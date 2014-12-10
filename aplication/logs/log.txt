@@ -1,0 +1,2 @@
+[2014-12-10 18:25:33.000000 127.0.0.1  - Error Fatal - Parse - Strict ] Call to undefined function maps_components()
+----------\n

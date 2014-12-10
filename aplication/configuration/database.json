@@ -1,0 +1,23 @@
+{
+    "actual_db": "Local",
+          
+    "Local": {
+        "hostname": "localhost",
+        "user": "user",
+        "pass": "pass",
+        "database": "db",
+        "driverbd": "mysql",
+        "persistente": "FALSE",
+        "charset": "utf8"
+    },
+    
+    "Servidor": {
+        "hostname": "localhost",
+        "user": "user",
+        "pass": "pass",
+        "database": "db",
+        "driverbd": "mysql",
+        "persistente": "FALSE",
+        "charset": "utf8"
+    }
+}

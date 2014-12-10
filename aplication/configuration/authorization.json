@@ -1,0 +1,10 @@
+{
+    "default": {
+        "permit": {
+            "front": "/*"
+        },
+        "deny": {
+        },
+        "error": "login"
+    }
+}
