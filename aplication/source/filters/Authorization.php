@@ -61,8 +61,7 @@ class Authorization extends En_Filter{
         else{
             //Si no existe la configuracion aviso del error
             echo "No existe definicion de seguridad para $user_logged";
-            $sesion= new Sesion();
-            $sesion->delete_session();
+            $this->request->session->delete_session();
             exit();
         }
     }
