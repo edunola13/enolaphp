@@ -72,7 +72,7 @@
             else{
                 $dir= PATHAPP . $comp['location'] . '/' . $comp['class'] . '.php';
             }
-            require $dir;
+            require_once $dir;
             $dir= explode("/", $comp['class']);
             $class= $dir[count($dir) - 1];
             $componente= new $class();
