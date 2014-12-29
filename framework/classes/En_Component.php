@@ -4,9 +4,11 @@
  */
 class En_Component extends Enola implements Component{ 
     protected $view_folder;
+    protected $session;
     
     public function __construct() {        
         parent::__construct('component');
+        $this->session= new Session();
         $this->view_folder= PATHAPP . 'source/view/';
     }    
     /**

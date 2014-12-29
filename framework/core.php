@@ -127,6 +127,11 @@
     require PATHAPP . 'load_user_config.php';    
     
     /*
+     * Cargo el modulo HTTP 
+     */
+    require PATHFRA . 'modules/http.php';
+    
+    /*
      * Almacena la definicion de componentes en una variable global y analiza si carga el modulo componente
      */    
     //Leo las componentes de la variable config y analizo todo lo respectivo a ellas
@@ -142,12 +147,8 @@
 			//Termina la ejecucion
 			exit;
 		}
-    }    
+    }
     
-    /*
-     * Cargo el modulo HTTP 
-     */
-    require PATHFRA . 'modules/http.php';
     /*
      * Lee los controladores de la variable config. En caso de que no haya controladores avisa del error
      * Me quedo con el controlador que mapea
