@@ -138,6 +138,9 @@
             case 'URI':
                 $controlador->doUri();
                 break;
+            case "OPTIONS":
+                $controlador->doOptions();
+                break;
             case 'CONNECT':
                 $controlador->doConnect();
                 break;
