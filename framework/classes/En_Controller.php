@@ -58,31 +58,44 @@ class En_Controller extends Enola implements Controller{
     /**
      * Funcion lee los campos de un formulario y asigna a una variable el objeto con todos sus atributos
      */
-    protected function read_fields($var_name, $class){
+    protected function read_fields($var_name, $class = NULL){
         $vars= array();
         if($this->request->request_method == 'POST'){
             $vars= $this->request->post_params;
         }
         else{
             $vars= $this->request->get_params;
-        }        
-        $object= new $class();
-        foreach ($vars as $key => $value) {
-            if(property_exists($object, $key)){
-                $object->$key= $value;
-            }
         }
-        $this->$var_name= $object;
+        if($class != NULL){
+                    
+            $object= new $class();
+            foreach ($vars as $key => $value) {
+                if(property_exists($object, $key)){
+                    $object->$key= $value;
+                }
+            }
+            $this->$var_name= $object;
+        }
+        else{
+            $this->$var_name= $vars;
+        }
     }    
     /**
      * Funcion que valido las variables de un objeto en base a una configuracion de validacion
      */
-    protected function validate($object){
+    protected function validate($var){
         $validacion= new Validation();        
         $reglas= $this->config_validation();
-        foreach ($reglas as $key => $regla) {
-            $validacion->add_rule($key, $object->$key, $regla);
-        }        
+        if(is_object($var)){
+            foreach ($reglas as $key => $regla) {
+                $validacion->add_rule($key, $var->$key, $regla);
+            }
+        }
+        else{
+            foreach ($reglas as $key => $regla) {
+                $validacion->add_rule($key, $var[$key], $regla);
+            }
+        }
         if(! $validacion->validate()){
             //Consigo los errores y retorno FALSE
             $this->errores= $validacion->error_messages();
