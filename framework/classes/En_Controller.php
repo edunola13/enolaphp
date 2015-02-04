@@ -132,6 +132,10 @@ class En_Controller extends Enola implements Controller{
      */
     protected function load_view($view, $params = NULL){
         include $this->view_folder . $view . '.php';
-    }    
+    }
+    protected function fordward($uri){
+        $con= mapping_controller($GLOBALS['controllers'], $uri);
+        execute_controller($con);
+    }
 }
 ?>

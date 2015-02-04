@@ -37,13 +37,13 @@
                 }
                 //Analiza si existe el archivo
                 if(file_exists($dir)){
-                    require $dir;
+                    require_once $dir;
                     $dir= explode("/", $filtro_esp['class']);
                     $class= $dir[count($dir) - 1];
                     $filtro= new $class();
                     //Analiza si existe el metodo filtrar
                     if(method_exists($filtro, 'filter')){
-                        echo $filtro->filter();
+                        $filtro->filter();
                     }
                     else{
                         general_error('Filter Error', 'The filter ' . $filtro_esp['class'] . ' dont implement the method filter()');
@@ -66,12 +66,12 @@
      * @param type $controladores
      * @return type 
      */
-    function mapping_controller($controladores){
+    function mapping_controller($controladores, $uriapp = NULL){
         $mapea= FALSE;
         //Recorre todos los controladores hasta que uno coincida con la URI actual
         foreach ($controladores as $controlador_esp) {
             //Analiza si el controlador mapea con la uri actual
-            $mapea= maps_actual_url($controlador_esp['url']);
+            $mapea= maps_actual_url($controlador_esp['url'], $uriapp);
             if($mapea){
                 return $controlador_esp;
             }
@@ -96,7 +96,7 @@
         $controlador= NULL;
         //Analiza si existe el archivo
         if(file_exists($dir)){
-            require $dir;
+            require_once $dir;
             $dir= explode("/", $controlador_esp['class']);
             $class= $dir[count($dir) - 1];
             $controlador= new $class();

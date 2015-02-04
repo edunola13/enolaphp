@@ -1,5 +1,6 @@
 {
     "base_url": "http://localhost/enolaphp/",
+    "index_page": "",
     "environment": "development",
     "calculate_performance": "FALSE",
     "configuration": "configuration/",

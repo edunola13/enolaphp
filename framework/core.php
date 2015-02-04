@@ -53,9 +53,11 @@
     if($config['base_url'][$pos] != '/'){
         $config['base_url'] .= '/';
     }
-    define('BASEURL', $config['base_url']);    
-	//ENVIRONMENT: Indica el ambiente de la aplicacion
-	define('ENVIRONMENT', $config['environment']);
+    define('BASEURL', $config['base_url']); 
+    //INDEX_PAGE: Pagina inicial. En blanco si se utiliza mod_rewrite
+    define('INDEX_PAGE', $config['index_page']); 
+    //ENVIRONMENT: Indica el ambiente de la aplicacion
+    define('ENVIRONMENT', $config['environment']);
     //CONFIGURATION: carpeta base de configuracion - definida por el usuario en el archivo de configuracion
     define('CONFIGURATION', $config['configuration']);    
     //JSON_CONFIG_BD: archivo de configuracion para la base de datos
@@ -65,10 +67,16 @@
     }    
     //URL_COMPONENT: URL con la cual se deben mapear los controladores
     define('URL_COMPONENT', $config['url-components']);    
-    // PATHFRA: direccion de la carpeta de la aplicacion - definida en index.php
+    //PATHFRA: direccion de la carpeta de la aplicacion - definida en index.php
     define('PATHFRA', $path_framework);    
-    // PATHAPP: direccion de la carpeta de la aplicacion - definida en index.php
-    define('PATHAPP', $path_aplication);         
+    //PATHAPP: direccion de la carpeta de la aplicacion - definida en index.php
+    define('PATHAPP', $path_aplication);
+    //ENOLA_MODE: Indica si la aplicacion se esta ejecutando via HTTP o CLI
+    if(PHP_SAPI == 'cli' || !isset($_SERVER['REQUEST_METHOD'])){
+        define('ENOLA_MODE', 'CLI');
+    }else{
+        define('ENOLA_MODE', 'HTTP');
+    }
     /*
      * Creacion de variables globales
      */    
@@ -86,28 +94,20 @@
     //Define un manejador de excepciones - definido en el modulo errores
     set_error_handler('_error_handler');
     //Define un manejador de fin de cierre - definido en el modulo de errores
-    register_shutdown_function('_shutdown');         
-    //Carga de modulo URL-URI
-    require PATHFRA . 'modules/url_uri.php';
-    //Define la uri de la aplicacion y la setea como una variable estatica
-    define_application_uri();        
+    register_shutdown_function('_shutdown'); 
     //Carga de modulo para carga de archivos
     require PATHFRA . 'modules/load_files.php';
     //Carga de modulo con funciones para la vista
     require PATHFRA . 'modules/view.php';
     //Carga de modulo de seguridad
     require PATHFRA . 'modules/security.php';
+    //Carga de modulo URL-URI
+    require PATHFRA . 'modules/url_uri.php';
     //Carga Clase Base Enola
     require PATHFRA . 'classes/Enola.php';  
     //Carga Clase En_DataBase
-    require PATHFRA . 'classes/En_DataBase.php';    
-    /*
-     * Analiza el paso de un error HTTP
-     */
-    catch_server_error();
-    /*
-     * Fin
-     */    
+    require PATHFRA . 'classes/En_DataBase.php';
+    
     /*
      * Cargo todas las librerias particulares de la aplicacion que se cargaran automaticamente indicadas en el archivo de configuracion
      */
@@ -118,18 +118,27 @@
         //$libreria['class'] tiene la direccion completa desde LIBRARIE, no solo el nombre
         $dir= $libreria['class'];
         import_librarie($dir);
-    }
+    }        
+    
+    //Si la aplicacion se encuentra en modo HTTP carga los modulos y realiza los calculos necesarios
+    if(ENOLA_MODE == 'HTTP'){        
+        //Define la uri de la aplicacion y la setea como una variable estatica
+        define_application_uri();    
+        /*
+         * Analiza el paso de un error HTTP
+         */
+        catch_server_error();
+        /*
+        * Cargo el modulo HTTP 
+        */
+        require PATHFRA . 'modules/http.php';
+    }    
     
     /**
      * Configuracion Inicial: Despues de la carga inicial y las libreria permite que el usuario realice su propia configuracion
-     * Antes de atender el requerimiento HTTP 
+     * Antes de atender el requerimiento HTTP o CLI
      */
     require PATHAPP . 'load_user_config.php';    
-    
-    /*
-     * Cargo el modulo HTTP 
-     */
-    require PATHFRA . 'modules/http.php';
     
     /*
      * Almacena la definicion de componentes en una variable global y analiza si carga el modulo componente
@@ -141,48 +150,64 @@
         $GLOBALS['components']= $componentes;
         //Cargo el modulo componente
         require PATHFRA . 'modules/component.php';
-		//Analiza si se ejecuta un componente via URL
-		if(maps_components()){
-			execute_url_component();
-			//Termina la ejecucion
-			exit;
-		}
+	//Analiza si se ejecuta un componente via URL
+	if(ENOLA_MODE == 'HTTP' && maps_components()){
+            execute_url_component();
+            //Termina la ejecucion
+            exit;
+	}
     }
     
     /*
-     * Lee los controladores de la variable config. En caso de que no haya controladores avisa del error
-     * Me quedo con el controlador que mapea
+     * Si la aplicacion se encuentra en modo HTTP ejecuta controladores y filtros correspondientes
+     * Si la aplicacion se encuentra en modo HTTP ejecuta controladores cron
      */
-    $controllers= $config['controllers'];
-    $actual_controller= NULL;
-    if(count($controllers) > 0){
-        $actual_controller= mapping_controller($controllers);
+    if(ENOLA_MODE == 'HTTP'){
+        /*
+         * Lee los controladores de la variable config. En caso de que no haya controladores avisa del error
+         * Me quedo con el controlador que mapea
+         */
+        $controllers= $config['controllers'];
+        $GLOBALS['controllers']= $config['controllers'];
+        $actual_controller= NULL;
+        if(count($controllers) > 0){
+            $actual_controller= mapping_controller($controllers);
+        }
+        else{
+            general_error('Controller Error', 'There isent define any controller');
+        }
+        //Creo el HTTP REQUEST correspondiente en base a la URL que mapeo
+        create_request($actual_controller['url']);
+        /*
+         * Lee los filtros que se deben ejecutar antes del procesamiento de la variable config y delega trabajo a archivo filtros.php
+         * En caso de que no haya filtros asignados no delega ningun trabajo
+         */
+        $filtros= $config['filters'];
+        if(count($filtros) > 0){
+            execute_filters($filtros);
+        }        
+        /**
+         *Ejecuto el controlador correspondiente 
+         */
+        execute_controller($actual_controller);
+        /**
+         * Lee los filtros que se deben ejecutar despues del procesamiento de la variable config y delega trabajo a archivo filtros.php
+         * En caso de que no haya filtros asignados no delega ningun trabajo
+         */
+        $filtros_despues= $config['filters_after_processing'];
+        if(count($filtros_despues) > 0){
+            execute_filters($filtros_despues);
+        }
+    }else{
+        //Analizo si se pasa por lo menos un parametros (nombre cron), el primer parametros es el nombre del archivo por eso
+        //pregunta por >= 2
+        if($argc >= 2){
+            require PATHFRA . 'modules/cron.php';
+            execute_cron_controller($argv);
+        }else{
+            general_error('Cron Controller', 'There isent define any cron controller name');
+        }        
     }
-    else{
-        general_error('Controller Error', 'There isent define any controller');
-    }
-    //Creo el HTTP REQUEST correspondiente en base a la URL que mapeo
-    create_request($actual_controller['url']);
-    /*
-     * Lee los filtros que se deben ejecutar antes del procesamiento de la variable config y delega trabajo a archivo filtros.php
-     * En caso de que no haya filtros asignados no delega ningun trabajo
-     */
-    $filtros= $config['filters'];
-    if(count($filtros) > 0){
-        execute_filters($filtros);
-    }        
-    /**
-     *Ejecuto el controlador correspondiente 
-     */
-    execute_controller($actual_controller);
-    /**
-     * Lee los filtros que se deben ejecutar despues del procesamiento de la variable config y delega trabajo a archivo filtros.php
-     * En caso de que no haya filtros asignados no delega ningun trabajo
-     */
-    $filtros_despues= $config['filters_after_processing'];
-    if(count($filtros_despues) > 0){
-        execute_filters($filtros_despues);
-    }     
     /*
      * Si se esta calculando el tiempo, realiza el calculo y envia la respuesta
      */

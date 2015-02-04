@@ -12,8 +12,14 @@
     function define_application_uri(){
         //Cargo la URI segun el servidor - Esta siempre es todo lo que esta despues de www.edunola.com.ar o localhost/
         $uri_actual= $_SERVER['REQUEST_URI'];
-        //Analizo la cantidad de partes de la baseurl para poder crear la URI correspondiente para la aplicacion
-        $url_base= explode("/", BASEURL);
+        //Analizo la cantidad de partes de la baseurl + indexpage(si corresponde) para poder crear la URI correspondiente para la aplicacion
+        $url_base= BASEURL;
+        if(INDEX_PAGE != ''){
+            $url_base .= trim(INDEX_PAGE, '/') . '/';
+        }
+        //REAL_BASE_URL: Real Base url de la aplicacion - Es la union de BASE_URL y INDEX_PAGE
+        define('REAL_BASE_URL', $url_base);
+        $url_base= explode("/", $url_base);
         $uri_app= "";
         //0= http, 1= //, 2= dominio, >3= una carpeta cualquiera
         if(count($url_base) > 3){
@@ -95,9 +101,9 @@
         //Separa la url pasada y la uri en partes para poder analizarlas
         $partes_url= explode("/", $url);
         
-        //Saco de la uri actual los parametros
+        //Saco de la uri actual o uriapp pasada como parametro los parametros
         $uri_explode= explode("?", URIAPP);
-        if($uriapp != NULL){
+        if($uriapp !== NULL){
             $uri_explode= explode("?", $uriapp);
         }
         $uri_front= $uri_explode[0];
