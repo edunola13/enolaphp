@@ -66,8 +66,7 @@ class En_Controller extends Enola implements Controller{
         else{
             $vars= $this->request->get_params;
         }
-        if($class != NULL){
-                    
+        if($class != NULL){                    
             $object= new $class();
             foreach ($vars as $key => $value) {
                 if(property_exists($object, $key)){
@@ -133,9 +132,22 @@ class En_Controller extends Enola implements Controller{
     protected function load_view($view, $params = NULL){
         include $this->view_folder . $view . '.php';
     }
-    protected function fordward($uri){
+    
+    /**
+     * Redireccion interna a otro Controlador.
+     * Se indica si se debe filtrar o no la nueva solicitud
+     * @param type $uri
+     * @param Bool $filtrar= FALSE. Indica si filtra
+     */
+    protected function fordward($uri, $filtrar = FALSE){
+        if($filtrar){
+            execute_filters($GLOBALS['filters'], $uri);
+        }
         $con= mapping_controller($GLOBALS['controllers'], $uri);
         execute_controller($con);
+        if($filtrar){
+            execute_filters($GLOBALS['filters_after_processing'], $uri);
+        }
     }
 }
 ?>

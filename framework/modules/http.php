@@ -22,10 +22,10 @@
      * Analiza los filtros correspondientes y ejecuta los que correspondan
      * @param array[array] $filtros
      */
-    function execute_filters($filtros){
+    function execute_filters($filtros, $uriapp = NULL){
         //Analizo los filtros y los aplico en caso de que corresponda
         foreach ($filtros as $filtro_esp) {
-            $filtrar= maps_actual_url($filtro_esp['filtered']);
+            $filtrar= maps_actual_url($filtro_esp['filtered'], $uriapp);
             //Si debe filtrar carga el filtro correspondiente y realiza el llamo al metodo filtrar()
             if($filtrar){
                 $dir= "";

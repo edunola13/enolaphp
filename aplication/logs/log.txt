@@ -36,4 +36,8 @@
 ----------\n[2015-02-04 00:35:41.000000 ::1  - Error Fatal - Parse - Strict ] Allowed memory size of 134217728 bytes exhausted (tried to allocate 261904 bytes)
 ----------\n[2015-02-04 00:37:04.000000 ::1  - Error Fatal - Parse - Strict ] Allowed memory size of 134217728 bytes exhausted (tried to allocate 261904 bytes)
 ----------\n[2015-02-04 00:39:59.000000 ::1  - Unknown ] Cannot modify header information - headers already sent by (output started at C:\xampp\htdocs\enolaphp\framework\modules\url_uri.php:109)
+----------\n[2015-02-04 13:11:50.000000 127.0.0.1  - Unknown ] Undefined index: filters_after_processing
+----------\n[2015-02-04 13:11:50.000000 127.0.0.1  - Unknown ] Invalid argument supplied for foreach()
+----------\n[2015-02-04 13:19:05.000000 127.0.0.1  - The controller Index_1 dont exists ] general_error
+----------\n[2015-02-04 13:19:05.000000 127.0.0.1  - Error Fatal - Parse - Strict ] Call to a member function doGet() on a non-object
 ----------\n

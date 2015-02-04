@@ -183,6 +183,9 @@
          * En caso de que no haya filtros asignados no delega ningun trabajo
          */
         $filtros= $config['filters'];
+        $GLOBALS['filters']= $filtros;
+        $filtros_despues= $config['filters_after_processing'];
+        $GLOBALS['filters_after_processing']= $filtros_despues;
         if(count($filtros) > 0){
             execute_filters($filtros);
         }        
@@ -193,8 +196,7 @@
         /**
          * Lee los filtros que se deben ejecutar despues del procesamiento de la variable config y delega trabajo a archivo filtros.php
          * En caso de que no haya filtros asignados no delega ningun trabajo
-         */
-        $filtros_despues= $config['filters_after_processing'];
+         */        
         if(count($filtros_despues) > 0){
             execute_filters($filtros_despues);
         }
