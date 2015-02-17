@@ -8,7 +8,15 @@
      */
     function base(){
         return BASEURL;
+    }
+    /**
+     * Retorna la baseurl
+     * @return string
+     */
+    function real_base(){
+        return REAL_BASE_URL;
     } 
+    
     /**
      * Retorna la base url con el locale actual
      * @return string

@@ -4,7 +4,8 @@
  * @author Enola
  */
 class En_Controller extends Enola implements Controller{
-    protected $request;     
+    protected $request;
+    protected $uri_params;
     protected $view_folder;
     //errores
     public $errores;    
@@ -56,6 +57,13 @@ class En_Controller extends Enola implements Controller{
     }
     
     /**
+     * Setea los uri params
+     * @param type $uri_params
+     */
+    public function setUriParams($uri_params){
+        $this->uri_params= $uri_params;
+    }
+    /**
      * Funcion lee los campos de un formulario y asigna a una variable el objeto con todos sus atributos
      */
     protected function read_fields($var_name, $class = NULL){
@@ -80,7 +88,7 @@ class En_Controller extends Enola implements Controller{
         }
     }    
     /**
-     * Funcion que valido las variables de un objeto en base a una configuracion de validacion
+     * Funcion que valida las variables de un objeto o de un array en base a una configuracion de validacion
      */
     protected function validate($var){
         $validacion= new Validation();        
@@ -121,7 +129,7 @@ class En_Controller extends Enola implements Controller{
     protected function load_data(){        
     }    
     /**
-     * Funcion que carga los datos usados por la vista de 
+     * Funcion que carga los datos usados por la vista de error
      */
     protected function load_data_error(){        
     }    
@@ -129,8 +137,21 @@ class En_Controller extends Enola implements Controller{
      * Carga una vista PHP
      * @param type $view 
      */
-    protected function load_view($view, $params = NULL){
+    protected function load_view($view, $params = NULL, $returnData = FALSE){
+        if($params != NULL && is_array($params)){
+            foreach ($params as $key => $value) {
+                $$key= $value;
+            }
+        }
+        if($returnData){
+            ob_start();            
+        }
         include $this->view_folder . $view . '.php';
+        if($returnData){
+            $output = ob_get_contents();
+            ob_end_clean();
+            return $output;
+        }
     }
     
     /**
@@ -144,7 +165,7 @@ class En_Controller extends Enola implements Controller{
             execute_filters($GLOBALS['filters'], $uri);
         }
         $con= mapping_controller($GLOBALS['controllers'], $uri);
-        execute_controller($con);
+        execute_controller($con, $uri);
         if($filtrar){
             execute_filters($GLOBALS['filters_after_processing'], $uri);
         }

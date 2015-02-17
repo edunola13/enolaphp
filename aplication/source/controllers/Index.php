@@ -14,5 +14,6 @@ class Index extends En_Controller{
     public function doGet(){
         $this->load_view("index");
     }
+
 }
 ?>

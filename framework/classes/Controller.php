@@ -35,5 +35,9 @@ interface Controller {
      * Funcion que es llamada cuando el metodo HTTP es CONNECT
      */
     public function doConnect();
+    /**
+     * Setea los uri_params
+     */
+    public function setUriParams($uri_params);
 }
 ?>

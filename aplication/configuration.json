@@ -7,11 +7,11 @@
     "charset": "UTF-8",
       
     "controllers": {
-        "index": {"class": "Index", "url": ""}
+        "index": {"class": "Index", "url": "/"}
     },
 
     "filters": {
-        "authorization": {"class": "Authorization", "filtered": "/*"}        
+        "authorization": {"class": "Authorization", "filtered": "/*"}
     },
             
     "filters_after_processing": {

@@ -175,6 +175,13 @@ class EnolaMVC implements Controller{
     public function doConnect(){
         $this->doGet();
     }
+    /**
+     * Setea los uri params
+     * @param type $uri_params
+     */
+    public function setUriParams($uri_params){
+        $this->uri_params= $uri_params;
+    }
 }
 
 ?>

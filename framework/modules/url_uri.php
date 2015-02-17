@@ -40,7 +40,7 @@
         $locale_actual= NULL;
         $locale_uri= NULL;
         $uri_app_locale= $uri_actual;
-        $base_url_locale= BASEURL;        
+        $base_url_locale= REAL_BASE_URL;        
         //Si hay configuracion de internacionalizacion realiza analisis
         if(isset($GLOBALS['i18n']['locales'])){
             //Consigue el locale por defecto
@@ -116,8 +116,8 @@
             $count_partes_uri= count($partes_url);
             for($i= 0; $i < $count_partes_uri; $i++) {
                 if(count($partes_uri_actual) >= ($i + 1)){
-                    //Si hay un * no me importa que viene despues, mapea todo, no deberia haber nada despues
-                    if($partes_url[$i] != "*"){
+                    //Si hay un * o un - no me importa que viene despues, mapea todo, no deberia haber nada despues
+                    if($partes_url[$i] != "*" && $partes_url[$i] != "-"){
                         $pos_ocurrencia= strpos($partes_url[$i], "*");
                         if($pos_ocurrencia != FALSE){
                             $parte_url= explode("*", $partes_url[$i]);
@@ -136,7 +136,7 @@
                                 $mapea= FALSE;
                                 break;
                             }
-                        }
+                        }                        
                         //Si alguna esta vacia no compara el mapeo con () y voy directo a la comparacion
                         if(empty($partes_url[$i]) || empty($partes_uri_actual[$i])){
                             //Si no coinciden las partes no mapean
@@ -163,8 +163,11 @@
                 }
                 else{
                     //La uri actual no tiene mas partes y no hay coincidencia completa
-                    $mapea= FALSE;
-                    break;
+                    //Si lo que sigue es un - mapea
+                    if($partes_url[$i] != "-"){
+                        $mapea= FALSE;
+                    }
+                    break;                 
                 }
             }            
         }
@@ -173,8 +176,8 @@
             $count_partes_uri_actual= count($partes_uri_actual);
             for($i= 0; $i < $count_partes_uri_actual; $i++){
                 if(count($partes_url) >= ($i + 1)){                
-                    //Si hay un * no me importa que viene despues, mapea todo, no deberia haber nada despues
-                    if($partes_url[$i] != "*"){
+                    //Si hay un * o un - no me importa que viene despues, mapea todo, no deberia haber nada despues
+                    if($partes_url[$i] != "*" && $partes_url[$i] != "-"){
                         $pos_ocurrencia= strpos($partes_url[$i], "*");
                         if($pos_ocurrencia != FALSE){
                             $parte_url= explode("*", $partes_url[$i]);
@@ -253,19 +256,47 @@
      * @param string $url
      * @return array[string]
      */
-    function uri_params($url){
-        $parametros= NULL;        
+    function uri_params($url, $uriapp = NULL){
+        $parametros= NULL;
+        $method= 'index';
+        $dinamic= FALSE;
         //Elimino el primer caracter si es igual a "/"
-        if(substr($url, 0, 1) == "/"){
-            $url= substr($url, 1);
-        }        
+        $url= ltrim($url, '/');
         //Separa la url y la uri en partes para poder analizarlas
         $partes_url= explode("/", $url);
         $uri_explode= explode("?", URIAPP);
+        if($uriapp !== NULL){
+            $uri_explode= explode("?", $uriapp);
+        }
         $uri_front= $uri_explode[0];
         $partes_uri_actual= explode("/", $uri_front);
-        $conut_partes_uri= count($partes_url);
-        for($i= 0; $i < $conut_partes_uri; $i++){
+        //Si en la url hay un * o un - limpio paso todo lo que venga desde la url real como un parametro
+        $in_array_guion= in_array('-', $partes_url);
+        $in_array_aster= in_array('*', $partes_url);
+        if($in_array_guion || $in_array_aster){
+            $count_partes_uri_actual= count($partes_uri_actual);
+            $encontrado= FALSE;
+            for($i= 0; $i < $count_partes_uri_actual; $i++){
+                if(!$encontrado){
+                    if($partes_url[$i] == '-' || $partes_url[$i] == '*'){
+                        $encontrado= TRUE;
+                        if($partes_url[$i] == '-'){
+                            $method= $partes_uri_actual[$i];                            
+                            continue;
+                        }
+                    }else{
+                        continue;
+                    }
+                }
+                $parametros[]= $partes_uri_actual[$i];
+            }
+            if($in_array_guion){
+                $dinamic= TRUE;
+            }
+        }        
+        //Pase lo que pase arriba esto puede ir siempre, ya que puede estar anterior al * o al -
+        $count_partes_uri= count($partes_url);
+        for($i= 0; $i < $count_partes_uri; $i++){
             if(empty($partes_url[$i]) || empty($partes_uri_actual[$i])){
                 //Si alguno esta vacio ya no hay parametros uri, es decir ()
                 break;
@@ -277,8 +308,11 @@
                     $parametros[$nombre]= $partes_uri_actual[$i];
                 }
             }
+        }        
+        if($parametros != NULL){
+            $parametros= clean_vars($parametros);
         }
-        return clean_vars($parametros);
+        return array('params' => $parametros, 'method' => $method, 'dinamic' => $dinamic);
     }
     /**
      * Funcion para setear el codigo del header HTTP

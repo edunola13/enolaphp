@@ -85,7 +85,7 @@
      * Ejecuta el controlador que mapeo anteriormente
      * @param type $controlador_esp 
      */
-    function execute_controller($controlador_esp){
+    function execute_controller($controlador_esp, $uriapp = NULL){
         $dir= "";
         if(! isset($controlador_esp['location'])){
             $dir= PATHAPP . 'source/controllers/' . $controlador_esp['class'] . '.php';
@@ -94,6 +94,8 @@
             $dir= PATHAPP . $controlador_esp['location'] . '/' . $controlador_esp['class'] . '.php';
         }
         $controlador= NULL;
+        $dinamic_method= FALSE;
+        $method= NULL;
         //Analiza si existe el archivo
         if(file_exists($dir)){
             require_once $dir;
@@ -101,7 +103,10 @@
             $class= $dir[count($dir) - 1];
             $controlador= new $class();
             //Agrego los parametros URI
-            $controlador->uri_params= uri_params($controlador_esp['url']);
+            $uri_params= uri_params($controlador_esp['url'], $uriapp);
+            $dinamic_method= $uri_params['dinamic'];
+            $method= $uri_params['method'];
+            $controlador->setUriParams($uri_params['params']);
             //Analizo si hay parametros en la configuracion
             if(isset($controlador_esp['params'])){
                 foreach ($controlador_esp['params'] as $key => $value) {
@@ -112,11 +117,17 @@
         else{
             //Avisa que el archivo no existe
             general_error('Controller Error', 'The controller ' . $controlador_esp['class'] . ' dont exists');
-        }            
+        }        
         //Saca el metodo HTPP y en base a eso hace una llamada al metodo correspondiente
         $metodo= $_SERVER['REQUEST_METHOD'];
-        try{
-            switch ($metodo) {
+        if($dinamic_method){
+            if(method_exists($controlador, $method)){
+                $controlador->$method();
+            }else{
+                general_error('HTTP Method Error', "The HTTP method $method is not supported");
+            }
+        }else{
+           switch ($metodo) {
             case 'GET':
                 $controlador->doGet();
                 break;
@@ -144,12 +155,9 @@
             case 'CONNECT':
                 $controlador->doConnect();
                 break;
-            default :
+            default :                
                 general_error('HTTP Method Error', "The HTTP method $metodo is not supported");
             }
-        }
-        catch (Exception $e){
-            general_error('Error executing the method HTTP - ' . $metodo, $e->getMessage());
         }
     }
 ?>

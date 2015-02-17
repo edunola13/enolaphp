@@ -1,43 +1,27 @@
-[2014-12-10 18:25:33.000000 127.0.0.1  - Error Fatal - Parse - Strict ] Call to undefined function maps_components()
-----------\n[2015-02-03 21:40:10.000000   - Unknown ] Undefined index: REMOTE_ADDR
-----------\n[2015-02-03 21:40:10.000000   - There isent define any cron controller name ] general_error
-----------\n[2015-02-03 21:40:10.000000   - Unknown ] Undefined index: REMOTE_ADDR
-----------\n[2015-02-03 21:40:10.000000   - Error Fatal - Parse - Strict ] Call to undefined function set_estado_header()
-----------\n[2015-02-03 21:43:17.000000 MODE CLI  - There isent define any cron controller name ] general_error
-[2015-02-03 21:43:17.000000 MODE CLI  - Unknown ] Undefined index: REMOTE_ADDR
-[2015-02-03 21:43:17.000000   - Unknown ] Undefined index: REMOTE_ADDR
-----------\n[2015-02-03 21:43:17.000000   - There isent define any cron controller name ] general_error
-----------\n[2015-02-03 21:43:17.000000 MODE CLI  - Unknown ] Cannot modify header information - headers already sent by (output started at C:\xampp\htdocs\enolaphp\framework\modules\errors.php:121)
-[2015-02-03 21:43:17.000000   - Unknown ] Cannot modify header information - headers already sent by (output started at C:\xampp\htdocs\enolaphp\framework\modules\errors.php:121)
-----------\n[2015-02-03 21:43:41.000000 MODE CLI  - There isent define any cron controller name ] general_error
-----------\n[2015-02-03 21:44:36.000000 MODE CLI  - There isent define any cron controller name ] general_error
-----------\n[2015-02-03 22:09:25.000000 MODE CLI  - Unknown ] Undefined variable: argv
-----------\n[2015-02-03 22:10:12.000000 MODE CLI  - Unknown ] Undefined variable: argv
-----------\n[2015-02-03 22:11:40.000000 MODE CLI  - Unknown ] Undefined variable: argv
-----------\n[2015-02-03 22:11:40.000000 MODE CLI  - Unknown ] Undefined variable: argv
-----------\n[2015-02-03 22:12:36.000000 MODE CLI  - The filter  dont exist ] general_error
-----------\n[2015-02-03 22:13:14.000000 MODE CLI  - The Cron Controller  dont exist ] general_error
-----------\n[2015-02-03 22:14:41.000000 MODE CLI  - Unknown ] Uninitialized string offset: 0
-----------\n[2015-02-03 22:15:47.000000 MODE CLI  - Unknown ] Uninitialized string offset: 0
-----------\n[2015-02-03 22:19:03.000000 MODE CLI  - The Cron Controller Prueba dont implement the method otroMetodos() ] general_error
-----------\n[2015-02-03 22:42:32.000000 MODE CLI  - Error Fatal - Parse - Strict ] Call to protected method En_CronController::setParams() from context ''
-----------\n[2015-02-04 00:06:47.000000 ::1  - Unknown ] session_start() [<a href='function.session-start'>function.session-start</a>]: Cannot send session cache limiter - headers already sent (output started at C:\xampp\htdocs\enolaphp\framework\modules\url_uri.php:20)
-----------\n[2015-02-04 00:06:47.000000 ::1  - Unknown ] Cannot modify header information - headers already sent by (output started at C:\xampp\htdocs\enolaphp\framework\modules\url_uri.php:20)
-----------\n[2015-02-04 00:07:33.000000 ::1  - Unknown ] session_start() [<a href='function.session-start'>function.session-start</a>]: Cannot send session cache limiter - headers already sent (output started at C:\xampp\htdocs\enolaphp\framework\modules\url_uri.php:23)
-----------\n[2015-02-04 00:07:33.000000 ::1  - Unknown ] Cannot modify header information - headers already sent by (output started at C:\xampp\htdocs\enolaphp\framework\modules\url_uri.php:23)
-----------\n[2015-02-04 00:08:33.000000 ::1  - Unknown ] session_start() [<a href='function.session-start'>function.session-start</a>]: Cannot send session cache limiter - headers already sent (output started at C:\xampp\htdocs\enolaphp\framework\modules\url_uri.php:23)
-----------\n[2015-02-04 00:08:37.000000 ::1  - Unknown ] session_start() [<a href='function.session-start'>function.session-start</a>]: Cannot send session cache limiter - headers already sent (output started at C:\xampp\htdocs\enolaphp\framework\modules\url_uri.php:23)
-----------\n[2015-02-04 00:31:47.000000 ::1  - Error Fatal - Parse - Strict ] Allowed memory size of 134217728 bytes exhausted (tried to allocate 261904 bytes)
-----------\n[2015-02-04 00:32:36.000000 ::1  - Error Fatal - Parse - Strict ] Allowed memory size of 134217728 bytes exhausted (tried to allocate 261904 bytes)
-----------\n[2015-02-04 00:33:04.000000 ::1  - Error Fatal - Parse - Strict ] Allowed memory size of 134217728 bytes exhausted (tried to allocate 261904 bytes)
-----------\n[2015-02-04 00:33:21.000000 ::1  - Error Fatal - Parse - Strict ] Allowed memory size of 134217728 bytes exhausted (tried to allocate 261904 bytes)
-----------\n[2015-02-04 00:33:49.000000 ::1  - Error Fatal - Parse - Strict ] Allowed memory size of 134217728 bytes exhausted (tried to allocate 261904 bytes)
-----------\n[2015-02-04 00:34:25.000000 ::1  - Error Fatal - Parse - Strict ] Allowed memory size of 134217728 bytes exhausted (tried to allocate 261904 bytes)
-----------\n[2015-02-04 00:35:41.000000 ::1  - Error Fatal - Parse - Strict ] Allowed memory size of 134217728 bytes exhausted (tried to allocate 261904 bytes)
-----------\n[2015-02-04 00:37:04.000000 ::1  - Error Fatal - Parse - Strict ] Allowed memory size of 134217728 bytes exhausted (tried to allocate 261904 bytes)
-----------\n[2015-02-04 00:39:59.000000 ::1  - Unknown ] Cannot modify header information - headers already sent by (output started at C:\xampp\htdocs\enolaphp\framework\modules\url_uri.php:109)
-----------\n[2015-02-04 13:11:50.000000 127.0.0.1  - Unknown ] Undefined index: filters_after_processing
-----------\n[2015-02-04 13:11:50.000000 127.0.0.1  - Unknown ] Invalid argument supplied for foreach()
-----------\n[2015-02-04 13:19:05.000000 127.0.0.1  - The controller Index_1 dont exists ] general_error
-----------\n[2015-02-04 13:19:05.000000 127.0.0.1  - Error Fatal - Parse - Strict ] Call to a member function doGet() on a non-object
+[2015-02-15 00:43:29.000000 ::1  - Unknown ] Use of undefined constant BASEURL_LOCALE - assumed 'BASEURL_LOCALE'
+----------\n[2015-02-15 00:43:29.000000 ::1  - Unknown ] session_start() [<a href='function.session-start'>function.session-start</a>]: Cannot send session cache limiter - headers already sent (output started at C:\xampp\htdocs\enolaphp\aplication\errors\error_php.php:3)
+----------\n[2015-02-15 01:27:30.000000 ::1  - The requested page could not be found but may be available again in the future
+ ] error_http
+----------\n[2015-02-15 01:27:30.000000 ::1  - The requested page could not be found but may be available again in the future
+ ] general_error
+----------\n[2015-02-15 01:28:25.000000 ::1  - The requested page could not be found but may be available again in the future
+ ] error_http
+----------\n[2015-02-15 01:28:25.000000 ::1  - The requested page could not be found but may be available again in the future
+ ] general_error
+----------\n[2015-02-15 01:28:26.000000 ::1  - The requested page could not be found but may be available again in the future
+ ] error_http
+----------\n[2015-02-15 01:28:26.000000 ::1  - The requested page could not be found but may be available again in the future
+ ] general_error
+----------\n[2015-02-15 01:29:07.000000 ::1  - The requested page could not be found but may be available again in the future
+ ] error_http
+----------\n[2015-02-15 01:29:07.000000 ::1  - The requested page could not be found but may be available again in the future
+ ] general_error
+----------\n[2015-02-15 01:29:28.000000 ::1  - The requested page could not be found but may be available again in the future
+ ] error_http
+----------\n[2015-02-15 01:29:28.000000 ::1  - The requested page could not be found but may be available again in the future
+ ] general_error
+----------\n[2015-02-15 01:29:34.000000 ::1  - The requested page could not be found but may be available again in the future
+ ] error_http
+----------\n[2015-02-15 01:29:34.000000 ::1  - The requested page could not be found but may be available again in the future
+ ] general_error
 ----------\n
