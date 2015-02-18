@@ -6,7 +6,17 @@
  */
 class En_DataBase extends Enola{
     protected $config_db;
-    protected $conexion;   
+    protected $conexion;
+    
+    protected $select;
+    protected $distinct;
+    protected $from;
+    protected $join;
+    protected $where;
+    protected $group;
+    protected $having;
+    protected $order;
+    protected $limit;
     /**
      * Constructor que conecta a la bd y carga las librerias que se indicaron en el archivo de configuracion
      */
