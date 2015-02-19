@@ -9,13 +9,14 @@ class En_DataBase extends Enola{
     protected $conexion;
     
     protected $select= "*";
-    protected $from;
-    protected $where;
-    protected $where_values;
-    protected $group;
-    protected $having;
-    protected $order;
-    protected $limit;
+    protected $from= '';
+    protected $where= '';
+    protected $where_values= array();
+    protected $group= '';
+    protected $having= '';
+    protected $having_values= array();
+    protected $order= '';
+    protected $limit= '';
     /**
      * Constructor que conecta a la bd y carga las librerias que se indicaron en el archivo de configuracion
      */
@@ -88,8 +89,39 @@ class En_DataBase extends Enola{
         $this->from.= $type.' '.$table.' '.$condition.' ';
     }
     
-    public function where($where){
-        //Estos deberian ser un par de metodos
+    public function where(array $conditions, array $values){
+        //conditions= 'pepe = :clave1 and (pepa = :clave2)...'
+        //values= array('clave1' => value...)
+        $this->where.= $conditions . ' ';
+        $this->where_values = array_merge($this->where_values, $values);
+    }
+    
+    public function where_like($field, $match, $joker='both', $not=FALSE){
+        $this->where.= $field . ' ';
+        if($not)$this->where.= 'NOT ';
+        $this->where.= 'LIKE ';
+        switch ($joker){
+            case 'both':
+                 $this->where.= "'%$joker%' ";
+                break;
+            case 'after':
+                 $this->where.= "'$joker%' ";
+                break;
+            case 'before':
+                 $this->where.= "'%$joker' ";
+                break;
+        }
+    }
+    
+    public function where_in($field, array $values, $not=FALSE){
+        $this->where.= $field . ' ';
+        if($not)$this->where.= 'NOT ';
+        $this->where.= 'IN (';
+        foreach ($values as $value) {
+            $this->where.= $value . ',';
+        }
+        $this->where= rtrim($this->where, ',');
+        $this->where.= ')';
     }
     
     public function group($group){
@@ -104,32 +136,66 @@ class En_DataBase extends Enola{
         }
     }
     
-    public function having($having){
-        //Igual que el where
+    public function having(array $conditions, array $values){
+        //conditions= 'pepe = :clave1 and (pepa = :clave2)...'
+        //values= array('clave1' => value...)
+        $this->having.= $conditions . ' ';
+        $this->having_values = array_merge($this->having_values, $values);
     }
     
     public function order($order){
-        $this->order= 'ORDER BY ' . $order;
+        $this->order= 'ORDER BY ' . $order .' ';
     }
     
     public function limit($limit, $offset = NULL){
         $this->limit= 'LIMIT ' . $limit;
-        if($offset != NULL)$this->limit.= ',' . $offset;
+        if($offset != NULL)$this->limit.= ',' . $offset.' ';
     }
     
-    public function get($from = NULL, $order = NULL, $limit = NULL){
+    public function get(){
         try{
             $sql= "";           
             $sql.= "SELECT " . $this->select;
-            if($from != NULL)$this->from= $from;
             $sql.= " FROM " . $this->from;
             $sql.= $this->join;
-            if($this->where != '')$sql.= " WHERE " . $this->where;                
+            if($this->where != '')$sql.= "WHERE " . $this->where;                
             $sql.= $this->group;
-            if($this->having != '')$sql.= " HAVING " . $this->having;
-            $sql.= $this->having;
+            if($this->having != '')$sql.= "HAVING " . $this->having;
             $sql.= $this->order;
             $sql.= $this->limit;
+
+            $consulta= $this->conexion->prepare($sql);        
+            foreach ($this->where_values as $key => $value){
+                if($value === FALSE){
+                    $consulta->bindValue($key, 0);
+                }else{
+                    $consulta->bindValue($key, $value);
+                }
+            }
+            $consulta->execute();
+            $error= $consulta->errorInfo();
+            if($error[0] != 00000){            
+                return FALSE;
+            }else{
+                return $consulta;
+            }
+        } catch (PDOException $e) {
+            general_error('PDO Error', $e->getMessage(), 'error_bd');
+            return FALSE;
+        }
+    }
+    
+    public function get_from_where($from, $where=NULL, $where_values=array(), $order=NULL, $limit=NULL, $offset=NULL){
+        try{
+            $sql= "";           
+            $sql.= "SELECT " . $this->select;
+            $sql.= " FROM " . $from;
+            if($where != NULL)$sql.= " WHERE " . $where;
+            if($order != NULL)$sql.= " ORDER BY " . $order;
+            if($limit != NULL){
+                $sql.= " LIMIT " . $limit;
+                if($offset != NULL)$sql.= ',' . $offset;
+            }
 
             $consulta= $this->conexion->prepare($sql);        
             foreach ($where_values as $key => $value){
