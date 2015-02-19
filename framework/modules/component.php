@@ -26,10 +26,19 @@
         $partes_uri= explode("/", URIAPP);
         $nombre= "";
         $params= array();
+        $action= NULL;
         if(count($partes_uri) > 1){
             $nombre= $partes_uri[1];
             unset($partes_uri[0]);
             unset($partes_uri[1]);
+            //Reseteo los indices
+            $partes_uri= array_values($partes_uri);            
+            if(isset($partes_uri[0]) && $partes_uri[0] == 'actionComponent' && isset($partes_uri[1])){
+                $action= $partes_uri[1];
+                unset($partes_uri[0]);
+                unset($partes_uri[1]);
+                $partes_uri= array_values($partes_uri);
+            }
             //Consigue los parametros
             foreach ($partes_uri as $value) {
                 $params[]= $value;
@@ -40,7 +49,7 @@
             if(isset($GLOBALS['componentes'][$nombre])){
                 $comp= $GLOBALS['componentes'][$nombre];
                 if($comp['enabled-url'] == 'TRUE' || $comp['enabled-url'] == 'true'){
-                    execute_component($nombre, $params, TRUE);
+                    execute_component($nombre, $params, $action);
                 }
                 else{
                     echo "The component is disabled via URL";
@@ -61,7 +70,7 @@
      * @param type $parametros
      * @param type url
      */ 
-    function execute_component($nombre, $parametros = NULL, $url = FALSE){
+    function execute_component($nombre, $parametros = NULL, $action = NULL){
         $componente= NULL;
         if(isset($GLOBALS['componentes'][$nombre])){
             $comp= $GLOBALS['componentes'][$nombre];
@@ -78,14 +87,16 @@
             $componente= new $class();
         }
         if($componente != NULL){
-            //Analiza si existe el metodo filtrar
+            //Analiza si existe el metodo render
             if(method_exists($componente, 'rendering')){
-                if($parametros == NULL){
-                    return $componente->rendering();
+                if($action != NULL){
+                    if(method_exists($componente, $action)){
+                        $componente->$action($parametros);
+                    }else{
+                        general_error('Component Error', 'The component ' . $nombre . ' dont implement the action ' . $action . '()');
+                    }
                 }
-                else{
-                    return $componente->rendering($parametros);
-                }
+                return $componente->rendering($parametros);
             }
             else{
                 general_error('Component Error', 'The component ' . $nombre . ' dont implement the method rendering()');

@@ -24,4 +24,7 @@
  ] error_http
 ----------\n[2015-02-15 01:29:34.000000 ::1  - The requested page could not be found but may be available again in the future
  ] general_error
+----------\n[2015-02-18 20:20:09.000000 127.0.0.1  - The component prueba dont implement the action 1() ] general_error
+----------\n[2015-02-18 20:20:43.000000 127.0.0.1  - The component prueba dont implement the action 1() ] general_error
+----------\n[2015-02-18 20:24:54.000000 127.0.0.1  - The component prueba2 dont implement the action otroAction() ] general_error
 ----------\n

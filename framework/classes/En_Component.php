@@ -8,7 +8,7 @@ class En_Component extends Enola implements Component{
     
     public function __construct() {        
         parent::__construct('component');
-        $this->session= new Session();
+        if(ENOLA_MODE == 'HTTP')$this->session= new Session();
         $this->view_folder= PATHAPP . 'source/view/';
     }    
     /**

@@ -30,7 +30,7 @@ class En_DataBase extends Enola{
      * Abre una conexion en base a la configuracion de la BD
      * @return \PDO
      */
-    protected function get_conexion(){
+    protected function get_conexion($opcion = NULL){
 	//Leo archivo de configuracion de BD si es la primera vez
         if($this->config_db == NULL){
             if(defined('JSON_CONFIG_BD')){
@@ -41,8 +41,8 @@ class En_DataBase extends Enola{
             }
             $this->config_db= json_decode($json_basededatos, TRUE);
         }
-        //Consulta la bd actual
-        $opcion= $this->config_db['actual_db'];
+        //Consulta la bd actual si no se indico opcion
+        if($opcion == NULL)$opcion= $this->config_db['actual_db'];
         //Cargo las opciones de la bd actual
         $cbd= $this->config_db[$opcion];
         //Abro una conexion
@@ -71,6 +71,16 @@ class En_DataBase extends Enola{
     protected function close_conexion(){
         $this->conexion= NULL;
     }
+    
+    public function get($from = NULL, $where = NULL, $where_values = NULL, $order = NULL, $limit = NULL){
+        $consulta= "";           
+        $consulta.= "select " . $this->select;
+        if($from != NULL)$this->from= $from;
+        $consulta.= " from " . $this->from;
+        if($where != NULL)$this->where= $where;
+        $consulta.= " where " . $this->where;
+    }
+    
     /**
      * En base a la ejecucion de una consulta y una clase devuelve un arreglo con instancias de la clase pasada
      * con los respectivos valores que trajo la consulta

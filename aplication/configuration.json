@@ -22,7 +22,7 @@
         "locales": "en,fr,me"
     },
        
-    "url-components": "enola-widgets",
+    "url-components": "enola-components",
     "components":{
     },
             
