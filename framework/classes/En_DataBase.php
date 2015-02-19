@@ -8,11 +8,10 @@ class En_DataBase extends Enola{
     protected $config_db;
     protected $conexion;
     
-    protected $select;
-    protected $distinct;
+    protected $select= "*";
     protected $from;
-    protected $join;
     protected $where;
+    protected $where_values;
     protected $group;
     protected $having;
     protected $order;
@@ -72,13 +71,85 @@ class En_DataBase extends Enola{
         $this->conexion= NULL;
     }
     
-    public function get($from = NULL, $where = NULL, $where_values = NULL, $order = NULL, $limit = NULL){
-        $consulta= "";           
-        $consulta.= "select " . $this->select;
-        if($from != NULL)$this->from= $from;
-        $consulta.= " from " . $this->from;
-        if($where != NULL)$this->where= $where;
-        $consulta.= " where " . $this->where;
+    public function select($select, $distinct = FALSE){
+        if($distinct){
+            $this->select= 'DISTINCT ';
+        }else{
+            $this->select= '';
+        }
+        $this->select .= $select;
+    }
+    
+    public function from($table){
+        $this->from= $table . ' ';
+    }
+    
+    public function join($table, $condition, $type='INNER JOIN'){
+        $this->from.= $type.' '.$table.' '.$condition.' ';
+    }
+    
+    public function where($where){
+        //Estos deberian ser un par de metodos
+    }
+    
+    public function group($group){
+        if(is_array($group)){
+            $this->group= 'GROUP BY ';
+            foreach ($group as $value) {
+                $this->group .= $value.',';
+            }
+            $this->group= rtrim($this->group, ',');
+        }else{
+            $this->group= $group;
+        }
+    }
+    
+    public function having($having){
+        //Igual que el where
+    }
+    
+    public function order($order){
+        $this->order= 'ORDER BY ' . $order;
+    }
+    
+    public function limit($limit, $offset = NULL){
+        $this->limit= 'LIMIT ' . $limit;
+        if($offset != NULL)$this->limit.= ',' . $offset;
+    }
+    
+    public function get($from = NULL, $order = NULL, $limit = NULL){
+        try{
+            $sql= "";           
+            $sql.= "SELECT " . $this->select;
+            if($from != NULL)$this->from= $from;
+            $sql.= " FROM " . $this->from;
+            $sql.= $this->join;
+            if($this->where != '')$sql.= " WHERE " . $this->where;                
+            $sql.= $this->group;
+            if($this->having != '')$sql.= " HAVING " . $this->having;
+            $sql.= $this->having;
+            $sql.= $this->order;
+            $sql.= $this->limit;
+
+            $consulta= $this->conexion->prepare($sql);        
+            foreach ($where_values as $key => $value){
+                if($value === FALSE){
+                    $consulta->bindValue($key, 0);
+                }else{
+                    $consulta->bindValue($key, $value);
+                }
+            }
+            $consulta->execute();
+            $error= $consulta->errorInfo();
+            if($error[0] != 00000){            
+                return FALSE;
+            }else{
+                return $consulta;
+            }
+        } catch (PDOException $e) {
+            general_error('PDO Error', $e->getMessage(), 'error_bd');
+            return FALSE;
+        }
     }
     
     /**
