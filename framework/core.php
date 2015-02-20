@@ -118,7 +118,7 @@
         //$libreria['class'] tiene la direccion completa desde LIBRARIE, no solo el nombre
         $dir= $libreria['class'];
         import_librarie($dir);
-    }        
+    }    
     
     //Si la aplicacion se encuentra en modo HTTP carga los modulos y realiza los calculos necesarios
     if(ENOLA_MODE == 'HTTP'){        

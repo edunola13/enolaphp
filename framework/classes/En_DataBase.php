@@ -14,7 +14,6 @@ class En_DataBase extends Enola{
     protected $where_values= array();
     protected $group= '';
     protected $having= '';
-    protected $having_values= array();
     protected $order= '';
     protected $limit= '';
     /**
@@ -86,10 +85,10 @@ class En_DataBase extends Enola{
     }
     
     public function join($table, $condition, $type='INNER JOIN'){
-        $this->from.= $type.' '.$table.' '.$condition.' ';
+        $this->from.= $type.' '.$table.' ON '.$condition.' ';
     }
     
-    public function where(array $conditions, array $values){
+    public function where($conditions, array $values){
         //conditions= 'pepe = :clave1 and (pepa = :clave2)...'
         //values= array('clave1' => value...)
         $this->where.= $conditions . ' ';
@@ -131,16 +130,17 @@ class En_DataBase extends Enola{
                 $this->group .= $value.',';
             }
             $this->group= rtrim($this->group, ',');
+            $this->group.=' ';
         }else{
-            $this->group= $group;
+            $this->group= 'GROUP BY '.$group.' ';
         }
     }
     
-    public function having(array $conditions, array $values){
+    public function having($conditions, array $values){
         //conditions= 'pepe = :clave1 and (pepa = :clave2)...'
         //values= array('clave1' => value...)
         $this->having.= $conditions . ' ';
-        $this->having_values = array_merge($this->having_values, $values);
+        $this->where_values = array_merge($this->where_values, $values);
     }
     
     public function order($order){
@@ -149,21 +149,21 @@ class En_DataBase extends Enola{
     
     public function limit($limit, $offset = NULL){
         $this->limit= 'LIMIT ' . $limit;
-        if($offset != NULL)$this->limit.= ',' . $offset.' ';
+        if($offset != NULL)$this->limit.= ' OFFSET ' . $offset.' ';
     }
     
     public function get(){
+        $res= FALSE;
         try{
             $sql= "";           
             $sql.= "SELECT " . $this->select;
             $sql.= " FROM " . $this->from;
-            $sql.= $this->join;
             if($this->where != '')$sql.= "WHERE " . $this->where;                
             $sql.= $this->group;
             if($this->having != '')$sql.= "HAVING " . $this->having;
             $sql.= $this->order;
             $sql.= $this->limit;
-
+//            echo $sql;
             $consulta= $this->conexion->prepare($sql);        
             foreach ($this->where_values as $key => $value){
                 if($value === FALSE){
@@ -174,18 +174,18 @@ class En_DataBase extends Enola{
             }
             $consulta->execute();
             $error= $consulta->errorInfo();
-            if($error[0] != 00000){            
-                return FALSE;
-            }else{
-                return $consulta;
+            if($error[0] == 00000){
+                $res= $consulta;
             }
         } catch (PDOException $e) {
             general_error('PDO Error', $e->getMessage(), 'error_bd');
-            return FALSE;
         }
+        $this->clean_vars();
+        return $res;
     }
     
     public function get_from_where($from, $where=NULL, $where_values=array(), $order=NULL, $limit=NULL, $offset=NULL){
+        $res= FALSE;
         try{
             $sql= "";           
             $sql.= "SELECT " . $this->select;
@@ -194,9 +194,9 @@ class En_DataBase extends Enola{
             if($order != NULL)$sql.= " ORDER BY " . $order;
             if($limit != NULL){
                 $sql.= " LIMIT " . $limit;
-                if($offset != NULL)$sql.= ',' . $offset;
+                if($offset != NULL)$sql.= ' OFFSET ' . $offset;
             }
-
+            
             $consulta= $this->conexion->prepare($sql);        
             foreach ($where_values as $key => $value){
                 if($value === FALSE){
@@ -207,15 +207,26 @@ class En_DataBase extends Enola{
             }
             $consulta->execute();
             $error= $consulta->errorInfo();
-            if($error[0] != 00000){            
-                return FALSE;
-            }else{
-                return $consulta;
+            if($error[0] == 00000){
+                $res= $consulta;
             }
         } catch (PDOException $e) {
             general_error('PDO Error', $e->getMessage(), 'error_bd');
             return FALSE;
         }
+        $this->clean_vars();
+        return $res;
+    }
+    
+    protected function clean_vars(){
+        $this->select= "*";
+        $this->from= '';
+        $this->where= '';
+        $this->where_values= array();
+        $this->group= '';
+        $this->having= '';
+        $this->order= '';
+        $this->limit= '';
     }
     
     /**
@@ -225,7 +236,7 @@ class En_DataBase extends Enola{
      * @param type $class
      * @return \class
      */
-    protected function results_in_objects($PdoStatement, $class){
+    public function results_in_objects($PdoStatement, $class){
         $result= array();
         while($reg= $PdoStatement->fetchObject()){
             $instanciaClase= new $class();

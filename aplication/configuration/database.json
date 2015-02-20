@@ -3,9 +3,9 @@
           
     "Local": {
         "hostname": "localhost",
-        "user": "user",
-        "pass": "pass",
-        "database": "db",
+        "user": "ana",
+        "pass": "ana",
+        "database": "appedunola",
         "driverbd": "mysql",
         "persistente": "FALSE",
         "charset": "utf8"
