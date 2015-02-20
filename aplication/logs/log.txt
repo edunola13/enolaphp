@@ -105,4 +105,72 @@
 ----------\n[2015-02-20 00:29:41.000000 ::1  - Error Fatal - Parse - Strict ] Call to a member function fetchObject() on a non-object
 ----------\n[2015-02-20 00:29:48.000000 ::1  - SQLSTATE[HY093]: Invalid parameter number: number of bound variables does not match number of tokens ] general_error
 ----------\n[2015-02-20 00:29:48.000000 ::1  - Error Fatal - Parse - Strict ] Call to a member function fetchObject() on a non-object
+----------\n[2015-02-20 16:28:34.000000 127.0.0.1  - SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'usuario IN (eduardo_n,anadg)GROUP BY autor, nombre HAVING count(nombre) > '0' OR' at line 1 ] general_error
+----------\n[2015-02-20 16:28:34.000000 127.0.0.1  - Error Fatal - Parse - Strict ] Call to a member function fetchObject() on a non-object
+----------\n[2015-02-20 16:29:46.000000 127.0.0.1  - SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'usuario IN (eduardo_n,anadg) GROUP BY autor, nombre HAVING count(nombre) > '0' O' at line 1 ] general_error
+----------\n[2015-02-20 16:29:46.000000 127.0.0.1  - Error Fatal - Parse - Strict ] Call to a member function fetchObject() on a non-object
+----------\n[2015-02-20 16:30:40.000000 127.0.0.1  - SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'usuario IN ('eduardo_n','anadg') GROUP BY autor, nombre HAVING count(nombre) > '' at line 1 ] general_error
+----------\n[2015-02-20 16:30:40.000000 127.0.0.1  - Error Fatal - Parse - Strict ] Call to a member function fetchObject() on a non-object
+----------\n[2015-02-20 16:30:59.000000 127.0.0.1  - SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'usuario IN ('eduardo_n','anadg') GROUP BY autor, nombre HAVING count(nombre) > '' at line 1 ] general_error
+----------\n[2015-02-20 16:30:59.000000 127.0.0.1  - Error Fatal - Parse - Strict ] Call to a member function fetchObject() on a non-object
+----------\n[2015-02-20 18:05:10.000000 127.0.0.1  - Error Fatal - Parse - Strict ] Call to undefined method Prueba::or_where()
+----------\n[2015-02-20 18:17:37.000000 127.0.0.1  - SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'AND usuario LIKE '%do_n' ORDER BY habilitado desc, nombre LIMIT 10 OFFSET 0' at line 1 ] general_error
+----------\n[2015-02-20 18:18:27.000000 127.0.0.1  - SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'usuario NOT IN ('eduardo_n','anadg') GROUP BY autor, nombre HAVING count(nombre)' at line 1 ] general_error
+----------\n[2015-02-20 18:22:10.000000 127.0.0.1  - Unknown ] Argument 2 passed to En_DataBase::or_having() must be an array, none given, called in C:\wamp\www\enolaphp\aplication\source\controllers\Index.php on line 55 and defined
+----------\n[2015-02-20 18:22:10.000000 127.0.0.1  - Unknown ] Undefined variable: values
+----------\n[2015-02-20 18:22:10.000000 127.0.0.1  - Unknown ] array_merge() [<a href='function.array-merge'>function.array-merge</a>]: Argument #2 is not an array
+----------\n[2015-02-20 18:22:10.000000 127.0.0.1  - Unknown ] Invalid argument supplied for foreach()
+----------\n[2015-02-20 18:22:10.000000 127.0.0.1  - SQLSTATE[HY093]: Invalid parameter number: no parameters were bound ] general_error
+----------\n[2015-02-20 18:22:27.000000 127.0.0.1  - SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'GROUP BY autor, nombre HAVING count(nombre) > '0' sum(autor) > '0' ORDER BY titu' at line 1 ] general_error
+----------\n[2015-02-20 18:42:04.000000 127.0.0.1  - Error Fatal - Parse - Strict ] Cannot access protected property Tag::$descripcion
+----------\n[2015-02-20 18:48:46.000000 127.0.0.1  - Error Fatal - Parse - Strict ] Cannot access protected property Tag::$descripcion
+----------\n[2015-02-20 18:49:13.000000 127.0.0.1  - Error Fatal - Parse - Strict ] Cannot access protected property Tag::$descripcion
+----------\n[2015-02-20 18:49:48.000000 127.0.0.1  - Error Fatal - Parse - Strict ] Cannot access protected property Tag::$descripcion
+----------\n[2015-02-20 18:51:09.000000 127.0.0.1  - Error Fatal - Parse - Strict ] Cannot access protected property Tag::$descripcion
+----------\n[2015-02-20 18:58:02.000000 127.0.0.1  - SQLSTATE[42S22]: Column not found: 1054 Unknown column 'descripcion2' in 'field list' ] general_error
+----------\n[2015-02-20 19:24:33.000000 127.0.0.1  - Unknown ] Invalid argument supplied for foreach()
+----------\n[2015-02-20 19:24:33.000000 127.0.0.1  - Unknown ] Invalid argument supplied for foreach()
+----------\n[2015-02-20 19:31:51.000000 127.0.0.1  - SQLSTATE[HY093]: Invalid parameter number: parameter was not defined ] general_error
+----------\n[2015-02-20 19:32:29.000000 127.0.0.1  - SQLSTATE[HY093]: Invalid parameter number: parameter was not defined ] general_error
+----------\n[2015-02-20 19:40:58.000000 127.0.0.1  - SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ':nombre2' at line 1 ] general_error
+----------\n[2015-02-20 19:41:15.000000 127.0.0.1  - SQLSTATE[HY093]: Invalid parameter number: number of bound variables does not match number of tokens ] general_error
+----------\n[2015-02-20 19:50:00.000000 127.0.0.1  - Error Fatal - Parse - Strict ] Call to undefined method Prueba::beginTransaction()
+----------\n[2015-02-20 19:50:09.000000 127.0.0.1  - Error Fatal - Parse - Strict ] Call to protected method En_DataBase::begin_transaction() from context 'Index'
+----------\n[2015-02-20 20:25:20.000000 127.0.0.1  - SQLSTATE[42S22]: Column not found: 1054 Unknown column 'nombres' in 'where clause' ] general_error
+----------\n[2015-02-20 20:30:07.000000 127.0.0.1  - SQLSTATE[42S22]: Column not found: 1054 Unknown column 'nombre2' in 'where clause' ] general_error
+----------\n[2015-02-20 20:30:34.000000 127.0.0.1  - Unknown ] A non well formed numeric value encountered
+----------\n[2015-02-20 20:30:34.000000 127.0.0.1  - Error Fatal - Parse - Strict ] Uncaught exception 'PDOException' with message 'SQLSTATE[42S22]: Column not found: 1054 Unknown column 'nombre2' in 'where clause'' in C:\wamp\www\enolaphp\framework\classes\En_DataBase.php:335
+Stack trace:
+#0 C:\wamp\www\enolaphp\aplication\source\controllers\Index.php(78): En_DataBase->update('tag', Array)
+#1 C:\wamp\www\enolaphp\framework\modules\http.php(132): Index->doGet()
+#2 C:\wamp\www\enolaphp\framework\core.php(195): execute_controller(Array)
+#3 C:\wamp\www\enolaphp\index.php(31): require('C:\wamp\www\eno...')
+#4 {main}
+  thrown
+----------\n[2015-02-20 20:31:04.000000 127.0.0.1  - Unknown ] A non well formed numeric value encountered
+----------\n[2015-02-20 20:31:04.000000 127.0.0.1  - Error Fatal - Parse - Strict ] Uncaught exception 'PDOException' with message 'SQLSTATE[42S22]: Column not found: 1054 Unknown column 'nombre2' in 'where clause'' in C:\wamp\www\enolaphp\framework\classes\En_DataBase.php:335
+Stack trace:
+#0 C:\wamp\www\enolaphp\aplication\source\controllers\Index.php(78): En_DataBase->update('tag', Array)
+#1 C:\wamp\www\enolaphp\framework\modules\http.php(132): Index->doGet()
+#2 C:\wamp\www\enolaphp\framework\core.php(195): execute_controller(Array)
+#3 C:\wamp\www\enolaphp\index.php(31): require('C:\wamp\www\eno...')
+#4 {main}
+  thrown
+----------\n[2015-02-20 20:31:31.000000 127.0.0.1  - Error Fatal - Parse - Strict ] Uncaught exception 'PDOException' in C:\wamp\www\enolaphp\framework\classes\En_DataBase.php:335
+Stack trace:
+#0 C:\wamp\www\enolaphp\aplication\source\controllers\Index.php(78): En_DataBase->update('tag', Array)
+#1 C:\wamp\www\enolaphp\framework\modules\http.php(132): Index->doGet()
+#2 C:\wamp\www\enolaphp\framework\core.php(195): execute_controller(Array)
+#3 C:\wamp\www\enolaphp\index.php(31): require('C:\wamp\www\eno...')
+#4 {main}
+  thrown
+----------\n[2015-02-20 20:31:47.000000 127.0.0.1  - Unknown ] A non well formed numeric value encountered
+----------\n[2015-02-20 20:31:47.000000 127.0.0.1  - Error Fatal - Parse - Strict ] Uncaught exception 'PDOException' with message 'SQLSTATE[42S22]: Column not found: 1054 Unknown column 'nombre2' in 'where clause'' in C:\wamp\www\enolaphp\framework\classes\En_DataBase.php:335
+Stack trace:
+#0 C:\wamp\www\enolaphp\aplication\source\controllers\Index.php(78): En_DataBase->update('tag', Array)
+#1 C:\wamp\www\enolaphp\framework\modules\http.php(132): Index->doGet()
+#2 C:\wamp\www\enolaphp\framework\core.php(195): execute_controller(Array)
+#3 C:\wamp\www\enolaphp\index.php(31): require('C:\wamp\www\eno...')
+#4 {main}
+  thrown
 ----------\n
