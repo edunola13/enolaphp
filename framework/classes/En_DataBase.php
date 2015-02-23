@@ -5,12 +5,14 @@
  * @author Enola
  */
 class En_DataBase extends Enola{
-    protected $config_db;
+    protected static $config_db;
     protected $conexion;
+    protected $currentDB;
+    protected $currentConfiguration;
     
-    protected $state_tran= TRUE;
-    protected $error_tran= array();
-    protected $last_error= NULL;
+    public $stateTran= TRUE;
+    public $errorTran= array();
+    public $lastError= NULL;
     
     protected $select= "*";
     protected $from= '';
@@ -23,31 +25,31 @@ class En_DataBase extends Enola{
     /**
      * Constructor que conecta a la bd y carga las librerias que se indicaron en el archivo de configuracion
      */
-    function __construct($conect = TRUE) {
+    function __construct($conect = TRUE, $nameDB = NULL) {
         parent::__construct('db');
-	if($conect){
-            $this->conexion= $this->get_conexion();
-	}
+	if($conect)$this->conexion= $this->getConexion($nameDB);
     }
     /**
      * Abre una conexion en base a la configuracion de la BD
      * @return \PDO
      */
-    protected function get_conexion($opcion = NULL){
+    protected function getConexion($nameDB = NULL){
 	//Leo archivo de configuracion de BD si es la primera vez
-        if($this->config_db == NULL){
+        if(self::$config_db == NULL){            
             if(defined('JSON_CONFIG_BD')){
                 $json_basededatos= file_get_contents(PATHAPP . CONFIGURATION . JSON_CONFIG_BD);
             }
             else {
                 general_error('Data Base', 'The configuration file of the Data Base is not especified', 'error_bd');
             }
-            $this->config_db= json_decode($json_basededatos, TRUE);
+            self::$config_db= json_decode($json_basededatos, TRUE);
         }
         //Consulta la bd actual si no se indico opcion
-        if($opcion == NULL)$opcion= $this->config_db['actual_db'];
+        if($nameDB == NULL)$nameDB= self::$config_db['actual_db'];
         //Cargo las opciones de la bd actual
-        $cbd= $this->config_db[$opcion];
+        $cbd= self::$config_db[$nameDB];
+        $this->currentDB= $nameDB;
+        $this->currentConfiguration= &self::$config_db[$nameDB];
         //Abro una conexion
         try {
             // 5.3.5 o < y luego 5.3.6 o >
@@ -58,47 +60,76 @@ class En_DataBase extends Enola{
             $dsn=  $cbd['driverbd'].':host='.$cbd['hostname'].';dbname='.$cbd['database'].';charset='.$cbd['charset'];
             //Abro la conexion                
             $gbd = new PDO($dsn, $cbd['user'], $cbd['pass'], array(PDO::ATTR_PERSISTENT => $cbd['persistente'], PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES '.$cbd['charset']));
-            $gbd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            //Guarda la conexion en un variable global
-            $GLOBALS['gbd']= $gbd;
+            if(ENVIRONMENT == 'development'){
+                $gbd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            }else{
+                $gbd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_SILENT);
+            }
             //Retorno la conexion 
             return $gbd;
         } 
         catch (PDOException $e) {
-            general_error('Conexion Error', $e->getMessage(), 'error_bd');
+            throw new PDOException($e->getMessage(), $e->getCode());
         }
     }
-    /**
-     * Cierra la conexion
-     */
-    protected function close_conexion(){
+    /** Limpia las variables de instancia del ActiveRecord */
+    protected function cleanVars(){
+        $this->select= "*";
+        $this->from= '';
+        $this->where= '';
+        $this->where_values= array();
+        $this->group= '';
+        $this->having= '';
+        $this->order= '';
+        $this->limit= '';
+    }    
+    /** Elimina elementos de $vars que tengan como clave el valor de un elemento de $excepts_vars */
+    private function deleteVars($vars, $excepts_vars){
+        foreach ($excepts_vars as $value) {
+            unset($vars[$value]);
+        }
+        return $vars;
+    }
+    /** Almacena los errores */
+    protected function catchError($error){
+        if($this->conexion->inTransaction()){
+            $this->error_tran[]= $error;
+            $this->state_tran= FALSE;
+        }
+        $this->last_error= $error;    
+    }
+        
+    /** Cierra la conexion */
+    protected function closeConexion(){
         $this->conexion= NULL;
     }
-    
-    public function begin_transaction(){
+    /** Cambia la conexion actual */
+    public function changeConexion($nameDB = NULL){
+        $this->conexion= $this->getConexion($nameDB);
+    }
+    /** Comienza una Transaccion */
+    public function beginTransaction(){
         $this->state_tran= TRUE;
         $this->error_tran= array();
         $this->conexion->beginTransaction();
     }
-    public function finish_transaction(){
+    /** Finaliza una Transaccion - Si fue todo bien realiza commit, en caso contrario rolllBack */
+    public function finishTransaction(){
         if($this->state_tran){
             $this->conexion->commit();
         }else{
             $this->conexion->rollBack();
         }
     }
-    public function catch_error($error){
-        if($this->conexion->inTransaction()){
-            $this->error_tran[]= $error;
-            $this->state_tran= FALSE;
-        }else{
-            $this->last_error= $error;
-        }    
-    }
     
     /*
-     * ACTIVE RECORD
-     */    
+     * ACTIVE RECORD and MORE
+     */
+    /** 
+     * Arma el Select de la consulta
+     * @param string $select
+     * @param bool $distinct
+     */
     public function select($select, $distinct = FALSE){
         if($distinct){
             $this->select= 'DISTINCT ';
@@ -107,30 +138,60 @@ class En_DataBase extends Enola{
         }
         $this->select .= $select;
     }
-    
+    /**
+     * Arma el from de la consulta
+     * @param string $table
+     */
     public function from($table){
         $this->from= $table . ' ';
     }
-    
+    /**
+     * Arma Joins de la consulta
+     * @param string $table
+     * @param string $condition
+     * @param string $type
+     */
     public function join($table, $condition, $type='INNER JOIN'){
         $this->from.= $type.' '.$table.' ON '.$condition.' ';
     }
-    
+    /**
+     * Arma el where de la consulta
+     * @param string $conditions
+     * @param array $values
+     */
     public function where($conditions, array $values){
         if($this->where != '')$this->where.='AND ';
         $this->where.= $conditions . ' ';
         $this->where_values = array_merge($this->where_values, $values);
-    }    
+    }
+    /**
+     * Arma el where con or de la consulta
+     * @param string $conditions
+     * @param array $values
+     */
     public function or_where($conditions, array $values){
         if($this->where != '')$this->where.='OR ';
         $this->where.= $conditions . ' ';
         $this->where_values = array_merge($this->where_values, $values);
     }
-    
+    /**
+     * Arma el where like de la consutla
+     * @param string $field
+     * @param type $match
+     * @param string $joker
+     * @param bool $not
+     */
     public function where_like($field, $match, $joker='both', $not=FALSE){
         if($this->where != '')$this->where.='AND ';
         $this->like($field, $match, $joker, $not);
-    }    
+    }
+    /**
+     * Arma el where like con or de la consutla
+     * @param string $field
+     * @param type $match
+     * @param string $joker
+     * @param bool $not
+     */
     public function or_where_like($field, $match, $joker='both', $not=FALSE){
         if($this->where != '')$this->where.='OR ';
         $this->like($field, $match, $joker, $not);
@@ -151,16 +212,27 @@ class En_DataBase extends Enola{
                 break;
         }
     }
-    
+    /**
+     * Arma el where in de la consulta
+     * @param string $field
+     * @param array $values
+     * @param bool $not
+     */
     public function where_in($field, array $values, $not=FALSE){
         if($this->where != '')$this->where.='AND ';
         $this->in($field, $values, $not);       
-    }    
+    }
+    /**
+     * Arma el where in con or de la consulta
+     * @param string $field
+     * @param array $values
+     * @param bool $not
+     */
     public function or_where_in($field, array $values, $not=FALSE){
         if($this->where != '')$this->where.='OR ';
         $this->in($field, $values, $not);
     }    
-    public function in($field, array $values, $not=FALSE){
+    protected function in($field, array $values, $not=FALSE){
         $this->where.= $field . ' ';
         if($not)$this->where.= 'NOT ';
         $this->where.= 'IN (';
@@ -170,7 +242,10 @@ class En_DataBase extends Enola{
         $this->where= rtrim($this->where, ',');
         $this->where.= ') ';
     }
-    
+    /**
+     * Arma el group de la consulta
+     * @param string $group
+     */
     public function group($group){
         if(is_array($group)){
             $this->group= 'GROUP BY ';
@@ -183,27 +258,47 @@ class En_DataBase extends Enola{
             $this->group= 'GROUP BY '.$group.' ';
         }
     }
-    
+    /**
+     * Arma el having de la consulta
+     * @param string $conditions
+     * @param array $values
+     */
     public function having($conditions, array $values){
         if($this->having != '')$this->having.='AND ';
         $this->having.= $conditions . ' ';
         $this->where_values = array_merge($this->where_values, $values);
-    }    
+    } 
+    /**
+     * Arma el having con or de la consulta
+     * @param string $conditions
+     * @param array $values
+     */
     public function or_having($conditions, array $values){
         if($this->having != '')$this->having.='OR ';
         $this->having.= $conditions . ' ';
         $this->where_values = array_merge($this->where_values, $values);
     }
-    
+    /**
+     * Arma el order de la consulta
+     * @param string $order
+     */
     public function order($order){
         $this->order= 'ORDER BY ' . $order .' ';
     }
-    
+    /**
+     * Arma el limit de la consulta
+     * @param type $limit
+     * @param type $offset
+     */
     public function limit($limit, $offset = NULL){
         $this->limit= 'LIMIT ' . $limit;
         if($offset != NULL)$this->limit.= ' OFFSET ' . $offset.' ';
     }
-    
+    /**
+     * Devuelve el resultado de la consulta armada de forma ActiveRecord
+     * @return PDOStatement
+     * @throws PDOException
+     */
     public function get(){
         $res= FALSE;
         try{
@@ -226,19 +321,41 @@ class En_DataBase extends Enola{
             }
             $consulta->execute();
             $error= $consulta->errorInfo();
-            if($error[0] == 00000){
+            if($error[0] == '00000'){
                 $res= $consulta;
             }else{
-                $this->catch_error($error);
+                $this->catchError($error);
             }
         } catch (PDOException $e) {
-            general_error('PDO Error', $e->getMessage(), 'error_bd');
+            throw new PDOException($e->getMessage(), $e->getCode());
         }
-        $this->clean_vars();
+        $this->cleanVars();
         return $res;
     }
-    
-    public function get_from_where($from, $where=NULL, $where_values=array(), $order=NULL, $limit=NULL, $offset=NULL){
+    /**
+     * Devuelve un conjunto de objetos de la clase especificada en base a la consulta armada de la forma ActiveRecord
+     * @param string $class
+     * @return PDOStatement
+     */
+    public function getInObject(string $class){
+        $res= $this->get();
+        if($res !== FALSE){
+            $this->resultsInObjects($res, $class);
+        }
+        return $res;
+    }
+    /**
+     * Devuelve el resultado de la consulta armada
+     * @param string $from
+     * @param string $where
+     * @param array $where_values
+     * @param string $order
+     * @param type $limit
+     * @param type $offset
+     * @return 
+     * @throws PDOStatement
+     */
+    public function getFromWhere($from, $where=NULL, $where_values=array(), $order=NULL, $limit=NULL, $offset=NULL){
         $res= FALSE;
         try{
             $sql= "";           
@@ -261,19 +378,43 @@ class En_DataBase extends Enola{
             }
             $consulta->execute();
             $error= $consulta->errorInfo();
-            if($error[0] == 00000){
+            if($error[0] == '00000'){
                 $res= $consulta;
             }else{
-                $this->catch_error($error);
+                $this->catchError($error);
             }
         } catch (PDOException $e) {
-            general_error('PDO Error', $e->getMessage(), 'error_bd');
-            return FALSE;
+            throw new PDOException($e->getMessage(), $e->getCode());
         }
-        $this->clean_vars();
+        $this->cleanVars();
         return $res;
     }
-    
+    /**
+     * Devuelve un conjunto de objetos de la clase especificada en base a la consulta armada
+     * @param string $class
+     * @param string $from
+     * @param string $where
+     * @param array $where_values
+     * @param string $order
+     * @param type $limit
+     * @param type $offset
+     * @return 
+     * @throws PDOStatement
+     */
+    public function getFromWhereInObjects(string $class, $from, $where=NULL, $where_values=array(), $order=NULL, $limit=NULL, $offset=NULL){
+        $res= $this->get($from,$where,$where_values,$order,$limit,$offset);
+        if($res !== FALSE){
+            $this->resultsInObjects($res, $class);
+        }
+        return $res;
+    }
+    /**
+     * Inserta en una tabla los valores indicados
+     * @param string $table
+     * @param array $values
+     * @return boolean
+     * @throws PDOException
+     */
     public function insert($table, array $values){
         try{
             $sql= 'INSERT INTO ' . $table . ' (';
@@ -295,19 +436,24 @@ class En_DataBase extends Enola{
             }
             $consulta->execute();
             $error= $consulta->errorInfo();
-            if($error[0] != 00000){
-                $this->catch_error($error);
+            if($error[0] != '00000'){
+                $this->catchError($error);
                 return FALSE;
             }
             else{
                 return TRUE;
             }
         } catch (PDOException $e) {
-            general_error('PDO Error', $e->getMessage(), 'error_bd');
-            return FALSE;
+            throw new PDOException($e->getMessage(), $e->getCode());
         }
     }
-    
+    /**
+     * Actualiza una tabla en base a los datos indicados y la consulta armada en forma ActiveRecord
+     * @param string $table
+     * @param array $values
+     * @return boolean
+     * @throws PDOException
+     */
     public function update($table, array $values){
         $res= FALSE;
         try{
@@ -329,19 +475,24 @@ class En_DataBase extends Enola{
             }
             $consulta->execute();
             $error= $consulta->errorInfo();
-            if($error[0] == 00000){
+            if($error[0] == '00000'){
                 $res= TRUE;
             }else{
-                $this->catch_error($error);
+                $this->catchError($error);
             }
         } catch (PDOException $e) {
             throw new PDOException($e->getMessage(), $e->getCode());
         }
-        $this->clean_vars();
+        $this->cleanVars();
         return $res;
     }
-    
-    public function delete($table){
+    /**
+     * Elimina tuplas de una tabla en base a la consulta armada de la forma ActiveRecord
+     * @param string $table
+     * @return boolean
+     * @throws PDOException
+     */
+    public function delete($table){        
         $res= FALSE;
         try{
             $sql= 'DELETE FROM ' . $table . ' ';            
@@ -355,29 +506,18 @@ class En_DataBase extends Enola{
                     $consulta->bindValue($key, $value);
                 }
             }
-            $consulta->execute();
+            $consulta->execute();            
             $error= $consulta->errorInfo();
-            if($error[0] == 00000){
-                $res= TRUE;
+            if($error[0] != '00000'){
+                $this->catch_error($error);                
             }else{
-                $this->catch_error($error);
+                $res= TRUE;
             }
         } catch (PDOException $e) {
-            general_error('PDO Error', $e->getMessage(), 'error_bd');
+            throw new PDOException($e->getMessage(), (int)$e->getCode());
         }
-        $this->clean_vars();
+        $this->cleanVars();
         return $res;
-    }
-    
-    protected function clean_vars(){
-        $this->select= "*";
-        $this->from= '';
-        $this->where= '';
-        $this->where_values= array();
-        $this->group= '';
-        $this->having= '';
-        $this->order= '';
-        $this->limit= '';
     }
     
     /**
@@ -387,7 +527,7 @@ class En_DataBase extends Enola{
      * @param type $class
      * @return \class
      */
-    public function results_in_objects($PdoStatement, $class){
+    public function resultsInObjects($PdoStatement, $class){
         $result= array();
         while($reg= $PdoStatement->fetchObject()){
             $instanciaClase= new $class();
@@ -408,7 +548,7 @@ class En_DataBase extends Enola{
      * @param type $class
      * @return null|\class
      */
-    protected function first_result_in_object($PdoStatement, $class){
+    public function firstResultInObject($PdoStatement, $class){
         $tupla= $PdoStatement->fetchObject();
         if($tupla == NULL){
             return NULL;
@@ -432,11 +572,11 @@ class En_DataBase extends Enola{
      * @param type $excepts_vars
      * @return boolean
      */
-    public function insert_object($table, $object, $excepts_vars = array()){
+    public function insertObject($table, $object, $excepts_vars = array()){
         try{
             //Consigo las variables publicas del objeto
             $vars= get_object_vars($object);
-            $vars= $this->delete_vars($vars, $excepts_vars);
+            $vars= $this->deleteVars($vars, $excepts_vars);
             $sql= 'INSERT INTO ' . $table . ' (';
             $values= 'values(';
             foreach ($vars as $key => $value) {
@@ -456,8 +596,8 @@ class En_DataBase extends Enola{
             }
             $consulta->execute();
             $error= $consulta->errorInfo();
-            if($error[0] != 00000){
-                $this->catch_error($error);
+            if($error[0] != '00000'){
+                $this->catchError($error);
                 return FALSE;
             }
             else{
@@ -471,11 +611,11 @@ class En_DataBase extends Enola{
      * En base a una tabla especificada y un objeto modifica el objeto en la tabla. 
      * Usa todos los atributos publicos del objeto
      */
-    public function update_object($table, $object, $where = '', $where_values = array(), $excepts_vars = array()){
+    public function updateObject($table, $object, $where = '', $where_values = array(), $excepts_vars = array()){
         try{
             $vars= get_object_vars($object);
             //Consigo las variables publicas del objeto
-            $vars= $this->delete_vars($vars, $excepts_vars);
+            $vars= $this->deleteVars($vars, $excepts_vars);
             $sql= 'UPDATE ' . $table . ' SET ';
             foreach ($vars as $key => $value) {
                 $sql .= $key . '=:' . $key . ',';
@@ -485,6 +625,7 @@ class En_DataBase extends Enola{
                 $sql .= ' WHERE ' . $where;
             }
             $consulta= $this->conexion->prepare($sql);
+            $vars = array_merge($vars, $where_values);
             foreach ($vars as $key => $value){
                 if($value === FALSE){
                     $consulta->bindValue($key, 0);
@@ -492,39 +633,18 @@ class En_DataBase extends Enola{
                     $consulta->bindValue($key, $value);
                 }
             }
-            foreach ($where_values as $key => $value){
-                if($value === FALSE){
-                    $consulta->bindValue($key, 0);
-                }
-                else{
-                    $consulta->bindValue($key, $value);
-                }
-            }
             $consulta->execute();
             $error= $consulta->errorInfo();
-            if($error[0] != 00000){
-                $this->catch_error($error);
+            if($error[0] != '00000'){
+                $this->catchError($error);
                 return FALSE;
             }
             else{
                 return TRUE;
             }
         } catch (PDOException $e) {
-            general_error('PDO Error', $e->getMessage(), 'error_bd');
-            return FALSE;
+            throw new PDOException($e->getMessage(), $e->getCode());
         }
-    }
-    /**
-     * Elimina elementos de $vars que tengan como clave el valor de un elemento de $excepts_vars
-     * @param type $vars
-     * @param type $excepts_vars
-     * @return type
-     */
-    private function delete_vars($vars, $excepts_vars){
-        foreach ($excepts_vars as $value) {
-            unset($vars[$value]);
-        }
-        return $vars;
     }
 }
 ?>

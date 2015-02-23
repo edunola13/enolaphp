@@ -58,7 +58,7 @@
                     error_php('Error Fatal - Parse - Strict', $e['type'], $e['message'], $e['file'], $e['line']);
                 }
             }
-        }  
+        }
     }    
     /**
      * Funcion que es llamada para crear una respuesta de error php - usada por el manejador de errores definido por el framework

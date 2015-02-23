@@ -105,8 +105,8 @@
     require PATHFRA . 'modules/url_uri.php';
     //Carga Clase Base Enola
     require PATHFRA . 'classes/Enola.php';  
-    //Carga Clase En_DataBase
-    require PATHFRA . 'classes/En_DataBase.php';
+    //Carga Clase En_DataBase - Si se definio configuracion para la misma
+    if(defined('JSON_CONFIG_BD'))require PATHFRA . 'classes/En_DataBase.php';
     
     /*
      * Cargo todas las librerias particulares de la aplicacion que se cargaran automaticamente indicadas en el archivo de configuracion
