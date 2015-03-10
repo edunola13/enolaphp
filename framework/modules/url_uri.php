@@ -83,7 +83,7 @@
         define('LOCALE_URI', $locale_uri);
         //LOCALE: Contiene el Locale actual. Si no se encuentra ninguno en la URL es igual al por defecto, si no es igual a LOCALE_URI
         define('LOCALE', $locale_actual);
-        //BASEURL_LOCALE: Contiene la base URL con el LOCALE correspondiente. Si el locale es el por defecto esta es igual a BASEURL
+        //BASEURL_LOCALE: Contiene la base URL con el LOCALE correspondiente. Si el locale es el por defecto esta es igual a REAL_BASE_URL
         define('BASEURL_LOCALE', $base_url_locale);
     }
     /**

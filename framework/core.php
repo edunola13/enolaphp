@@ -22,11 +22,11 @@
     switch ($config['environment']){
         case 'development':
             error_reporting(E_ALL);
-            define('ERROR', 'todos');
+            define('ERROR_EN', 'all');
             break;	
         case 'production':
             error_reporting(0);
-            define('ERROR', 'ninguno');
+            define('ERROR_EN', 'none');
             break;
         default:
             //No realiza el llamado a funcion de error porque todavia no se cargo el modulo de errores
@@ -67,7 +67,7 @@
     }    
     //URL_COMPONENT: URL con la cual se deben mapear los controladores
     define('URL_COMPONENT', $config['url-components']);    
-    //PATHFRA: direccion de la carpeta de la aplicacion - definida en index.php
+    //PATHFRA: direccion de la carpeta del framework - definida en index.php
     define('PATHFRA', $path_framework);    
     //PATHAPP: direccion de la carpeta de la aplicacion - definida en index.php
     define('PATHAPP', $path_aplication);
