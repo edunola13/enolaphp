@@ -2,4 +2,3 @@ RewriteEngine on
 RewriteCond $1 !^(index.php|resources) 
 RewriteRule ^(.*)$ /enolaphp/index.php/$1 [L]
 ErrorDocument 404 /enolaphp/index.php?error_apache_enola=404
-

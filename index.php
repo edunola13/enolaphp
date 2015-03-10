@@ -17,7 +17,7 @@
      *  Path donde se encuentra la carpeta los archivos de la aplicacion que son usados por el framework
      *  Si la carpeta es cambiada de lugar es necesario modificar esta variable
      */
-    $path_aplication= 'aplication';    
+    $path_aplication= 'application';    
     if (realpath($path_aplication) !== FALSE){
         //Asigna la direccion real de $path_aplicacion
 	$path_aplication = realpath($path_aplication).'/';
