@@ -83,9 +83,7 @@
     //Creo variable global con la configuracion de Internacionalizacion
     if(isset($config['i18n'])){
         $GLOBALS['i18n']= $config['i18n'];
-    }    
-    //Creo la variable global con la configuracion de librerias
-    $GLOBALS['libraries_file']= $config['libraries'];    
+    }   
     /*
      * Carga de modulos obligatorios para que el framework trabaje correctamente
      */    
@@ -111,14 +109,18 @@
     /*
      * Cargo todas las librerias particulares de la aplicacion que se cargaran automaticamente indicadas en el archivo de configuracion
      */
-    //Leo las librerias de la variable config
-    $archivos_librerias_a= $config['libraries'];
+    //Creo la variable global con la configuracion de librerias
+    $GLOBALS['libraries_file']= $config['libraries'];
+    $load_libraries= array();
     //Recorro de a una las librerias y las importo
-    foreach ($archivos_librerias_a as $libreria) {
+    foreach ($GLOBALS['libraries_file'] as $name => $libreria) {
         //$libreria['class'] tiene la direccion completa desde LIBRARIE, no solo el nombre
         $dir= $libreria['class'];
+        if(isset($libreria['load_in']))$load_libraries[$name]= $libreria;
         import_librarie($dir);
-    }    
+    }
+    //Creo la variable global con las librerias que son cargables
+    $GLOBALS['load_libraries_file']= $load_libraries;
     
     //Si la aplicacion se encuentra en modo HTTP carga los modulos y realiza los calculos necesarios
     if(ENOLA_MODE == 'HTTP'){        

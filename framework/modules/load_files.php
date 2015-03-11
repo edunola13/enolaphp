@@ -60,16 +60,15 @@
      * Esta funcion supone que la ibreria ya se encuentra importada
      */
     function load_librarie_in_class($object, $type){
-        //Analiza las librerias
-        foreach ($GLOBALS['libraries_file'] as $name => $libreria) { 
-            if(isset($libreria['load_in'])){
-                //Si esta seteada la variable cargar_en y contiene la definicion $type carga la libreria
-                if(strpos($libreria['load_in'], $type) !== FALSE){
-                    $dir= $libreria['class'];
-                    $dir= explode("/", $dir);
-                    $class= $dir[count($dir) - 1];
-                    add_instance($class, $object, $name);
-                }
+        //Analiza las librerias que tienen seteado "load_in"
+        foreach ($GLOBALS['load_libraries_file'] as $name => $libreria) {
+            $types= explode(",", $libreria['load_in']);
+            //Si la libreria contiene el tipo se carga
+            if(in_array($type, $types)){
+                $dir= $libreria['class'];
+                $dir= explode("/", $dir);
+                $class= $dir[count($dir) - 1];
+                add_instance($class, $object, $name);
             }
         }
     }    
