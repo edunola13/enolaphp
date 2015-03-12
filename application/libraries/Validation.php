@@ -129,11 +129,11 @@ class Validation {
     private function load_messages(){
         if($this->archivo == NULL){
             if($this->locale == NULL){
-                $this->messages= file(realpath(dirname(__FILE__)). '/' . $this->dir_content . '.ini');
+                $this->messages= file(realpath(dirname(__FILE__)). '/' . $this->dir_content . '.txt');
                 $this->messages= $this->parse_properties($this->messages);
             }
             else{
-                $this->messages= file(realpath(dirname(__FILE__)). '/' . $this->dir_content . "_$this->locale" . '.ini');
+                $this->messages= file(realpath(dirname(__FILE__)). '/' . $this->dir_content . "_$this->locale" . '.txt');
                 $this->messages= $this->parse_properties($this->messages);
             }
         }
@@ -146,31 +146,14 @@ class Validation {
      * @return type
      */
     private function parse_properties($lineas) {
-        $isWaitingOtherLine = false;
         $result= NULL;
         foreach($lineas as $i=>$linea) {
             if(empty($linea) || !isset($linea) || strpos($linea,"#") === 0){
                 continue;
             }
-
-            if(!$isWaitingOtherLine) {
-                $key = substr($linea,0,strpos($linea,'='));
-                $value = substr($linea,strpos($linea,'=') + 1, strlen($linea));
-            }
-            else {
-                $value .= $linea;
-            }
-
-            /* Check if ends with single '\' */
-            if(strrpos($value,"\\") === strlen($value)-strlen("\\")) {
-                $value = substr($value, 0, strlen($value)-1)."\n";
-                $isWaitingOtherLine = true;
-            }
-            else {
-                $isWaitingOtherLine = false;
-            }
+            $key = substr($linea,0,strpos($linea,'='));
+            $value = substr($linea,strpos($linea,'=') + 1, strlen($linea));
             $result[$key] = $value;
-            unset($lineas[$i]);
         }
         return $result;
     }

@@ -15,7 +15,7 @@
     function _error_handler($level, $message, $file, $line){
         if (!(error_reporting() & $level)) {
             //Agrega el Log
-            write_log($message, 'Level Error: '. $level);
+            write_log($message, 'Level Error: '. $level, $file, $line);
             // Segun el nivel de error veo si agarro o no la excepcion. si entra aca no hago nada
             return;
         }
@@ -52,7 +52,7 @@
             //Si no son manejados con esa funcion todos cierran el programa directamente
             if($e['type'] == E_ERROR || $e['type'] == E_PARSE || $e['type'] == E_STRICT){
                 if(!(error_reporting() & $e['type'])){
-                    write_log($e['message'], $e['type']);
+                    write_log($e['message'], $e['type'], $e['file'], $e['line']);
                 }
                 else{
                     error_php('Error Fatal - Parse - Strict', $e['type'], $e['message'], $e['file'], $e['line']);
@@ -69,7 +69,7 @@
      * @param int $linea
      */
     function error_php($type, $level, $message, $file, $line){
-        write_log($message, $type);
+        write_log($message, $type, $file, $line);
         if(error_reporting()){
             require_once PATHAPP . 'errors/error_php.php';
         }
@@ -105,7 +105,7 @@
      * @param String $cadena
      * @param String $tipo
      */
-    function write_log($cadena, $tipo){
+    function write_log($cadena, $tipo, $file="", $line=""){
         if(filesize(PATHAPP . 'logs/log.txt') > 100000){           
             $arch= fopen(PATHAPP . 'logs/log.txt', "w");
             fclose($arch); 
@@ -116,7 +116,7 @@
                    " - $tipo ] ".$cadena."\n");
         }else{
             fwrite($arch, "[".date("Y-m-d H:i:s.u")." MODE CLI ".
-                   " - $tipo ] ".$cadena."\n");
+                   " - $tipo ] ".$cadena." - $file - $line \n");
         }
         fwrite($arch, '----------\n');
 	fclose($arch);
