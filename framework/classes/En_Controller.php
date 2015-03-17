@@ -5,15 +5,15 @@
  */
 class En_Controller extends Enola implements Controller{
     protected $request;
-    protected $uri_params;
-    protected $view_folder;
+    protected $uriParams;
+    protected $viewFolder;
     //errores
     public $errores;    
 
     function __construct(){
         parent::__construct('controller');
         $this->request= En_HttpRequest::getInstance();
-        $this->view_folder= PATHAPP . 'source/view/';
+        $this->viewFolder= PATHAPP . 'source/view/';
     }    
     /**
      * Funcion que es llamada cuando el metodo HTTP es GET
@@ -61,14 +61,14 @@ class En_Controller extends Enola implements Controller{
      * @param type $uri_params
      */
     public function setUriParams($uri_params){
-        $this->uri_params= $uri_params;
+        $this->uriParams= $uri_params;
     }
     /**
-     * Funcion lee los campos de un formulario y asigna a una variable el objeto con todos sus atributos
+     * Funcion lee los campos de un formulario y asigna a una variable el objeto con todos sus atributos o un array asociativo
      */
-    protected function read_fields($var_name, $class = NULL){
+    protected function readFields($var_name, $class = NULL){
         $vars= array();
-        if($this->request->request_method == 'POST'){
+        if($this->request->requestMethod == 'POST'){
             $vars= $this->request->post_params;
         }
         else{
@@ -92,7 +92,7 @@ class En_Controller extends Enola implements Controller{
      */
     protected function validate($var){
         $validacion= new Validation();        
-        $reglas= $this->config_validation();
+        $reglas= $this->configValidation();
         if(is_object($var)){
             foreach ($reglas as $key => $regla) {
                 $validacion->add_rule($key, $var->$key, $regla);
@@ -115,29 +115,29 @@ class En_Controller extends Enola implements Controller{
     /**
      * Funcion que arma una configuracion para la validacion
      */
-    protected function config_validation(){
+    protected function configValidation(){
         return array();
     }
     /**
-     * Funcion que actua cuando acurre un error en la validacion
+     * Funcion que actua cuando acurre un error en el controlador
      */
     protected function error(){        
     }    
     /**
      * Funcion que carga los datos usados por la vista
      */
-    protected function load_data(){        
+    protected function loadData(){        
     }    
     /**
      * Funcion que carga los datos usados por la vista de error
      */
-    protected function load_data_error(){        
+    protected function loadDataError(){        
     }    
     /**
      * Carga una vista PHP
      * @param type $view 
      */
-    protected function load_view($view, $params = NULL, $returnData = FALSE){
+    protected function loadView($view, $params = NULL, $returnData = FALSE){
         if($params != NULL && is_array($params)){
             foreach ($params as $key => $value) {
                 $$key= $value;
@@ -146,7 +146,7 @@ class En_Controller extends Enola implements Controller{
         if($returnData){
             ob_start();            
         }
-        include $this->view_folder . $view . '.php';
+        include $this->viewFolder . $view . '.php';
         if($returnData){
             $output = ob_get_contents();
             ob_end_clean();

@@ -141,7 +141,6 @@ class Validation {
     /**
      * Este proceso analiza de a una las lineas del archivo de mensajes usado. En este caso ini file y me arma lo que seria
      * un array asociativo clave valor en base a la linea.
-     * Codigo descargado de: http://blog.rafaelsanches.com/2009/08/05/reading-java-style-properties-file-in-php/
      * @param type $lineas
      * @return type
      */

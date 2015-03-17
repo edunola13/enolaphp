@@ -17,7 +17,7 @@
     function import_aplication_file($dir){
         $dir= PATHAPP . $dir . '.php';
         require_once $dir;
-    }    
+    }
     /**
      * Carga un archivo que luego podras ser asignado a una variable
      * @param string $dir
@@ -56,8 +56,8 @@
     }       
     /*
      * Recorre las librerias y analiza si carga o no la libreria en la determinada clase
-     * Es llamado por el controlador en su construccion para cargar las librerias correspondientes
-     * Esta funcion supone que la ibreria ya se encuentra importada
+     * Es llamado por el Enola en su construccion para cargar las librerias correspondientes
+     * Esta funcion supone que la libreria ya se encuentra importada
      */
     function load_librarie_in_class($object, $type){
         //Analiza las librerias que tienen seteado "load_in"

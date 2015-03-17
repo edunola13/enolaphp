@@ -10,7 +10,14 @@ class Performance {
      * Constructor
      */
     public function __construct() {        
-    }    
+    }
+    /**
+     * Resetea el analisis 
+     */
+    public function reset(){
+        $this->timeBegin= NULL;
+        $this->timeEnd= NULL;
+    }
     /**
      * Inicial el calculo del tiempo para luego poder terminar y calcular el tiempo
      */

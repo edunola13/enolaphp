@@ -10,7 +10,7 @@
         return BASEURL;
     }
     /**
-     * Retorna la baseurl
+     * Retorna la real_baseurl
      * @return string
      */
     function real_base(){
@@ -62,9 +62,9 @@
      * @param type $nombre
      * @param type $parametros
      */
-    function component($name, $params = NULL){
+    function component($name, $params = NULL, $action = NULL){
         //Llama a la funcion que ejecuta el componente definido en el modulo Componente
-        return execute_component($name, $params);
+        return execute_component($name, $params, $action);
     }    
     /**
      * Carga un archivo de internacionalizacion. Si no se especifica el locale carga el archivo por defecto, si no le agrega el locale pasado
@@ -75,13 +75,13 @@
         $archivo_cargado= NULL;
         if($locale != NULL){
             if(file_exists(PATHAPP . 'source/content/' . $file . "_$locale" . '.ini')){
-                $archivo_cargado= load_application_file('source/content/' . $file . "_$locale" . '.ini');
+                $archivo_cargado= load_application_file('source/content/' . $file . "_$locale" . '.txt');
                 $archivo_cargado= parse_properties($archivo_cargado);
                 $GLOBALS['i18n_locale']= $locale;
             }
         }
         if($archivo_cargado == NULL){
-            $archivo_cargado= load_application_file('source/content/' . $file . '.ini');
+            $archivo_cargado= load_application_file('source/content/' . $file . '.txt');
             $archivo_cargado= parse_properties($archivo_cargado);
             $GLOBALS['i18n_locale']= 'Default';
         }
@@ -135,38 +135,20 @@
         }
     }    
     /**
-     * Este proceso analiza de a una las lineas del archivo de internacionalizacion usado. En este caso ini file y me arma lo que seria
+     * Este proceso analiza de a una las lineas del archivo de internacionalizacion usado. En este caso txt file y me arma lo que seria
      * un array asociativo clave valor en base a la linea.
-     * Codigo descargado de: http://blog.rafaelsanches.com/2009/08/05/reading-java-style-properties-file-in-php/
      * @param type $lineas
      * @return type
      */
     function parse_properties($lineas) {
-        $isWaitingOtherLine = false;
         $result= NULL;
         foreach($lineas as $i=>$linea) {
             if(empty($linea) || !isset($linea) || strpos($linea,"#") === 0){
                 continue;
             }
-
-            if(!$isWaitingOtherLine) {
-                $key = substr($linea,0,strpos($linea,'='));
-                $value = substr($linea,strpos($linea,'=') + 1, strlen($linea));
-            }
-            else {
-                $value .= $linea;
-            }
-
-            /* Check if ends with single '\' */
-            if(strrpos($value,"\\") === strlen($value)-strlen("\\")) {
-                $value = substr($value, 0, strlen($value)-1)."\n";
-                $isWaitingOtherLine = true;
-            }
-            else {
-                $isWaitingOtherLine = false;
-            }
+            $key = substr($linea,0,strpos($linea,'='));
+            $value = substr($linea,strpos($linea,'=') + 1, strlen($linea));
             $result[$key] = $value;
-            unset($lineas[$i]);
         }
         return $result;
    }

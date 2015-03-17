@@ -5,14 +5,14 @@
  */
 class En_CronController extends Enola{
     protected $params;
-    protected $clean_params;
-    protected $view_folder;
+    protected $cleanParams;
+    protected $viewFolder;
     //errores
     public $errores;    
 
     function __construct(){
         parent::__construct('cron');
-        $this->view_folder= PATHAPP . 'source/view/';
+        $this->viewFolder= PATHAPP . 'source/view/';
     }
     
     /**
@@ -35,19 +35,32 @@ class En_CronController extends Enola{
     /**
      * Funcion que carga los datos usados por la vista
      */
-    protected function load_data(){        
+    protected function loadData(){        
     }    
     /**
      * Funcion que carga los datos usados por la vista de 
      */
-    protected function load_data_error(){        
+    protected function loadDataError(){        
     }    
     /**
      * Carga una vista PHP
      * @param type $view 
      */
-    protected function load_view($view, $params = NULL){
-        include $this->view_folder . $view . '.php';
+    protected function loadView($view, $params = NULL, $returnData = FALSE){
+        if($params != NULL && is_array($params)){
+            foreach ($params as $key => $value) {
+                $$key= $value;
+            }
+        }
+        if($returnData){
+            ob_start();            
+        }
+        include $this->viewFolder . $view . '.php';
+        if($returnData){
+            $output = ob_get_contents();
+            ob_end_clean();
+            return $output;
+        }
     }
 }
 

@@ -4,24 +4,23 @@
  */
 class En_HttpRequest {
     private static $instancia;    
-    public $get_params;
-    public $post_params;
+    public $getParams;
+    public $postParams;
     public $session;
-    public $request_method;
+    public $requestMethod;
     
-    protected function __construct($uri){
-        $this->get_params= $_GET;
-        $this->post_params= $_POST;
-        //Aca le tengo que pasar la url del controlador que se mapeo        
+    protected function __construct(){
+        $this->getParams= $_GET;
+        $this->postParams= $_POST;       
         $this->session= new Session();
-        $this->request_method= $_SERVER['REQUEST_METHOD'];
+        $this->requestMethod= $_SERVER['REQUEST_METHOD'];
     }
     /**
      * Crea una unica instancia y/o devuelve la actual
      */
     public static function getInstance($uri = NULL){
         if(!self::$instancia instanceof self){
-            self::$instancia = new self($uri);
+            self::$instancia = new self();
         }
         return self::$instancia;
     }    
@@ -30,9 +29,9 @@ class En_HttpRequest {
      * @param string $nombre
      * @return null o string
      */
-    public function get_param($nombre){
-        if(isset($this->get_params[$nombre])){
-            return $this->get_params[$nombre];
+    public function getParam($nombre){
+        if(isset($this->getParams[$nombre])){
+            return $this->getParams[$nombre];
         }
         else{
             return NULL;
@@ -43,9 +42,9 @@ class En_HttpRequest {
      * @param string $nombre
      * @return null o string
      */
-    public function post_param($nombre){
-        if(isset($this->post_params[$nombre])){
-            return $this->post_params[$nombre];
+    public function postParam($nombre){
+        if(isset($this->postParams[$nombre])){
+            return $this->postParams[$nombre];
         }
         else{
             return NULL;
@@ -56,9 +55,9 @@ class En_HttpRequest {
      * @param string $nombre
      * @return null o string
      */
-    public function get_clean_param($nombre){
-        if(isset($this->get_params[$nombre])){            
-            return clean_vars($this->get_params[$nombre]);
+    public function getCleanParam($nombre){
+        if(isset($this->geParams[$nombre])){            
+            return clean_vars($this->getParams[$nombre]);
         }
         else{
             return NULL;
@@ -69,9 +68,9 @@ class En_HttpRequest {
      * @param string $nombre
      * @return null o string
      */
-    public function post_clean_param($nombre){
-        if(isset($this->post_params[$nombre])){
-            return clean_vars($this->post_params[$nombre]);
+    public function postCleanParam($nombre){
+        if(isset($this->postParams[$nombre])){
+            return clean_vars($this->postParams[$nombre]);
         }
         else{
             return NULL;

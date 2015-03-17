@@ -10,10 +10,6 @@ class En_DataBase extends Enola{
     protected $currentDB;
     protected $currentConfiguration;
     
-    public $stateTran= TRUE;
-    public $errorTran= array();
-    public $lastError= NULL;
-    
     protected $select= "*";
     protected $from= '';
     protected $where= '';
@@ -22,6 +18,10 @@ class En_DataBase extends Enola{
     protected $having= '';
     protected $order= '';
     protected $limit= '';
+    
+    public $stateTran= TRUE;
+    public $errorTran= array();
+    public $lastError= NULL;
     /**
      * Constructor que conecta a la bd y carga las librerias que se indicaron en el archivo de configuracion
      */
