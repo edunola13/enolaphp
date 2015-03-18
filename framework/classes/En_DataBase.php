@@ -93,14 +93,15 @@ class En_DataBase extends Enola{
     /** Almacena los errores */
     protected function catchError($error){
         if($this->conexion->inTransaction()){
-            $this->error_tran[]= $error;
-            $this->state_tran= FALSE;
+            $this->errorTran[]= $error;
+            $this->stateTran= FALSE;
         }
-        $this->last_error= $error;    
-    }
+        $this->lastError= $error;    
         
+    }
+    
     /** Cierra la conexion */
-    protected function closeConexion(){
+    public function closeConexion(){
         $this->conexion= NULL;
     }
     /** Cambia la conexion actual */
@@ -109,13 +110,13 @@ class En_DataBase extends Enola{
     }
     /** Comienza una Transaccion */
     public function beginTransaction(){
-        $this->state_tran= TRUE;
-        $this->error_tran= array();
+        $this->stateTran= TRUE;
+        $this->errorTran= array();
         $this->conexion->beginTransaction();
     }
     /** Finaliza una Transaccion - Si fue todo bien realiza commit, en caso contrario rolllBack */
     public function finishTransaction(){
-        if($this->state_tran){
+        if($this->stateTran){
             $this->conexion->commit();
         }else{
             $this->conexion->rollBack();
@@ -337,7 +338,7 @@ class En_DataBase extends Enola{
      * @param string $class
      * @return PDOStatement
      */
-    public function getInObject(string $class){
+    public function getInObjects(string $class){
         $res= $this->get();
         if($res !== FALSE){
             $this->resultsInObjects($res, $class);
