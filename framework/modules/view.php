@@ -74,7 +74,7 @@
     function i18n($file, $locale = NULL){
         $archivo_cargado= NULL;
         if($locale != NULL){
-            if(file_exists(PATHAPP . 'source/content/' . $file . "_$locale" . '.ini')){
+            if(file_exists(PATHAPP . 'source/content/' . $file . "_$locale" . '.txt')){
                 $archivo_cargado= load_application_file('source/content/' . $file . "_$locale" . '.txt');
                 $archivo_cargado= parse_properties($archivo_cargado);
                 $GLOBALS['i18n_locale']= $locale;
