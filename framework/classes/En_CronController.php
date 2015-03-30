@@ -8,7 +8,7 @@ class En_CronController extends Enola{
     protected $cleanParams;
     protected $viewFolder;
     //errores
-    public $errores;    
+    public $errors;    
 
     function __construct(){
         parent::__construct('cron');

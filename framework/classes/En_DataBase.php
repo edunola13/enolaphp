@@ -341,7 +341,7 @@ class En_DataBase extends Enola{
     public function getInObjects(string $class){
         $res= $this->get();
         if($res !== FALSE){
-            $this->resultsInObjects($res, $class);
+            return $this->resultsInObjects($res, $class);
         }
         return $res;
     }
@@ -405,7 +405,7 @@ class En_DataBase extends Enola{
     public function getFromWhereInObjects(string $class, $from, $where=NULL, $where_values=array(), $order=NULL, $limit=NULL, $offset=NULL){
         $res= $this->get($from,$where,$where_values,$order,$limit,$offset);
         if($res !== FALSE){
-            $this->resultsInObjects($res, $class);
+            return $this->resultsInObjects($res, $class);
         }
         return $res;
     }
