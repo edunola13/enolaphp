@@ -479,6 +479,7 @@ class En_DataBase extends Enola{
             if($error[0] == '00000'){
                 $res= TRUE;
             }else{
+                $res= FALSE;
                 $this->catchError($error);
             }
         } catch (PDOException $e) {
@@ -510,6 +511,7 @@ class En_DataBase extends Enola{
             $consulta->execute();            
             $error= $consulta->errorInfo();
             if($error[0] != '00000'){
+                $res= FALSE;
                 $this->catch_error($error);                
             }else{
                 $res= TRUE;

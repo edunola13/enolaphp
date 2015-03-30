@@ -7,8 +7,8 @@ class En_Controller extends Enola implements Controller{
     protected $request;
     protected $uriParams;
     protected $viewFolder;
-    //errores
-    public $errores;    
+    //errors
+    public $errors;    
 
     function __construct(){
         parent::__construct('controller');
@@ -66,7 +66,7 @@ class En_Controller extends Enola implements Controller{
     /**
      * Funcion lee los campos de un formulario y asigna a una variable el objeto con todos sus atributos o un array asociativo
      */
-    protected function readFields($var_name, $class = NULL){
+    protected function readFields(&$var, $class = NULL){
         $vars= array();
         if($this->request->requestMethod == 'POST'){
             $vars= $this->request->post_params;
@@ -81,11 +81,12 @@ class En_Controller extends Enola implements Controller{
                     $object->$key= $value;
                 }
             }
-            $this->$var_name= $object;
+            $var= $object;
         }
         else{
-            $this->$var_name= $vars;
+            $var= $vars;
         }
+        return $var;
     }    
     /**
      * Funcion que valida las variables de un objeto o de un array en base a una configuracion de validacion
@@ -105,7 +106,7 @@ class En_Controller extends Enola implements Controller{
         }
         if(! $validacion->validate()){
             //Consigo los errores y retorno FALSE
-            $this->errores= $validacion->error_messages();
+            $this->errors= $validacion->error_messages();
             return FALSE;
         }
         else{
