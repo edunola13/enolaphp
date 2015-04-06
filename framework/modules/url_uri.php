@@ -163,8 +163,8 @@
                 }
                 else{
                     //La uri actual no tiene mas partes y no hay coincidencia completa
-                    //Si lo que sigue es un - mapea
-                    if($partes_url[$i] != "-"){
+                    //Si lo que sigue es un - o un * mapea
+                    if($partes_url[$i] != "-" && $partes_url[$i] != "*"){
                         $mapea= FALSE;
                     }
                     break;                 
