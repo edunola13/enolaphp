@@ -10,8 +10,8 @@ class Validation {
     public $dir_content= '../source/content/messages';
     //Variable con toda la informacion sobre los datos/campos
     private $campos_datos;
-    private $archivo= NULL;
     private $messages;
+    private $messagesLocale= NULL;
     private $locale= NULL;
     
     public function __construct($locale = NULL) {
@@ -127,14 +127,18 @@ class Validation {
      * Carga el archivo de mensajes en la primer llamada
      */
     private function load_messages(){
-        if($this->archivo == NULL){
-            if($this->locale == NULL){
+        if($this->messages == NULL || $this->locale != $this->messagesLocale){
+            if($this->locale != NULL){
+                if(file_exists(realpath(dirname(__FILE__)). '/' . $this->dir_content . "_$this->locale" . '.txt')){
+                    $this->messages= file(realpath(dirname(__FILE__)). '/' . $this->dir_content . "_$this->locale" . '.txt');
+                    $this->messages= $this->parse_properties($this->messages);
+                    $this->messagesLocale= $this->locale;
+                }
+            }
+            if($this->messages == NULL){
                 $this->messages= file(realpath(dirname(__FILE__)). '/' . $this->dir_content . '.txt');
                 $this->messages= $this->parse_properties($this->messages);
-            }
-            else{
-                $this->messages= file(realpath(dirname(__FILE__)). '/' . $this->dir_content . "_$this->locale" . '.txt');
-                $this->messages= $this->parse_properties($this->messages);
+                $this->messagesLocale= NULL;
             }
         }
     }    

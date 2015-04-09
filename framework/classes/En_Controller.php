@@ -92,7 +92,7 @@ class En_Controller extends Enola implements Controller{
      * Funcion que valida las variables de un objeto o de un array en base a una configuracion de validacion
      */
     protected function validate($var){
-        $validacion= new Validation();        
+        $validacion= new Validation(LOCALE_URI);        
         $reglas= $this->configValidation();
         if(is_object($var)){
             foreach ($reglas as $key => $regla) {
