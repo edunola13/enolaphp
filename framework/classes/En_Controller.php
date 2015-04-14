@@ -69,10 +69,10 @@ class En_Controller extends Enola implements Controller{
     protected function readFields(&$var, $class = NULL){
         $vars= array();
         if($this->request->requestMethod == 'POST'){
-            $vars= $this->request->post_params;
+            $vars= $this->request->postParams;
         }
         else{
-            $vars= $this->request->get_params;
+            $vars= $this->request->getParams;
         }
         if($class != NULL){                    
             $object= new $class();
@@ -116,7 +116,7 @@ class En_Controller extends Enola implements Controller{
     /**
      * Funcion que arma una configuracion para la validacion
      */
-    protected function configValidation(){
+    protected function configValidation($params=NULL){
         return array();
     }
     /**

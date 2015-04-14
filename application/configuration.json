@@ -31,7 +31,6 @@
     },
                 
     "libraries": {
-        "validation": {"class": "Validation", "load_in": "controller"},
-        "paginator": {"class": "Paginator"}
+        "validation": {"class": "Validation"}
     }
 }
