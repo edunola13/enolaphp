@@ -116,7 +116,7 @@ class En_Controller extends Enola implements Controller{
     /**
      * Funcion que arma una configuracion para la validacion
      */
-    protected function configValidation($params=NULL){
+    protected function configValidation(){
         return array();
     }
     /**
