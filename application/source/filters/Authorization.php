@@ -19,13 +19,11 @@ class Authorization extends En_Filter{
         $json_segurirad= file_get_contents(PATHAPP . CONFIGURATION . 'authorization.json');
         //Pasa el archivo json a un arreglo
         $seguridad= json_decode($json_segurirad, TRUE);
+        //Tipo por defecto
+        $user_logged= 'default';
         if($this->request->session->exist('user_logged')){
             //Si existe le asigno el tipo correspondiente
             $user_logged= $this->request->session->get('user_logged');
-        }
-        else{
-            //Si no existe le asigno el nombre Default
-            $user_logged= 'default';
         }
         //Compruebo que exista la configuracion para el tipo de usuario logueado
         if(isset($seguridad[$user_logged])){
@@ -61,7 +59,7 @@ class Authorization extends En_Filter{
         else{
             //Si no existe la configuracion aviso del error
             echo "No existe definicion de seguridad para $user_logged";
-            $this->request->session->delete_session();
+            $this->request->session->deleteSession();
             exit();
         }
     }
