@@ -237,7 +237,7 @@
     function redirect($uri){
         //Le quita '/' si es que tiene al principio y al final
         $uri= trim($uri, "/");
-        header('Location:' . BASEURL . $uri);
+        header('Location:' . REAL_BASE_URL . $uri);
         //Detiene el flujo
         exit;
     }    
