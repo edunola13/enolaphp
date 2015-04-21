@@ -7,7 +7,7 @@
         "pass": "ana",
         "database": "appedunola",
         "driverbd": "mysql",
-        "persistente": "FALSE",
+        "persistent": "FALSE",
         "charset": "utf8"
     },
     
@@ -17,7 +17,7 @@
         "pass": "pass",
         "database": "db",
         "driverbd": "mysql",
-        "persistente": "FALSE",
+        "persistent": "FALSE",
         "charset": "utf8"
     }
 }

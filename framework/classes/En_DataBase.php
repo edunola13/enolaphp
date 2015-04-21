@@ -6,7 +6,7 @@
  */
 class En_DataBase extends Enola{
     protected static $config_db;
-    protected $conexion;
+    public $conexion;
     protected $currentDB;
     protected $currentConfiguration;
     
@@ -59,7 +59,7 @@ class En_DataBase extends Enola{
             //Creo el dsn
             $dsn=  $cbd['driverbd'].':host='.$cbd['hostname'].';dbname='.$cbd['database'].';charset='.$cbd['charset'];
             //Abro la conexion                
-            $gbd = new PDO($dsn, $cbd['user'], $cbd['pass'], array(PDO::ATTR_PERSISTENT => $cbd['persistente'], PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES '.$cbd['charset']));
+            $gbd = new PDO($dsn, $cbd['user'], $cbd['pass'], array(PDO::ATTR_PERSISTENT => $cbd['persistent'], PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES '.$cbd['charset']));
             if(ENVIRONMENT == 'development'){
                 $gbd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             }else{

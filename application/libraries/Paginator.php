@@ -48,11 +48,11 @@ class Paginator {
      * @return int
      */
     public function element_end_position(){
-        if($this->cantidad_de_paginas() == $this->current_page){
+        if($this->number_of_pages() == $this->current_page){
             return $this->total_amount - 1;
         }
         else{
-            return $this->posicion_elemento_inicio() + $this->amount_per_page - 1;
+            return $this->element_start_position() + $this->amount_per_page - 1;
         }
     }    
     /**

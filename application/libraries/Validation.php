@@ -25,6 +25,13 @@ class Validation {
         $this->locale= $locale;
     }
     /**
+     * Resetea el validador
+     * Limpia la variable campos_datos que contiene todas las definiciones y los resultados de ejecutar las reglas 
+     */
+    public function reset(){
+        $this->campos_datos= array();
+    }
+    /**
      * Agregar una regla de validacion que luego sera validada
      * @param string $nombre
      * @param DATO $dato
@@ -94,7 +101,7 @@ class Validation {
      * @return array[string]
      */
     public function error_messages(){
-        $mensajes= NULL;
+        $mensajes= array();
         foreach ($this->campos_datos as $campos_dato) {
             //Si no es valido agrego el mensaje de error
             if(! $campos_dato['valido']){
@@ -109,16 +116,14 @@ class Validation {
      * @param string $nombre
      * @param string $mensaje
      */
-    private function add_message($nombre, $mensaje, $parametros = NULL){
+    private function add_message($nombre, $mensaje, $parametros = array()){
         //Carga el archivo si es la primer llamada
         $this->load_messages();        
         //Consigue el mensaje
         $mensaje= $this->messages[$mensaje];        
         //Analiza si se pasaron parametros y si se pasaron cambia los valores correspondientes
-        if($parametros != NULL){
-            foreach ($parametros as $key => $valor) {
-                $mensaje= str_replace(":$key", $valor, $mensaje);
-            }
+        foreach ($parametros as $key => $valor) {
+            $mensaje= str_replace(":$key", $valor, $mensaje);
         }        
         //Guarda el mensaje en el campo correspondiente
         $this->campos_datos["$nombre"]['mensaje']= $mensaje;
@@ -368,7 +373,7 @@ class Validation {
      * @return boolean
      */
     private function user_name ($nombre, $dato){
-    	$expresion = '/^[a-zA-Záéíóúñ\d_]{6,20}$/i';
+    	$expresion = '/^[a-zA-Záéíóúñ\d_]{5,20}$/i';
     	if(preg_match($expresion, $dato)){
             return TRUE;
     	}
