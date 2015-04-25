@@ -6,12 +6,14 @@ class En_HttpRequest {
     private static $instancia;    
     public $getParams;
     public $postParams;
+    public $attributes;
     public $session;
     public $requestMethod;
     
     protected function __construct(){
         $this->getParams= $_GET;
-        $this->postParams= $_POST;       
+        $this->postParams= $_POST;
+        $this->attributes= array();
         $this->session= new Session();
         $this->requestMethod= $_SERVER['REQUEST_METHOD'];
     }
@@ -56,7 +58,7 @@ class En_HttpRequest {
      * @return null o string
      */
     public function getCleanParam($nombre){
-        if(isset($this->geParams[$nombre])){            
+        if(isset($this->getParams[$nombre])){            
             return clean_vars($this->getParams[$nombre]);
         }
         else{
@@ -76,5 +78,18 @@ class En_HttpRequest {
             return NULL;
         }
     }
+    /**
+     * Devuelve un atributo, si existe y si no devuelve NULL
+     * @param string $nombre
+     * @return null o string
+     */
+    public function getAttributes($nombre){
+        if(isset($this->attributes[$nombre])){            
+            return $this->attributes[$nombre];
+        }
+        else{
+            return NULL;
+        }
+    }    
 }
 ?>
