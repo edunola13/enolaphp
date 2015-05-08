@@ -1,4 +1,4 @@
-# EnolaPHP - www.edunola.com.ar
+# EnolaPHP - www.enolaphp.com
 
 ##Que es EnolaPHP?
 
@@ -14,4 +14,4 @@ La razón más importante por la cual se desarrolló Enola PHP es para la creaci
 
 Como casi todos los frameworks PHP, Enola PHP es un framework que permite implementar fácilmente el patrón MVC (Modelo-Vista-Controlador). La principal diferencia con la mayoría de otros framework PHP es la utilización de Filtros, los cuales nos permiten realizar funcionalidades antes y después del procesamiento de la respuesta en sí. Un ejemplo de esto, es la autorización de usuarios.
 
-Para mas Información sobre el Framework: http://www.edunola.com.ar/enolaphp/
+Para mas Información sobre el Framework: http://www.enolaphp.com - http://www.edunola.com.ar
