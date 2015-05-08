@@ -392,4 +392,3 @@
             header("HTTP/1.1 {$codigo} {$text}", TRUE, $codigo);
 	}
     }
-?>

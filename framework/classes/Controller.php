@@ -40,4 +40,3 @@ interface Controller {
      */
     public function setUriParams($uri_params);
 }
-?>

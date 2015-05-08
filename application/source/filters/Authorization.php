@@ -64,4 +64,3 @@ class Authorization extends En_Filter{
         }
     }
 }
-?>

@@ -63,5 +63,3 @@ class En_CronController extends Enola{
         }
     }
 }
-
-?>

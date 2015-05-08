@@ -149,4 +149,3 @@
     function display_information($title, $message){
         require_once PATHFRA . 'information/information.php';
     }
-?>

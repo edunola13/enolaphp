@@ -172,4 +172,3 @@ class En_Controller extends Enola implements Controller{
         }
     }
 }
-?>

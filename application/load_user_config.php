@@ -4,5 +4,3 @@
  * Todo lo que se ubique aca se ejecutara despúes de cargar las librerias y realizar la conexion a la BD (si se ha solicitado)
  * Y antes de empezar a trabajar el requerimiento HTTP, digamos antes de que se ejecuten los filtros, controladores, etc. 
  */
-
-?>

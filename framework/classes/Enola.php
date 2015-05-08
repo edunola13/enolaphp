@@ -25,4 +25,3 @@ abstract class Enola {
         load_librarie_in_class($this, $this->type);
     }    
 }
-?>

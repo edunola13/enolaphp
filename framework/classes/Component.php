@@ -8,4 +8,3 @@ interface Component {
      */
     public function rendering($params = NULL);
 }
-?>

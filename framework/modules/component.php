@@ -106,4 +106,3 @@
             general_error('Component Error', "The component $nombre dont exists");
         }
     }
-?>

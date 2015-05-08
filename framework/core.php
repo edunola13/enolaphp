@@ -222,4 +222,3 @@
         //Muestra la informacion al usuario
         display_information($titulo, $mensaje);
     }
-?>

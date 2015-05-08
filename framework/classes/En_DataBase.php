@@ -650,4 +650,3 @@ class En_DataBase extends Enola{
         }
     }
 }
-?>

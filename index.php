@@ -28,5 +28,4 @@
     /**
      * Delega el trabajo al nucleo del framework
      */
-    require $path_framework . 'core.php';    
-?>
+    require $path_framework . 'core.php';

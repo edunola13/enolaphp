@@ -54,5 +54,4 @@
             $value= filter_simple_xss($value);
         }
         return $value;
-     }          
-?>
+     }

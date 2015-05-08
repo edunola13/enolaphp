@@ -807,4 +807,3 @@ class Tags {
         $api->componente('table_row', $valores);
     }
 }
-?>

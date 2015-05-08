@@ -16,4 +16,3 @@ class Index extends En_Controller{
     }
 
 }
-?>

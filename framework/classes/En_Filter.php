@@ -16,4 +16,3 @@ class En_Filter extends Enola implements Filter{
     public function filter(){        
     }    
 }
-?>

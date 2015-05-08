@@ -40,5 +40,4 @@
         }else{
             general_error('Cron Controller Error', 'The Cron Controller ' . $cronClass . ' dont exist');
         }
-    }   
-?>
+    }

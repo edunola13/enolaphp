@@ -38,4 +38,3 @@ class En_Component extends Enola implements Component{
         }
     }
 }
-?>

@@ -8,4 +8,3 @@ interface Filter {
      */
     public function filter();
 }
-?>

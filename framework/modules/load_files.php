@@ -82,4 +82,3 @@
         }
         $obj->$name= new $class();
     }
-?>

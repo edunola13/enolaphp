@@ -95,4 +95,3 @@ class Twig {
         return $this->environment->loadTemplate($templateFile);
     }
 }
-?>

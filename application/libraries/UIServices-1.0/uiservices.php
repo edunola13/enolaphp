@@ -14,4 +14,3 @@
     define('SERVER_DEFINITION_FILE', $pathServerDefinition);
     require 'ApiUi.php';
     require 'Tags.php';
-?>
