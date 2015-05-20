@@ -15,15 +15,70 @@
      */
     function real_base(){
         return REAL_BASE_URL;
-    } 
-    
+    }    
     /**
      * Retorna la base url con el locale actual
      * @return string
      */
     function base_locale(){
         return BASEURL_LOCALE;
-    }    
+    }
+    /**
+     * Arma una url para un recurso
+     * @param type $internalUri
+     * @return string 
+     */
+    function urlResourceFor($internalUri){
+        $internalUri= ltrim($internalUri, '/');
+        return BASEURL . 'resources/' . $internalUri;
+    }
+    /**
+     * Arma una url para una URI interna
+     * @param type $internalUri
+     * @param type $locale
+     * @return string 
+     */
+    function urlFor($internalUri, $locale = NULL){
+        $internalUri= ltrim($internalUri, '/');
+        if($locale == NULL)return REAL_BASE_URL . $internalUri;
+        else return REAL_BASE_URL . $locale . '/' . $internalUri;
+    }
+    /**
+     * Arma una url internacionalizada para una URI interna
+     * @param type $internalUri
+     * @return string 
+     */
+    function urlLocaleFor($internalUri){
+        $internalUri= ltrim($internalUri, '/');
+        return BASEURL_LOCALE . $internalUri;
+    }
+    /**
+     * Arma una url para acceder a un componente
+     * @param type $component
+     * @param string $params
+     * @param type $locale
+     * @return string 
+     */
+    function urlComponentFor($component, $params = "", $locale = NULL){
+        $params= '/' . ltrim($params, '/');
+        $url_component= trim(URL_COMPONENT, '/');
+        if($locale == NULL)return REAL_BASE_URL . $url_component . '/' . $component . $params;
+        else return REAL_BASE_URL . $locale . '/' . $url_component . '/' . $component . $params;
+    }
+    /**
+     * Arma un url para ejecutar una accion de un componente
+     * @param type $component
+     * @param type $action
+     * @param string $params
+     * @param type $locale
+     * @return string 
+     */
+    function urlComponentActionFor($component, $action, $params = "", $locale = NULL){
+        $params= '/' . ltrim($params, '/');
+        $url_component= trim(URL_COMPONENT, '/');
+        if($locale == NULL)return REAL_BASE_URL . $url_component . '/' . $component . '/actionComponent/' . $action . $params;
+        else return REAL_BASE_URL . $locale . '/' . $url_component . '/' . $component . '/actionComponent/' . $action . $params;
+    }
     /**
      * Retorna el locale actual.
      * En caso de que el locale este indicado en la URL sera igual a locale_uri, si no sera igual al locale definido por defecto.
@@ -142,13 +197,27 @@
      */
     function parse_properties($lineas) {
         $result= NULL;
+        $isWaitingOtherLine = false;
+        $value= NULL;
         foreach($lineas as $i=>$linea) {
             if(empty($linea) || !isset($linea) || strpos($linea,"#") === 0){
                 continue;
             }
-            $key = substr($linea,0,strpos($linea,'='));
-            $value = substr($linea,strpos($linea,'=') + 1, strlen($linea));
-            $result[$key] = $value;
+            if(!$isWaitingOtherLine) {
+                $key= substr($linea,0,strpos($linea,'='));
+                $value= substr($linea,strpos($linea,'=') + 1, strlen($linea));
+            }else {
+                $value.= $linea;
+            }           
+            
+            /* Check if ends with single '\' */
+            if(strrpos($value,"\\") === strlen($value)-strlen("\\")) {
+                $value= substr($value, 0, strlen($value)-1)."\n";
+                $isWaitingOtherLine= true;
+            }else {
+                $result[$key]= preg_replace("/\r\n+|\r+|\n+|\t+/i", "", $value); 
+                $isWaitingOtherLine= false;
+            }                       
         }
         return $result;
    }
