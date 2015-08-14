@@ -1,9 +1,11 @@
 <?php
+namespace Enola\Cron;
+
 /**
  * Clase de la que deben extender los controladores cron de la aplicacion para que se asegure el funcioneamiento del mismo
  * @author Enola
  */
-class En_CronController extends Enola{
+class En_CronController extends \Enola\Loader{
     protected $params;
     protected $cleanParams;
     protected $viewFolder;
@@ -41,25 +43,5 @@ class En_CronController extends Enola{
      * Funcion que carga los datos usados por la vista de 
      */
     protected function loadDataError(){        
-    }    
-    /**
-     * Carga una vista PHP
-     * @param type $view 
-     */
-    protected function loadView($view, $params = NULL, $returnData = FALSE){
-        if($params != NULL && is_array($params)){
-            foreach ($params as $key => $value) {
-                $$key= $value;
-            }
-        }
-        if($returnData){
-            ob_start();            
-        }
-        include $this->viewFolder . $view . '.php';
-        if($returnData){
-            $output = ob_get_contents();
-            ob_end_clean();
-            return $output;
-        }
     }
 }

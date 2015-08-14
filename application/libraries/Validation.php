@@ -1,6 +1,8 @@
 <?php
-//Version 1.0
+namespace Enola\Lib;
+
 /**
+ * Version 1.0
  * Libreria que realiza validacion de campos de formulario
  *
  * @author Enola
@@ -545,8 +547,8 @@ class Validation {
         $params= explode('&', $param);
         $formato= $params[0];
         $fecha= $params[1];
-    	$date1  = DateTime::createFromFormat($formato, "$dato");
-    	$date2  = DateTime::createFromFormat($formato, "$fecha");    	 
+    	$date1  = \DateTime::createFromFormat($formato, "$dato");
+    	$date2  = \DateTime::createFromFormat($formato, "$fecha");    	 
     	if(($date1 > $date2)){
             return TRUE;
     	}
@@ -566,8 +568,8 @@ class Validation {
         $params= explode('&', $param);
         $formato= $params[0];
         $fecha= $params[1];
-    	$date1  = DateTime::createFromFormat($formato, "$dato");
-    	$date2  = DateTime::createFromFormat($formato, "$fecha");    	 
+    	$date1  = \DateTime::createFromFormat($formato, "$dato");
+    	$date2  = \DateTime::createFromFormat($formato, "$fecha");    	 
     	if(($date1 < $date2)){
             return TRUE;
     	}

@@ -1,6 +1,8 @@
 <?php
-//Version 1.0
+namespace Enola\Lib;
+
 /**
+ * Version 1.0
  * Description of Paginador
  *
  * @author Enola

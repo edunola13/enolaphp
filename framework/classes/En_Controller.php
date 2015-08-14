@@ -1,9 +1,12 @@
 <?php
+namespace Enola\Http;
+use Enola\Lib;
+
 /**
  * Clase de la que deben extender los controladores de la aplicacion para que se asegure el funcioneamiento del mismo
  * @author Enola
  */
-class En_Controller extends Enola implements Controller{
+class En_Controller extends \Enola\Loader implements Controller{
     protected $request;
     protected $uriParams;
     protected $viewFolder;
@@ -64,62 +67,6 @@ class En_Controller extends Enola implements Controller{
         $this->uriParams= $uri_params;
     }
     /**
-     * Funcion lee los campos de un formulario y asigna a una variable el objeto con todos sus atributos o un array asociativo
-     */
-    protected function readFields(&$var, $class = NULL){
-        $vars= array();
-        if($this->request->requestMethod == 'POST'){
-            $vars= $this->request->postParams;
-        }
-        else{
-            $vars= $this->request->getParams;
-        }
-        if($class != NULL){                    
-            $object= new $class();
-            foreach ($vars as $key => $value) {
-                if(property_exists($object, $key)){
-                    $object->$key= $value;
-                }
-            }
-            $var= $object;
-        }
-        else{
-            $var= $vars;
-        }
-        return $var;
-    }    
-    /**
-     * Funcion que valida las variables de un objeto o de un array en base a una configuracion de validacion
-     */
-    protected function validate($var){
-        $validacion= new Validation(LOCALE_URI);        
-        $reglas= $this->configValidation();
-        if(is_object($var)){
-            foreach ($reglas as $key => $regla) {
-                $validacion->add_rule($key, $var->$key, $regla);
-            }
-        }
-        else{
-            foreach ($reglas as $key => $regla) {
-                $validacion->add_rule($key, $var[$key], $regla);
-            }
-        }
-        if(! $validacion->validate()){
-            //Consigo los errores y retorno FALSE
-            $this->errors= $validacion->error_messages();
-            return FALSE;
-        }
-        else{
-            return TRUE;            
-        }
-    }
-    /**
-     * Funcion que arma una configuracion para la validacion
-     */
-    protected function configValidation(){
-        return array();
-    }
-    /**
      * Funcion que actua cuando acurre un error en el controlador
      */
     protected function error(){        
@@ -134,27 +81,6 @@ class En_Controller extends Enola implements Controller{
      */
     protected function loadDataError(){        
     }    
-    /**
-     * Carga una vista PHP
-     * @param type $view 
-     */
-    protected function loadView($view, $params = NULL, $returnData = FALSE){
-        if($params != NULL && is_array($params)){
-            foreach ($params as $key => $value) {
-                $$key= $value;
-            }
-        }
-        if($returnData){
-            ob_start();            
-        }
-        include $this->viewFolder . $view . '.php';
-        if($returnData){
-            $output = ob_get_contents();
-            ob_end_clean();
-            return $output;
-        }
-    }
-    
     /**
      * Redireccion interna a otro Controlador.
      * Se indica si se debe filtrar o no la nueva solicitud

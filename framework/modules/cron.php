@@ -1,4 +1,6 @@
 <?php
+    namespace Enola\Cron;
+
     /*
      * Este modulo se encarga de cargar todas las clases necesarias para ejecutar Crons
      */

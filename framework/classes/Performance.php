@@ -1,4 +1,6 @@
 <?php
+namespace Enola;
+
 /**
  * Clase utilizada para calcular el rendimiento de la aplicacion-framework
  * @author Enola

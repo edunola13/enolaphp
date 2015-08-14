@@ -1,4 +1,6 @@
 <?php
+namespace Enola\Component;
+
 /**
  * @author Enola
  */

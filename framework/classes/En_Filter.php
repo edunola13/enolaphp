@@ -1,9 +1,11 @@
 <?php
+namespace Enola\Http;
+
 /**
  * Clase de la que deben extender los filtros de la aplicacion para funcionar correctamente
  * @author Enola
  */
-class En_Filter extends Enola implements Filter{
+class En_Filter extends \Enola\Loader implements Filter{
     protected $request;
 
     function __construct() {

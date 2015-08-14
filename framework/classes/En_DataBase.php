@@ -1,10 +1,12 @@
 <?php
+namespace Enola\DB;
+
 /**
  * Clase que se encarga de la configuracion de la BD.
  * Para utilizar la configuracion del Framework es necesario que las clases extiendan de esta clase
  * @author Enola
  */
-class En_DataBase extends Enola{
+class En_DataBase extends \Enola\Loader{
     protected static $config_db;
     public $conexion;
     protected $currentDB;
@@ -52,24 +54,25 @@ class En_DataBase extends Enola{
         $this->currentConfiguration= &self::$config_db[$nameDB];
         //Abro una conexion
         try {
-            // 5.3.5 o < y luego 5.3.6 o >
-            //Cuidado que charset=utf8 puede no funcar para versiones viejas y luego en opciones
-            //superiores habria q usar PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8"
-            //Por ahora uso las 2 y anda la que anda
+            // Desde 5.3.6 o >
+            // $gbd->exec("set names " . $cbd['charset']);
+            // Versiones anteriores usaba $cbd['driverbd'].':host='.$cbd['hostname'].';dbname='.$cbd['database'].';charset=utf8';
+            
             //Creo el dsn
-            $dsn=  $cbd['driverbd'].':host='.$cbd['hostname'].';dbname='.$cbd['database'].';charset='.$cbd['charset'];
+            $dsn=  $cbd['driverbd'].':host='.$cbd['hostname'].';dbname='.$cbd['database'];
             //Abro la conexion                
-            $gbd = new PDO($dsn, $cbd['user'], $cbd['pass'], array(PDO::ATTR_PERSISTENT => $cbd['persistent'], PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES '.$cbd['charset']));
+            $gbd = new \PDO($dsn, $cbd['user'], $cbd['pass'], array(\PDO::ATTR_PERSISTENT => $cbd['persistent']));
+            $gbd->exec("set names " . $cbd['charset']);
             if(ENVIRONMENT == 'development'){
-                $gbd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+                $gbd->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
             }else{
-                $gbd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_SILENT);
+                $gbd->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_SILENT);
             }
             //Retorno la conexion 
             return $gbd;
         } 
-        catch (PDOException $e) {
-            throw new PDOException($e->getMessage(), $e->getCode());
+        catch (\Exception $e) {
+            throw new \Exception($e->getMessage(), $e->getCode());
         }
     }
     /** Limpia las variables de instancia del ActiveRecord */
@@ -327,8 +330,8 @@ class En_DataBase extends Enola{
             }else{
                 $this->catchError($error);
             }
-        } catch (PDOException $e) {
-            throw new PDOException($e->getMessage(), $e->getCode());
+        } catch (\PDOException $e) {
+            throw new \PDOException($e->getMessage(), $e->getCode());
         }
         $this->cleanVars();
         return $res;
@@ -384,8 +387,8 @@ class En_DataBase extends Enola{
             }else{
                 $this->catchError($error);
             }
-        } catch (PDOException $e) {
-            throw new PDOException($e->getMessage(), $e->getCode());
+        } catch (\PDOException $e) {
+            throw new \PDOException($e->getMessage(), $e->getCode());
         }
         $this->cleanVars();
         return $res;
@@ -444,8 +447,8 @@ class En_DataBase extends Enola{
             else{
                 return TRUE;
             }
-        } catch (PDOException $e) {
-            throw new PDOException($e->getMessage(), $e->getCode());
+        } catch (\PDOException $e) {
+            throw new \PDOException($e->getMessage(), $e->getCode());
         }
     }
     /**
@@ -482,8 +485,8 @@ class En_DataBase extends Enola{
                 $res= FALSE;
                 $this->catchError($error);
             }
-        } catch (PDOException $e) {
-            throw new PDOException($e->getMessage(), $e->getCode());
+        } catch (\PDOException $e) {
+            throw new \PDOException($e->getMessage(), $e->getCode());
         }
         $this->cleanVars();
         return $res;
@@ -516,8 +519,8 @@ class En_DataBase extends Enola{
             }else{
                 $res= TRUE;
             }
-        } catch (PDOException $e) {
-            throw new PDOException($e->getMessage(), (int)$e->getCode());
+        } catch (\PDOException $e) {
+            throw new \PDOException($e->getMessage(), (int)$e->getCode());
         }
         $this->cleanVars();
         return $res;
@@ -536,7 +539,7 @@ class En_DataBase extends Enola{
             $instanciaClase= new $class();
             foreach ($reg as $key => $value) {
                 if(property_exists($instanciaClase, $key)){
-                   $ref= new ReflectionProperty($instanciaClase,$key);
+                   $ref= new \ReflectionProperty($instanciaClase,$key);
                    if($ref->isPublic())$instanciaClase->$key= $value;
                 }
             }
@@ -560,7 +563,7 @@ class En_DataBase extends Enola{
             $instanciaClase= new $class();
             foreach ($tupla as $key => $value) {
                 if(property_exists($instanciaClase, $key)){
-                    $ref= new ReflectionProperty($instanciaClase,$key);
+                    $ref= new \ReflectionProperty($instanciaClase,$key);
                     if($ref->isPublic())$instanciaClase->$key= $value;
                 }
             }
@@ -606,8 +609,8 @@ class En_DataBase extends Enola{
             else{
                 return TRUE;
             }
-        } catch (PDOException $e) {
-            throw new PDOException($e->getMessage(), $e->getCode());
+        } catch (\PDOException $e) {
+            throw new \PDOException($e->getMessage(), $e->getCode());
         }
     }
     /**
@@ -645,8 +648,8 @@ class En_DataBase extends Enola{
             else{
                 return TRUE;
             }
-        } catch (PDOException $e) {
-            throw new PDOException($e->getMessage(), $e->getCode());
+        } catch (\PDOException $e) {
+            throw new \PDOException($e->getMessage(), $e->getCode());
         }
     }
 }

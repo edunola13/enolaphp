@@ -1,9 +1,11 @@
 <?php
+use Enola\Http;
+
 /**
  * Filtro que analiza la autorizacion de los usuarios
  * @author Enola
  */
-class Authorization extends En_Filter{
+class Authorization extends Http\En_Filter{
     
     /**
      * Constructor
@@ -34,7 +36,7 @@ class Authorization extends En_Filter{
             $mapea= FALSE;
             //Recorro sus permisos y veo si alguno coincice
             foreach ($permisos as $permiso) {
-                if(maps_actual_url($permiso)){
+                if(Http\maps_actual_url($permiso)){
                     //Cuando alguno coincide salgo del for
                     $mapea= TRUE;
                     break;
@@ -44,7 +46,7 @@ class Authorization extends En_Filter{
                 //Si hubo mapeo, recorro las url denegadas para el usuario
                 $denegados= $config_seguridad['deny'];
                 foreach ($denegados as $denegado) {
-                    if(maps_actual_url($denegado)){
+                    if(Http\maps_actual_url($denegado)){
                         //Si la url es denegada salgo del for
                         $mapea= FALSE;
                         break;
@@ -53,7 +55,7 @@ class Authorization extends En_Filter{
             }
             if(! $mapea){
                 //Si no tiene permiso es redireccionado
-                redirect($config_seguridad['error']);
+                $this->request->redirect($config_seguridad['error']);
             }
         }
         else{

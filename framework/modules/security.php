@@ -1,4 +1,6 @@
 <?php
+    namespace Enola\Security;
+
     /**
      * Este modulo realiza acciones de seguridad
      * Contiene funciones que son utilizadas por el framework

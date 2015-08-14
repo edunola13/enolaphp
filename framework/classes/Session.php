@@ -1,4 +1,6 @@
 <?php
+namespace Enola\Http;
+
 session_start();
 /**
  * Libreria que maneja los datos y la seguridad de la sesion

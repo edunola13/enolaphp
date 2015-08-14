@@ -1,4 +1,6 @@
 <?php
+    namespace Enola;
+
     /*
      * Realiza la configuracion completa del sistema y empieza a delegar el requerimiento del cliente a los modulos del
      * framework y a los del cliente
@@ -23,7 +25,7 @@
         case 'development':
             error_reporting(E_ALL);
             define('ERROR_EN', 'all');
-            break;	
+            break;
         case 'production':
             error_reporting(0);
             define('ERROR_EN', 'none');
@@ -43,9 +45,13 @@
         //Incluye la clase Rendimiento 
         $performance= new Performance();
         $performance->start();
-    }	
+    }
     //Seteo la codificacion de caracteres, casi siempre es o debe ser UTF-8
-    ini_set('default_charset', $config['charset']);   
+    ini_set('default_charset', $config['charset']);
+    //Seteo Default Zoine si no esta seteada
+    if(! ini_get('date.timezone')){
+        date_default_timezone_set('GMT');
+    }   
 
     // Define las constantes del sistema
     // BASE_URL: Base url de la aplicacion - definida por el usuario en el archivo de configuracion    
@@ -87,12 +93,8 @@
     /*
      * Carga de modulos obligatorios para que el framework trabaje correctamente
      */    
-    //Carga del modulo errores
-    require PATHFRA . 'modules/errors.php';
-    //Define un manejador de excepciones - definido en el modulo errores
-    set_error_handler('_error_handler');
-    //Define un manejador de fin de cierre - definido en el modulo de errores
-    register_shutdown_function('_shutdown'); 
+    //Carga del modulo errores - se definen manejadores de errores
+    require PATHFRA . 'modules/errors.php';    
     //Carga de modulo para carga de archivos
     require PATHFRA . 'modules/load_files.php';
     //Carga de modulo con funciones para la vista
@@ -102,7 +104,7 @@
     //Carga de modulo URL-URI
     require PATHFRA . 'modules/url_uri.php';
     //Carga Clase Base Enola
-    require PATHFRA . 'classes/Enola.php';  
+    require PATHFRA . 'classes/Loader.php';  
     //Carga Clase En_DataBase - Si se definio configuracion para la misma
     if(defined('JSON_CONFIG_BD'))require PATHFRA . 'classes/En_DataBase.php';
     
@@ -125,7 +127,7 @@
     //Si la aplicacion se encuentra en modo HTTP carga los modulos y realiza los calculos necesarios
     if(ENOLA_MODE == 'HTTP'){        
         //Define la uri de la aplicacion y la setea como una variable estatica
-        define_application_uri();    
+        Http\define_application_uri();    
         /*
          * Analiza el paso de un error HTTP
          */
@@ -153,8 +155,8 @@
         //Cargo el modulo componente
         require PATHFRA . 'modules/component.php';
 	//Analiza si se ejecuta un componente via URL
-	if(ENOLA_MODE == 'HTTP' && maps_components()){
-            execute_url_component();
+	if(ENOLA_MODE == 'HTTP' && Component\maps_components()){
+            Component\execute_url_component();
             //Termina la ejecucion
             exit;
 	}
@@ -173,13 +175,13 @@
         $GLOBALS['controllers']= $config['controllers'];
         $actual_controller= NULL;
         if(count($controllers) > 0){
-            $actual_controller= mapping_controller($controllers);
+            $actual_controller= Http\mapping_controller($controllers);
         }
         else{
             general_error('Controller Error', 'There isent define any controller');
         }
         //Creo el HTTP REQUEST correspondiente en base a la URL que mapeo
-        create_request($actual_controller['url']);
+        Http\create_request($actual_controller['url']);
         /*
          * Lee los filtros que se deben ejecutar antes del procesamiento de la variable config y delega trabajo a archivo filtros.php
          * En caso de que no haya filtros asignados no delega ningun trabajo
@@ -189,25 +191,25 @@
         $filtros_despues= $config['filters_after_processing'];
         $GLOBALS['filters_after_processing']= $filtros_despues;
         if(count($filtros) > 0){
-            execute_filters($filtros);
+            Http\execute_filters($filtros);
         }        
         /**
          *Ejecuto el controlador correspondiente 
          */
-        execute_controller($actual_controller);
+        Http\execute_controller($actual_controller);
         /**
          * Lee los filtros que se deben ejecutar despues del procesamiento de la variable config y delega trabajo a archivo filtros.php
          * En caso de que no haya filtros asignados no delega ningun trabajo
          */        
         if(count($filtros_despues) > 0){
-            execute_filters($filtros_despues);
+            Http\execute_filters($filtros_despues);
         }
     }else{
         //Analizo si se pasa por lo menos un parametros (nombre cron), el primer parametros es el nombre del archivo por eso
         //pregunta por >= 2
         if($argc >= 2){
             require PATHFRA . 'modules/cron.php';
-            execute_cron_controller($argv);
+            Crom\execute_cron_controller($argv);
         }else{
             general_error('Cron Controller', 'There isent define any cron controller name');
         }        

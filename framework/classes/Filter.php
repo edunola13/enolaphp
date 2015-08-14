@@ -1,4 +1,6 @@
 <?php
+namespace Enola\Http;
+
 /**
  * @author Enola
  */

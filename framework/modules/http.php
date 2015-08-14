@@ -1,4 +1,6 @@
 <?php
+    namespace Enola\Http;
+
     /*
      * Este modulo se encarga de cargar todas las clases necesarias para los requerimientos HTTP
      * Esto incluye los filtros , los controladores y todos los datos de los mismo.

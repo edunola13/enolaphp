@@ -56,7 +56,7 @@
     }       
     /*
      * Recorre las librerias y analiza si carga o no la libreria en la determinada clase
-     * Es llamado por el Enola en su construccion para cargar las librerias correspondientes
+     * Es llamado por el Loader en su construccion para cargar las librerias correspondientes
      * Esta funcion supone que la libreria ya se encuentra importada
      */
     function load_librarie_in_class($object, $type){
@@ -65,7 +65,10 @@
             $types= explode(",", $libreria['load_in']);
             //Si la libreria contiene el tipo se carga
             if(in_array($type, $types)){
-                $dir= $libreria['class'];
+                //Veo si tiene namespace y si tiene le agrego el mismo
+                $namespace= (isset($libreria['namespace']) ? $libreria['namespace'] : '');
+                if($namespace != '') $dir= "\\" . $namespace;
+                $dir .= "\\" . $libreria['class'];
                 $dir= explode("/", $dir);
                 $class= $dir[count($dir) - 1];
                 add_instance($class, $object, $name);

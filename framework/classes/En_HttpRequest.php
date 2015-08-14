@@ -1,4 +1,7 @@
 <?php
+namespace Enola\Http;
+use Enola\Security;
+
 /**
  * @author Enola
  */
@@ -59,7 +62,7 @@ class En_HttpRequest {
      */
     public function getCleanParam($nombre){
         if(isset($this->getParams[$nombre])){            
-            return clean_vars($this->getParams[$nombre]);
+            return Security\clean_vars($this->getParams[$nombre]);
         }
         else{
             return NULL;
@@ -72,7 +75,7 @@ class En_HttpRequest {
      */
     public function postCleanParam($nombre){
         if(isset($this->postParams[$nombre])){
-            return clean_vars($this->postParams[$nombre]);
+            return Security\clean_vars($this->postParams[$nombre]);
         }
         else{
             return NULL;
@@ -90,5 +93,19 @@ class En_HttpRequest {
         else{
             return NULL;
         }
-    }    
+    }
+    /**
+     * Redireccionar a otra pagina pasando una uri relativa a la aplicacion
+     * @param string $uri
+     */
+    public function redirect($uri){
+        redirect($uri);
+    }
+    /**
+     * Redirecciona a una pagina externa a la aplicacion actual
+     * @param string $url
+     */
+    public function external_redirect($url){
+        redirect($url);
+    }
 }

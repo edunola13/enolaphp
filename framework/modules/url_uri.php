@@ -1,4 +1,7 @@
 <?php
+    namespace Enola\Http;
+    use Enola\Security;
+
     /*
      * Conjunto de funciones que ayudan al framework a realizar tareas con URL y URI
      * Tambien pueden ser utilizadas por el usuario del framework
@@ -310,7 +313,7 @@
             }
         }        
         if($parametros != NULL){
-            $parametros= clean_vars($parametros);
+            $parametros= Security\clean_vars($parametros);
         }
         return array('params' => $parametros, 'method' => $method, 'dinamic' => $dinamic);
     }

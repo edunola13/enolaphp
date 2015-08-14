@@ -2,7 +2,7 @@
     "base_url": "http://localhost/enolaphp/",
     "index_page": "",
     "environment": "development",
-    "calculate_performance": "FALSE",
+    "calculate_performance": "TRUE",
     "configuration": "configuration/",
     "charset": "UTF-8",
       

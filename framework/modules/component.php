@@ -1,4 +1,6 @@
 <?php
+    namespace Enola\Component;
+
     /**
      * Importa todo lo necesario para manejar los componentes
      * Contiene funciones para manejar los componentes por el framework y por el usuario

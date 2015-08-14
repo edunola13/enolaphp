@@ -81,7 +81,7 @@
     function error_404(){
         $head= '404 Pagina no Encontrada';
         $message= 'La pagina que solicitaste no existe';
-        set_estado_header(404);
+        Enola\Http\set_estado_header(404);
         require_once PATHAPP . 'errors/error_404.php';
         exit;
     }    
@@ -95,7 +95,7 @@
      */
     function general_error($head, $message, $template = 'general_error', $code_error = 500){
         write_log('general_error', $message);
-        set_estado_header($code_error);
+        Enola\Http\set_estado_header($code_error);
         if(error_reporting()){
             require_once PATHAPP . 'errors/' . $template . '.php'; 
         }        
@@ -149,3 +149,9 @@
     function display_information($title, $message){
         require_once PATHFRA . 'information/information.php';
     }
+    
+    
+    //Define un manejador de excepciones - definido en el modulo errores
+    set_error_handler('_error_handler');
+    //Define un manejador de fin de cierre - definido en el modulo de errores
+    register_shutdown_function('_shutdown'); 

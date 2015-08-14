@@ -119,7 +119,7 @@
      */
     function component($name, $params = NULL, $action = NULL){
         //Llama a la funcion que ejecuta el componente definido en el modulo Componente
-        return execute_component($name, $params, $action);
+        return Enola\Component\execute_component($name, $params, $action);
     }    
     /**
      * Carga un archivo de internacionalizacion. Si no se especifica el locale carga el archivo por defecto, si no le agrega el locale pasado
