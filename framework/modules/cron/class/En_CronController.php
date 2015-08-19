@@ -1,11 +1,14 @@
 <?php
 namespace Enola\Cron;
+use Enola\Common;
 
 /**
  * Clase de la que deben extender los controladores cron de la aplicacion para que se asegure el funcioneamiento del mismo
  * @author Enola
  */
-class En_CronController extends \Enola\Loader{
+class En_CronController extends Common\GenericLoader{
+    use Common\GenericBehavior;
+    
     protected $params;
     protected $cleanParams;
     protected $viewFolder;

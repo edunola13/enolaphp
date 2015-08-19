@@ -1,17 +1,20 @@
 <?php
 namespace Enola\Component;
-use Enola\Http;
+use Http\En_HttpRequest;
+use Enola\Common;
 
 /**
  * @author Enola
  */
-class En_Component extends \Enola\Loader implements Component{ 
+class En_Component extends Common\GenericLoader implements Component{ 
+    use Common\GenericBehavior;
+    
     protected $viewFolder;
-    protected $session;
+    protected $request;
     
     public function __construct() {        
         parent::__construct('component');
-        if(ENOLA_MODE == 'HTTP')$this->session= new Http\Session();
+        if(ENOLA_MODE == 'HTTP')$this->request= En_HttpRequest::getInstance();
         $this->viewFolder= PATHAPP . 'source/view/';
     }    
     /**

@@ -1,12 +1,14 @@
 <?php
 namespace Enola\Http;
-use Enola\Lib;
+use Enola\Common;
 
 /**
  * Clase de la que deben extender los controladores de la aplicacion para que se asegure el funcioneamiento del mismo
  * @author Enola
  */
-class En_Controller extends \Enola\Loader implements Controller{
+class En_Controller extends Common\GenericLoader implements Controller{
+    use Common\GenericBehavior;
+    
     protected $request;
     protected $uriParams;
     protected $viewFolder;

@@ -1,40 +1,12 @@
 <?php
-namespace Enola;
+namespace Enola\Common;
 
 /**
+ * Description of CommonClass
+ *
  * @author Enola
  */
-abstract class Loader {
-    protected $type;  
-    
-    public function __construct($type) {
-        $this->type= $type;
-        $this->loadLibraries();
-    }  
-    /**
-     * Agrega la instancia de una Clase a la instancia actual
-     * @param Clase $clase
-     * @param string $nombre
-     */
-    protected function loasClass($clase, $nombre= ""){
-        add_instance($clase, $this, $nombre);
-    }    
-    /**
-     * Metodo llamado en el constructor de la clase que carga las librerias correspondientes
-     */
-    protected function loadLibraries(){
-        //Realiza el llamado a la funcion que se encarga de esto
-        load_librarie_in_class($this, $this->type);
-    }
-    
-    
-    
-    /*
-     * CommonsFunction - Tal vez separar en varios
-     * Esto tiene que ir en un Trait para versiones >=5.4
-     * 
-     */
-    
+trait GenericBehavior {
     /**
      * Funcion lee los campos de un formulario y asigna a una variable el objeto con todos sus atributos o un array asociativo
      */
@@ -59,8 +31,7 @@ abstract class Loader {
             $var= $vars;
         }
         return $var;
-    }
-    
+    }    
     /**
      * Funcion que valida las variables de un objeto o de un array en base a una configuracion de validacion
      */
@@ -85,15 +56,13 @@ abstract class Loader {
         else{
             return TRUE;            
         }
-    }
-    
+    }    
     /**
      * Funcion que arma una configuracion para la validacion
      */
     protected function configValidation(){
         return array();
-    }
-    
+    }    
     /**
      * Carga una vista PHP
      * @param type $view 
@@ -113,8 +82,7 @@ abstract class Loader {
             ob_end_clean();
             return $output;
         }
-    }
-    
+    }    
     /*
      * Carga la instancia de objeto en una variable del objeto pasado como parametro
      * Supone que la clase ya se encuentra importada

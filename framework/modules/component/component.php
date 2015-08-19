@@ -1,13 +1,14 @@
 <?php
     namespace Enola\Component;
-
+    use Enola\Error;
+    
     /**
      * Importa todo lo necesario para manejar los componentes
      * Contiene funciones para manejar los componentes por el framework y por el usuario
      */
     //Interface y Clase de la que deben extender todos los components
-    require PATHFRA . 'classes/Component.php';
-    require PATHFRA . 'classes/En_Component.php';
+    require 'class/Component.php';
+    require 'class/En_Component.php';
     
     /**
      * Analiza si mapea la URL de componentes
@@ -95,16 +96,16 @@
                     if(method_exists($componente, $action)){
                         $componente->$action($parametros);
                     }else{
-                        general_error('Component Error', 'The component ' . $nombre . ' dont implement the action ' . $action . '()');
+                        Error::general_error('Component Error', 'The component ' . $nombre . ' dont implement the action ' . $action . '()');
                     }
                 }
                 return $componente->rendering($parametros);
             }
             else{
-                general_error('Component Error', 'The component ' . $nombre . ' dont implement the method rendering()');
+                Error::general_error('Component Error', 'The component ' . $nombre . ' dont implement the method rendering()');
             }          
         }
         else{
-            general_error('Component Error', "The component $nombre dont exists");
+            Error::general_error('Component Error', "The component $nombre dont exists");
         }
     }

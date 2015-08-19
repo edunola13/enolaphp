@@ -1,12 +1,13 @@
 <?php
 namespace Enola\DB;
+use Enola\Common;
 
 /**
  * Clase que se encarga de la configuracion de la BD.
  * Para utilizar la configuracion del Framework es necesario que las clases extiendan de esta clase
  * @author Enola
  */
-class En_DataBase extends \Enola\Loader{
+class En_DataBase extends Common\GenericLoader{
     protected static $config_db;
     public $conexion;
     protected $currentDB;

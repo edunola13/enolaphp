@@ -1,6 +1,7 @@
 <?php
     namespace Enola;
-
+    use Enola\Error;
+    
     /*
      * Realiza la configuracion completa del sistema y empieza a delegar el requerimiento del cliente a los modulos del
      * framework y a los del cliente
@@ -38,12 +39,12 @@
             exit;
     }    
     //Carga la clase Rendimiento
-    require $path_framework . 'classes/Performance.php';
+    require $path_framework . 'modules/commonFunctionality/class/Performance.php';
     //Analiza si calcula el tiempo que tarda la aplicacion en ejecutarse
     $performance= NULL;
     if($config['calculate_performance'] == 'TRUE' || $config['calculate_performance'] == 'true'){
         //Incluye la clase Rendimiento 
-        $performance= new Performance();
+        $performance= new Common\Performance();
         $performance->start();
     }
     //Seteo la codificacion de caracteres, casi siempre es o debe ser UTF-8
@@ -94,19 +95,21 @@
      * Carga de modulos obligatorios para que el framework trabaje correctamente
      */    
     //Carga del modulo errores - se definen manejadores de errores
-    require PATHFRA . 'modules/errors.php';    
+    require PATHFRA . 'modules/commonFunctionality/errors.php';    
     //Carga de modulo para carga de archivos
-    require PATHFRA . 'modules/load_files.php';
+    require PATHFRA . 'modules/commonFunctionality/load_files.php';
     //Carga de modulo con funciones para la vista
-    require PATHFRA . 'modules/view.php';
+    require PATHFRA . 'modules/commonFunctionality/view.php';
     //Carga de modulo de seguridad
-    require PATHFRA . 'modules/security.php';
+    require PATHFRA . 'modules/commonFunctionality/security.php';
     //Carga de modulo URL-URI
-    require PATHFRA . 'modules/url_uri.php';
-    //Carga Clase Base Enola
-    require PATHFRA . 'classes/Loader.php';  
+    require PATHFRA . 'modules/http/url_uri.php';
+    //Carga Clase Base Loader
+    require PATHFRA . 'modules/commonFunctionality/class/GenericLoader.php';
+    //Carga Trait de funciones Comunes
+    require PATHFRA . 'modules/commonFunctionality/class/GenericBehavior.php'; 
     //Carga Clase En_DataBase - Si se definio configuracion para la misma
-    if(defined('JSON_CONFIG_BD'))require PATHFRA . 'classes/En_DataBase.php';
+    if(defined('JSON_CONFIG_BD'))require PATHFRA . 'modules/commonFunctionality/class/En_DataBase.php';
     
     /*
      * Cargo todas las librerias particulares de la aplicacion que se cargaran automaticamente indicadas en el archivo de configuracion
@@ -131,11 +134,11 @@
         /*
          * Analiza el paso de un error HTTP
          */
-        catch_server_error();
+        Error::catch_server_error();
         /*
         * Cargo el modulo HTTP 
         */
-        require PATHFRA . 'modules/http.php';
+        require PATHFRA . 'modules/http/http.php';
     }    
     
     /**
@@ -153,7 +156,7 @@
         //La guarda como global para que luego pueda ser utilizada
         $GLOBALS['components']= $componentes;
         //Cargo el modulo componente
-        require PATHFRA . 'modules/component.php';
+        require PATHFRA . 'modules/component/component.php';
 	//Analiza si se ejecuta un componente via URL
 	if(ENOLA_MODE == 'HTTP' && Component\maps_components()){
             Component\execute_url_component();
@@ -208,7 +211,7 @@
         //Analizo si se pasa por lo menos un parametros (nombre cron), el primer parametros es el nombre del archivo por eso
         //pregunta por >= 2
         if($argc >= 2){
-            require PATHFRA . 'modules/cron.php';
+            require PATHFRA . 'modules/cron/cron.php';
             Crom\execute_cron_controller($argv);
         }else{
             general_error('Cron Controller', 'There isent define any cron controller name');
@@ -222,5 +225,5 @@
         $mensaje= 'The execution time of the APP is: ' . $performance->elapsed();
         $titulo= 'Performance';
         //Muestra la informacion al usuario
-        display_information($titulo, $mensaje);
+        Error::display_information($titulo, $mensaje);
     }

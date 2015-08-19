@@ -1,5 +1,6 @@
 <?php
 namespace Enola\Http;
+use Enola\Error;
 
 session_start();
 /**
@@ -89,7 +90,7 @@ class Session {
     private function checkIdentity(){
         if(isset($_SESSION['REMOTE_ADDR']) && isset($_SESSION['HTTP_USER_AGENT'])){
             if($_SESSION['REMOTE_ADDR'] != $_SERVER['REMOTE_ADDR'] || $_SESSION['HTTP_USER_AGENT'] != $_SERVER['HTTP_USER_AGENT']) {
-                general_error('Session - Identity', 'There are a proble with the Sesion identity');
+                Error::general_error('Session - Identity', 'There are a proble with the Sesion identity');
             }
         }
         else{

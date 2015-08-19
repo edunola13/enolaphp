@@ -23,7 +23,7 @@ class En_HttpRequest {
     /**
      * Crea una unica instancia y/o devuelve la actual
      */
-    public static function getInstance($uri = NULL){
+    public static function getInstance(){
         if(!self::$instancia instanceof self){
             self::$instancia = new self();
         }
@@ -62,7 +62,7 @@ class En_HttpRequest {
      */
     public function getCleanParam($nombre){
         if(isset($this->getParams[$nombre])){            
-            return Security\clean_vars($this->getParams[$nombre]);
+            return Security::clean_vars($this->getParams[$nombre]);
         }
         else{
             return NULL;
@@ -75,7 +75,7 @@ class En_HttpRequest {
      */
     public function postCleanParam($nombre){
         if(isset($this->postParams[$nombre])){
-            return Security\clean_vars($this->postParams[$nombre]);
+            return Security::clean_vars($this->postParams[$nombre]);
         }
         else{
             return NULL;
@@ -106,6 +106,6 @@ class En_HttpRequest {
      * @param string $url
      */
     public function external_redirect($url){
-        redirect($url);
+        external_redirect($url);
     }
 }

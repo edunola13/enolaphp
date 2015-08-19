@@ -1,6 +1,7 @@
 <?php
     namespace Enola\Http;
     use Enola\Security;
+    use Enola;
 
     /*
      * Conjunto de funciones que ayudan al framework a realizar tareas con URL y URI
@@ -313,7 +314,7 @@
             }
         }        
         if($parametros != NULL){
-            $parametros= Security\clean_vars($parametros);
+            $parametros= Security::clean_vars($parametros);
         }
         return array('params' => $parametros, 'method' => $method, 'dinamic' => $dinamic);
     }
@@ -371,7 +372,7 @@
 						);
         //Me fijo que el codigo no sea un string 
         if ($codigo == '' OR ! is_numeric($codigo)){
-            general_error('Error Estado HTTP', 'El codigo de estado debe ser numerico');
+            Enola\Error::general_error('Error Estado HTTP', 'El codigo de estado debe ser numerico');
 	}
         //Veo si se paso o no texto y si no, le asigo el del codigo
 	if (isset($estados[$codigo]) AND $text == ''){
@@ -379,7 +380,7 @@
 	}
         //Me fijo que el texto no este vacio
         if ($text == ''){
-            general_error('Error Estado HTTP', 'No status text available.  Please check your status code number or supply your own message text.');
+            Enola\Error::general_error('Error Estado HTTP', 'No status text available.  Please check your status code number or supply your own message text.');
 	}
         //Cargo el protocolo
 	$server_protocol = (isset($_SERVER['SERVER_PROTOCOL'])) ? $_SERVER['SERVER_PROTOCOL'] : FALSE;

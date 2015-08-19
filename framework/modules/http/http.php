@@ -1,25 +1,26 @@
 <?php
     namespace Enola\Http;
+    use Enola\Error;
 
     /*
      * Este modulo se encarga de cargar todas las clases necesarias para los requerimientos HTTP
      * Esto incluye los filtros , los controladores y todos los datos de los mismo.
      */
-    require PATHFRA . 'classes/Session.php';
-    require PATHFRA . 'classes/En_HttpRequest.php';
+    require 'class/Session.php';
+    require 'class/En_HttpRequest.php';
     /**
      * Crea la instancia request para la url que se mapeo
      * @param type $uri 
      */
     function create_request($uri){
-        En_HttpRequest::getInstance($uri);
+        En_HttpRequest::getInstance();
     }    
     /*
      * Seccion de Filtros
      */
     //Interface y Clase base de la que deben extender todos los filtros
-    require PATHFRA . 'classes/Filter.php';
-    require PATHFRA . 'classes/En_Filter.php';
+    require 'class/Filter.php';
+    require 'class/En_Filter.php';
     /**
      * Analiza los filtros correspondientes y ejecuta los que correspondan
      * @param array[array] $filtros
@@ -48,11 +49,11 @@
                         $filtro->filter();
                     }
                     else{
-                        general_error('Filter Error', 'The filter ' . $filtro_esp['class'] . ' dont implement the method filter()');
+                        Error::general_error('Filter Error', 'The filter ' . $filtro_esp['class'] . ' dont implement the method filter()');
                     }
                 }
                 else{
-                    general_error('Filter Error', 'The filter ' . $filtro_esp['class'] . ' dont exist');
+                    Error::general_error('Filter Error', 'The filter ' . $filtro_esp['class'] . ' dont exist');
                 }
             }
         }
@@ -61,8 +62,8 @@
      * Seccion controladores
      */
     //Interface y Clase base de la que deben extender todos los Controllers
-    require PATHFRA . 'classes/Controller.php';
-    require PATHFRA . 'classes/En_Controller.php';
+    require 'class/Controller.php';
+    require 'class/En_Controller.php';
     /**
      * Encuentra el controlador que mapea
      * @param type $controladores
@@ -80,7 +81,7 @@
         }
         //si ningun controlador mapeo avisa el problema
         if(! $mapea){
-            error_404();
+            Error::error_404();
         }
     }
     /**
@@ -118,7 +119,7 @@
         }
         else{
             //Avisa que el archivo no existe
-            general_error('Controller Error', 'The controller ' . $controlador_esp['class'] . ' dont exists');
+            Error::general_error('Controller Error', 'The controller ' . $controlador_esp['class'] . ' dont exists');
         }        
         //Saca el metodo HTPP y en base a eso hace una llamada al metodo correspondiente
         $metodo= $_SERVER['REQUEST_METHOD'];
@@ -126,7 +127,7 @@
             if(method_exists($controlador, $method)){
                 $controlador->$method();
             }else{
-                general_error('HTTP Method Error', "The HTTP method $method is not supported");
+                Error::general_error('HTTP Method Error', "The HTTP method $method is not supported");
             }
         }else{
            switch ($metodo) {
@@ -158,7 +159,7 @@
                 $controlador->doConnect();
                 break;
             default :                
-                general_error('HTTP Method Error', "The HTTP method $metodo is not supported");
+                Error::general_error('HTTP Method Error', "The HTTP method $metodo is not supported");
             }
         }
     }
