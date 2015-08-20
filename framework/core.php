@@ -208,11 +208,11 @@
             Http\execute_filters($filtros_despues);
         }
     }else{
-        //Analizo si se pasa por lo menos un parametros (nombre cron), el primer parametros es el nombre del archivo por eso
+        //Analizo si se pasa por lo menos un parametros (nombre cron), el primer parametros es el nombre del archivo y el segundo en nombre de la clase
         //pregunta por >= 2
         if($argc >= 2){
             require PATHFRA . 'modules/cron/cron.php';
-            Crom\execute_cron_controller($argv);
+            Cron\execute_cron_controller($argv);
         }else{
             general_error('Cron Controller', 'There isent define any cron controller name');
         }        

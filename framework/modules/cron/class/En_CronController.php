@@ -30,7 +30,7 @@ class En_CronController extends Common\GenericLoader{
      * Setea los parametros limpiados de linea de comando
      */
     public function setCleanParams($params){
-        $this->clean_params= $params;
+        $this->cleanParams= $params;
     }
     /**
      * Funcion que actua cuando acurre un error en la validacion

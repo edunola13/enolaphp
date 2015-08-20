@@ -1,6 +1,6 @@
 <?php
 namespace Enola\Component;
-use Http\En_HttpRequest;
+use Enola\Http\En_HttpRequest;
 use Enola\Common;
 
 /**

@@ -12,7 +12,7 @@
          * @param string $value
          * @return string
         */
-        function encode_md5($value){
+        public static function encode_md5($value){
             return md5($value);
         }
         /**
@@ -20,7 +20,7 @@
          * @param string $value
          * @return string
          */
-        function encode_sha_1($value){
+        public static function encode_sha_1($value){
             return sha1($value);
         }     
         /**
@@ -28,7 +28,7 @@
          * @param string $value
          * @return string
          */
-        function encode_md5_y_sha_1($value){
+        public static function encode_md5_y_sha_1($value){
             $value= md5($value);
             return sha1($value);
         }     
@@ -38,7 +38,7 @@
          * @param string $value
          * @return string
          */
-        function filter_simple_xss($value){
+        public static function filter_simple_xss($value){
             $value= str_replace('"','',$value);
             return str_replace("'","",$value);
         }     
@@ -47,14 +47,14 @@
          * @param string o array[string] $valor
          * @return string o array[string]
          */
-        function clean_vars($value){
+        public static function clean_vars($value){
            if(is_array($value)){
                foreach($value as $key => $val) {
-                   $value[$key] = clean_vars($val);
+                   $value[$key] = self::clean_vars($val);
                }
            }
            else{
-               $value= filter_simple_xss($value);
+               $value= self::filter_simple_xss($value);
            }
            return $value;
         }
