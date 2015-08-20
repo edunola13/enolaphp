@@ -1,0 +1,19 @@
+{
+    "name": "enola/enolaphp",
+    "type": "framework",
+    "description": "EnolaPHP es un Framework PHP principalmente para el desarrollo de aplicaciones web el cual es muy liviano, simple de instalar y configurar, muy rápido y fácil de aprender",
+    "keywords": ["Framework PHP","Enola"],
+    "homepage": "http://enolaphp.com/",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Eduardo Sebastian Nola",
+            "email": "edunola13@hotmail.com",
+            "homepage": "http://www.edunola.com.ar/",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": ">=5.4.0"
+    }
+}
