@@ -7,14 +7,7 @@
      * Esto incluye los filtros , los controladores y todos los datos de los mismo.
      */
     require 'class/Session.php';
-    require 'class/En_HttpRequest.php';
-    /**
-     * Crea la instancia request para la url que se mapeo
-     * @param type $uri 
-     */
-    function create_request($uri){
-        En_HttpRequest::getInstance();
-    }    
+    require 'class/En_HttpRequest.php';    
     /*
      * Seccion de Filtros
      */

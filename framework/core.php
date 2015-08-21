@@ -183,8 +183,6 @@
         else{
             general_error('Controller Error', 'There isent define any controller');
         }
-        //Creo el HTTP REQUEST correspondiente en base a la URL que mapeo
-        Http\create_request($actual_controller['url']);
         /*
          * Lee los filtros que se deben ejecutar antes del procesamiento de la variable config y delega trabajo a archivo filtros.php
          * En caso de que no haya filtros asignados no delega ningun trabajo
