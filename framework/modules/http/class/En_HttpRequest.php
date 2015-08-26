@@ -6,29 +6,60 @@ use Enola\Security;
  * @author Enola
  */
 class En_HttpRequest {
-    private static $instancia;    
+    private static $instance;    
     public $getParams;
     public $postParams;
     public $attributes;
     public $session;
     public $requestMethod;
+    public $queryString;
+    public $requestUri;
+    public $httpHost;    
+    public $httpAccept;
+    public $httpAcceptLanguage;
+    public $httpUserAgent;
     
-    protected function __construct(){
+    public $realBaseUrl;
+    public $baseUrlLocale;
+    public $uriApp;
+    public $uriAppLocale;    
+    public $localeUri;
+    public $locale;
+    
+    public function __construct($config){
+        $this->init($config);
+        self::$instance= $this;
+    }
+    
+    /**
+     * Devuelve la isntancia que se esta utilizando
+     */
+    public static function getInstance(){
+        return self::$instance;
+    } 
+    
+    private function init($config){
+        //Configuro valores basicos-genericos
         $this->getParams= $_GET;
         $this->postParams= $_POST;
         $this->attributes= array();
         $this->session= new Session();
         $this->requestMethod= $_SERVER['REQUEST_METHOD'];
+        $this->queryString= $_SERVER['QUERY_STRING'];
+        $this->requestUri= $_SERVER['REQUEST_URI'];
+        $this->httpHost= $_SERVER['HTTP_HOST'];        
+        $this->httpAccept= $_SERVER['HTTP_ACCEPT'];
+        $this->httpAcceptLanguage= $_SERVER['HTTP_ACCEPT_LANGUAGE'];
+        $this->httpUserAgent= $_SERVER['HTTP_USER_AGENT'];
+        //Configuro la URIAPP y defino varios valores propios de la Aplicación        
+        $this->realBaseUrl= $config['REAL_BASE_URL'];
+        $this->baseUrlLocale= $config['BASEURL_LOCALE'];
+        $this->uriApp= $config['URIAPP'];
+        $this->uriAppLocale= $config['URIAPP_LOCALE'];
+        $this->localeUri= $config['LOCALE_URI'];
+        $this->locale= $config['LOCALE'];
     }
-    /**
-     * Crea una unica instancia y/o devuelve la actual
-     */
-    public static function getInstance(){
-        if(!self::$instancia instanceof self){
-            self::$instancia = new self();
-        }
-        return self::$instancia;
-    }    
+       
     /**
      * Devuelve un parametro GET si existe y si no devuelve NULL
      * @param string $nombre
@@ -99,13 +130,13 @@ class En_HttpRequest {
      * @param string $uri
      */
     public function redirect($uri){
-        redirect($uri);
+        UrlUri::redirect($this, $uri);
     }
     /**
      * Redirecciona a una pagina externa a la aplicacion actual
      * @param string $url
      */
     public function external_redirect($url){
-        external_redirect($url);
+        UrlUri::externalRedirect($url);
     }
 }

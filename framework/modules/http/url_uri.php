@@ -1,8 +1,9 @@
 <?php
-    namespace Enola\Http;
-    use Enola\Security;
-    use Enola;
+namespace Enola\Http;
+use Enola\Security;
+use Enola;
 
+class UrlUri{
     /*
      * Conjunto de funciones que ayudan al framework a realizar tareas con URL y URI
      * Tambien pueden ser utilizadas por el usuario del framework
@@ -13,16 +14,20 @@
      * Almacena el LOCALE de la URI
      * Usada solo por el framework en la etapa de configuracion
      */
-    function define_application_uri(){
+    public static function defineApplicationUri($context){
+        //Resultado de Configuracion
+        $result= array();
+        
         //Cargo la URI segun el servidor - Esta siempre es todo lo que esta despues de www.edunola.com.ar o localhost/
         $uri_actual= $_SERVER['REQUEST_URI'];
         //Analizo la cantidad de partes de la baseurl + indexpage(si corresponde) para poder crear la URI correspondiente para la aplicacion
         $url_base= BASEURL;
-        if(INDEX_PAGE != ''){
-            $url_base .= trim(INDEX_PAGE, '/') . '/';
+        $index_page= $context->getIndexPage();
+        if($index_page != ''){
+            $url_base .= trim($index_page, '/') . '/';
         }
         //REAL_BASE_URL: Real Base url de la aplicacion - Es la union de BASE_URL y INDEX_PAGE
-        define('REAL_BASE_URL', $url_base);
+        $result['REAL_BASE_URL']= $url_base;
         $url_base= explode("/", $url_base);
         $uri_app= "";
         //0= http, 1= //, 2= dominio, >3= una carpeta cualquiera
@@ -44,17 +49,17 @@
         $locale_actual= NULL;
         $locale_uri= NULL;
         $uri_app_locale= $uri_actual;
-        $base_url_locale= REAL_BASE_URL;        
+        $base_url_locale= $result['REAL_BASE_URL'];        
         //Si hay configuracion de internacionalizacion realiza analisis
-        if(isset($GLOBALS['i18n']['locales'])){
+        if($context->isLocalesDefined()){
             //Consigue el locale por defecto
-            $locale_actual= $GLOBALS['i18n']['default'];
+            $locale_actual= $context->getI18nDefaultLocale();
             //Consigo la primer parte de la URI para ver si esta internacionalizada
             $uri_locale= explode("/", $uri_actual);
             $uri_locale= $uri_locale[0];
             
             //Consigo el resto de los posibles LOCALES
-            $locales= str_replace(" ", "", $GLOBALS['i18n']['locales']);
+            $locales= str_replace(" ", "", $context->getI18nLocales());
             //Separo los LOCALE
             $locales= explode(",", $locales);
 
@@ -80,15 +85,18 @@
             }
         }       
         //URIAPP: Contiene la URI de peticion sin el fragmento de internacionalizacion
+        $result['URIAPP']= $uri_actual;
         define('URIAPP', $uri_actual);
         //URIAPP_LOCALE: Contiene la URI de peticion con el fragmento de internacionalizacion
-        define('URIAPP_LOCALE', $uri_app_locale);
+        $result['URIAPP_LOCALE']= $uri_app_locale;
         //LOCALE_URI: Contiene el LOCALE segun la URI actual
-        define('LOCALE_URI', $locale_uri);
+        $result['LOCALE_URI']= $locale_uri;
         //LOCALE: Contiene el Locale actual. Si no se encuentra ninguno en la URL es igual al por defecto, si no es igual a LOCALE_URI
-        define('LOCALE', $locale_actual);
+        $result['LOCALE']= $locale_actual;
         //BASEURL_LOCALE: Contiene la base URL con el LOCALE correspondiente. Si el locale es el por defecto esta es igual a REAL_BASE_URL
-        define('BASEURL_LOCALE', $base_url_locale);
+        $result['BASEURL_LOCALE']= $base_url_locale;
+        
+        return $result;
     }
     /**
      * En base a una URL pasada como parametro ve si esta mapea a la URL actual de la aplicacion
@@ -97,7 +105,7 @@
      * @param string uriapp - Si no deseo utilizar el URIAPP por defecto de la aplicacion, sirve para el MVC 
      * @return boolean
      */
-    function maps_actual_url($url, $uriapp = NULL){
+    public static function mapsActualUrl($url, $uriapp = NULL){
         //Elimino el primer caracter si es igual a "/"
         if(substr($url, 0, 1) == "/"){
             $url= substr($url, 1);
@@ -106,7 +114,7 @@
         $partes_url= explode("/", $url);
         
         //Saco de la uri actual o uriapp pasada como parametro los parametros
-        $uri_explode= explode("?", URIAPP);
+        $uri_explode= explode("?", En_HttpRequest::getInstance()->uriApp);
         if($uriapp !== NULL){
             $uri_explode= explode("?", $uriapp);
         }
@@ -236,12 +244,13 @@
     }    
     /**
      * Redireccionar a otra pagina pasando una uri relativa a la aplicacion
+     * @param En_HttpRequest
      * @param string $uri
      */
-    function redirect($uri){
+    public static function redirect($httpRequest, $uri){
         //Le quita '/' si es que tiene al principio y al final
         $uri= trim($uri, "/");
-        header('Location:' . REAL_BASE_URL . $uri);
+        header('Location:' . $httpRequest->realBaseUrl . $uri);
         //Detiene el flujo
         exit;
     }    
@@ -249,7 +258,7 @@
      * Redirecciona a una pagina externa a la aplicacion actual
      * @param string url
      */
-    function external_redirect($url){
+    public static function externalRedirect($url){
         header('Location:' . $url);
         //Detiene el flujo
         exit;
@@ -260,7 +269,7 @@
      * @param string $url
      * @return array[string]
      */
-    function uri_params($url, $uriapp = NULL){
+    public static function uriParams($url, $uriapp = NULL){
         $parametros= NULL;
         $method= 'index';
         $dinamic= FALSE;
@@ -268,7 +277,7 @@
         $url= ltrim($url, '/');
         //Separa la url y la uri en partes para poder analizarlas
         $partes_url= explode("/", $url);
-        $uri_explode= explode("?", URIAPP);
+        $uri_explode= explode("?", En_HttpRequest::getInstance()->uriApp);
         if($uriapp !== NULL){
             $uri_explode= explode("?", $uriapp);
         }
@@ -323,7 +332,7 @@
      * @param int $codigo
      * @param string $text
      */
-    function set_estado_header($codigo = 200, $text = ''){
+    public static function setEstadoHeader($codigo = 200, $text = ''){
         //Arreglo con todos los codigos y su respectivo texto
         $estados = array(
                                                         100     => 'Continue',
@@ -396,3 +405,4 @@
             header("HTTP/1.1 {$codigo} {$text}", TRUE, $codigo);
 	}
     }
+}

@@ -15,7 +15,7 @@ class En_Component extends Common\GenericLoader implements Component{
     public function __construct() {        
         parent::__construct('component');
         if(ENOLA_MODE == 'HTTP')$this->request= En_HttpRequest::getInstance();
-        $this->viewFolder= PATHAPP . 'source/view/';
+        $this->viewFolder= $this->context->getPathApp() . 'source/view/';
     }    
     /**
      * Funcion que es llamada para que el componente realice su trabajo

@@ -18,7 +18,7 @@ class Authorization extends Http\En_Filter{
      */
     public function filter(){
         //Leo el archivo de configuracion de seguridad
-        $json_segurirad= file_get_contents(PATHAPP . CONFIGURATION . 'authorization.json');
+        $json_segurirad= file_get_contents(PATHAPP . $this->context->getConfigurationFolder() . 'authorization.json');
         //Pasa el archivo json a un arreglo
         $seguridad= json_decode($json_segurirad, TRUE);
         //Tipo por defecto
@@ -36,7 +36,7 @@ class Authorization extends Http\En_Filter{
             $mapea= FALSE;
             //Recorro sus permisos y veo si alguno coincice
             foreach ($permisos as $permiso) {
-                if(Http\maps_actual_url($permiso)){
+                if(Http\UrlUri::mapsActualUrl($permiso)){
                     //Cuando alguno coincide salgo del for
                     $mapea= TRUE;
                     break;
@@ -46,7 +46,7 @@ class Authorization extends Http\En_Filter{
                 //Si hubo mapeo, recorro las url denegadas para el usuario
                 $denegados= $config_seguridad['deny'];
                 foreach ($denegados as $denegado) {
-                    if(Http\maps_actual_url($denegado)){
+                    if(Http\UrlUri::mapsActualUrl($denegado)){
                         //Si la url es denegada salgo del for
                         $mapea= FALSE;
                         break;

@@ -1,32 +1,40 @@
 <?php
-    namespace Enola\Component;
-    use Enola\Error;
+namespace Enola\Component;
+use Enola\Error;
+use Enola\Http;
     
-    /**
-     * Importa todo lo necesario para manejar los componentes
-     * Contiene funciones para manejar los componentes por el framework y por el usuario
-     */
-    //Interface y Clase de la que deben extender todos los components
-    require 'class/Component.php';
-    require 'class/En_Component.php';
+/**
+ * Importa todo lo necesario para manejar los componentes
+ * Contiene funciones para manejar los componentes por el framework y por el usuario
+ */
+//Interface y Clase de la que deben extender todos los components
+require 'class/Component.php';
+require 'class/En_Component.php';
+
+class ComponentCore{
+    public $core;
+    
+    public function __construct($core) {
+        $this->core= $core;
+    }
     
     /**
      * Analiza si mapea la URL de componentes
      * @return boolean 
      */
-    function maps_components(){
-        $partes_uri= explode("/", URIAPP);
-        if($partes_uri[0] == URL_COMPONENT){
+    public function mapsComponents($httpRequest){
+        $partes_uri= explode("/", $httpRequest->uriApp);
+        if($partes_uri[0] == $this->core->context->getComponentUrl()){
             return TRUE; 
         }
         return FALSE;
     }
     
     /**
-     * ejecuta el componente en base a una URL 
+     * Ejecuta el componente en base a una URL 
      */
-    function execute_url_component(){
-        $partes_uri= explode("/", URIAPP);
+    public function executeUrlComponent($httpRequest){        
+        $partes_uri= explode("/", $httpRequest->uriApp);
         $nombre= "";
         $params= array();
         $action= NULL;
@@ -48,9 +56,10 @@
             }
         }
         if($nombre != ""){
+            $components= $this->core->context->getComponentsDefinition();
             //Evalua si el componente existe y si se encuentra habilitado via URL
-            if(isset($GLOBALS['componentes'][$nombre])){
-                $comp= $GLOBALS['componentes'][$nombre];
+            if(isset($components[$nombre])){
+                $comp= $components[$nombre];
                 if($comp['enabled-url'] == 'TRUE' || $comp['enabled-url'] == 'true'){
                     execute_component($nombre, $params, $action);
                 }
@@ -73,20 +82,22 @@
      * @param type $parametros
      * @param type url
      */ 
-    function execute_component($nombre, $parametros = NULL, $action = NULL){
+    public function executeComponent($nombre, $parametros = NULL, $action = NULL){
+        $components= $this->core->context->getComponentsDefinition();
         $componente= NULL;
-        if(isset($GLOBALS['componentes'][$nombre])){
-            $comp= $GLOBALS['componentes'][$nombre];
-            $dir= "";
-            if(! isset($comp['location'])){
-                $dir= PATHAPP . 'source/components/' . $comp['class'] . '.php';
+        if(isset($components[$nombre])){
+            $comp= $components[$nombre];
+            $dir= Http\buildDir($comp, 'components');
+            $class= Http\buildClass($comp);
+            if(!class_exists($class)){
+                //Si la clase no existe intento cargarla
+                if(file_exists($dir)){
+                    require_once $dir;
+                }else{
+                    //Avisa que el archivo no existe
+                    Error::general_error('Component Error', 'The component ' . $comp['class'] . ' dont exists');
+                } 
             }
-            else{
-                $dir= PATHAPP . $comp['location'] . '/' . $comp['class'] . '.php';
-            }
-            require_once $dir;
-            $dir= explode("/", $comp['class']);
-            $class= $dir[count($dir) - 1];
             $componente= new $class();
         }
         if($componente != NULL){
@@ -109,3 +120,4 @@
             Error::general_error('Component Error', "The component $nombre dont exists");
         }
     }
+}

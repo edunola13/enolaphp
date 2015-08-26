@@ -18,7 +18,7 @@ class En_Controller extends Common\GenericLoader implements Controller{
     function __construct(){
         parent::__construct('controller');
         $this->request= En_HttpRequest::getInstance();
-        $this->viewFolder= PATHAPP . 'source/view/';
+        $this->viewFolder= $this->context->getPathApp() . 'source/view/';
     }    
     /**
      * Funcion que es llamada cuando el metodo HTTP es GET
@@ -91,12 +91,12 @@ class En_Controller extends Common\GenericLoader implements Controller{
      */
     protected function fordward($uri, $filtrar = FALSE){
         if($filtrar){
-            execute_filters($GLOBALS['filters'], $uri);
+            executeFilters($this->context->getFiltersBeforeDefinition, $uri);
         }
-        $con= mapping_controller($GLOBALS['controllers'], $uri);
-        execute_controller($con, $uri);
+        $con= mappingController($this->context->getControllersDefinition, $uri);
+        executeController($con, $uri);
         if($filtrar){
-            execute_filters($GLOBALS['filters_after_processing'], $uri);
+            executeFilters($this->context->getFiltersAfterDefinition, $uri);
         }
     }
 }

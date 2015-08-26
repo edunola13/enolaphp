@@ -3,6 +3,12 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/1"/>
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group/>
+        <group>
+            <file>file:/D:/xampp/htdocs/enolaphp/framework/modules/http/class/En_HttpRequest.php</file>
+            <file>file:/D:/xampp/htdocs/enolaphp/framework/modules/commonFunctionality/class/EnolaContext.php</file>
+            <file>file:/D:/xampp/htdocs/enolaphp/framework/core.php</file>
+            <file>file:/D:/xampp/htdocs/enolaphp/application/configuration.json</file>
+            <file>file:/D:/xampp/htdocs/enolaphp/framework/modules/http/url_uri.php</file>
+        </group>
     </open-files>
 </project-private>

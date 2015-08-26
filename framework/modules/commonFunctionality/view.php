@@ -14,14 +14,14 @@
      * @return string
      */
     function real_base(){
-        return REAL_BASE_URL;
+        return Enola\Http\En_HttpRequest::getInstance()->realBaseUrl;
     }    
     /**
      * Retorna la base url con el locale actual
      * @return string
      */
     function base_locale(){
-        return BASEURL_LOCALE;
+        return Enola\Http\En_HttpRequest::getInstance()->baseUrlLocale;
     }
     /**
      * Arma una url para un recurso
@@ -40,8 +40,8 @@
      */
     function urlFor($internalUri, $locale = NULL){
         $internalUri= ltrim($internalUri, '/');
-        if($locale == NULL)return REAL_BASE_URL . $internalUri;
-        else return REAL_BASE_URL . $locale . '/' . $internalUri;
+        if($locale == NULL)return Enola\Http\En_HttpRequest::getInstance()->realBaseUrl . $internalUri;
+        else return Enola\Http\En_HttpRequest::getInstance()->realBaseUrl . $locale . '/' . $internalUri;
     }
     /**
      * Arma una url internacionalizada para una URI interna
@@ -50,7 +50,7 @@
      */
     function urlLocaleFor($internalUri){
         $internalUri= ltrim($internalUri, '/');
-        return BASEURL_LOCALE . $internalUri;
+        return Enola\Http\En_HttpRequest::getInstance()->baseUrlLocale . $internalUri;
     }
     /**
      * Arma una url para acceder a un componente
@@ -61,9 +61,9 @@
      */
     function urlComponentFor($component, $params = "", $locale = NULL){
         $params= '/' . ltrim($params, '/');
-        $url_component= trim(URL_COMPONENT, '/');
-        if($locale == NULL)return REAL_BASE_URL . $url_component . '/' . $component . $params;
-        else return REAL_BASE_URL . $locale . '/' . $url_component . '/' . $component . $params;
+        $url_component= EnolaContext::getInstance()->getComponentUrl();
+        if($locale == NULL)return Enola\Http\En_HttpRequest::getInstance()->realBaseUrl . $url_component . '/' . $component . $params;
+        else return Enola\Http\En_HttpRequest::getInstance()->realBaseUrl . $locale . '/' . $url_component . '/' . $component . $params;
     }
     /**
      * Arma un url para ejecutar una accion de un componente
@@ -75,9 +75,9 @@
      */
     function urlComponentActionFor($component, $action, $params = "", $locale = NULL){
         $params= '/' . ltrim($params, '/');
-        $url_component= trim(URL_COMPONENT, '/');
-        if($locale == NULL)return REAL_BASE_URL . $url_component . '/' . $component . '/actionComponent/' . $action . $params;
-        else return REAL_BASE_URL . $locale . '/' . $url_component . '/' . $component . '/actionComponent/' . $action . $params;
+        $url_component= EnolaContext::getInstance()->getComponentUrl();
+        if($locale == NULL)return Enola\Http\En_HttpRequest::getInstance()->realBaseUrl . $url_component . '/' . $component . '/actionComponent/' . $action . $params;
+        else return Enola\Http\En_HttpRequest::getInstance()->realBaseUrl . $locale . '/' . $url_component . '/' . $component . '/actionComponent/' . $action . $params;
     }
     /**
      * Retorna el locale actual.
@@ -85,14 +85,14 @@
      * @return string
      */
     function locale(){
-        return LOCALE;
+        return Enola\Http\En_HttpRequest::getInstance()->locale;
     }    
     /**
      * Retorna el locale actual de la url
      * @return string
      */
     function locale_uri(){
-        return LOCALE_URI;
+        return Enola\Http\En_HttpRequest::getInstance()->localeUri;
     }
     /**
      * reemplaza $for por $replace en el string $string
@@ -119,7 +119,7 @@
      */
     function component($name, $params = NULL, $action = NULL){
         //Llama a la funcion que ejecuta el componente definido en el modulo Componente
-        return Enola\Component\execute_component($name, $params, $action);
+        return Enola\Component\executeComponent($name, $params, $action);
     }    
     /**
      * Carga un archivo de internacionalizacion. Si no se especifica el locale carga el archivo por defecto, si no le agrega el locale pasado

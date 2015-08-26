@@ -33,7 +33,7 @@ class Twig {
         $this->loader = new Twig_Loader_Filesystem(PATHAPP . $this->template_dir);
         //$this->loader = new Twig_Loader_Filesystem(realpath(dirname(__FILE__)) . '/' . $this->template_dir);
         
-	$this->con_environment= ENVIRONMENT;
+	$this->con_environment= EnolaContext::getInstance()->getEnvironment();
 		
         if($this->con_environment == 'production'){
             //Para produccion

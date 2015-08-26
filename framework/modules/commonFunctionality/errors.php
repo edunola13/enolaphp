@@ -90,7 +90,7 @@
        public static function error_404(){
            $head= '404 Pagina no Encontrada';
            $message= 'La pagina que solicitaste no existe';
-           Enola\Http\set_estado_header(404);
+           Http\UrlUri::setEstadoHeader(404);
            require_once PATHAPP . 'errors/error_404.php';
            exit;
        }    
@@ -104,7 +104,7 @@
         */
        public static function general_error($head, $message, $template = 'general_error', $code_error = 500){
            self::write_log($message, 'General Error');
-           Enola\Http\set_estado_header($code_error);
+           Http\UrlUri::setEstadoHeader($code_error);
            if(error_reporting()){
                require_once PATHAPP . 'errors/' . $template . '.php'; 
            }        

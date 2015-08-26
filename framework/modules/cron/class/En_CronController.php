@@ -17,7 +17,7 @@ class En_CronController extends Common\GenericLoader{
 
     function __construct(){
         parent::__construct('cron');
-        $this->viewFolder= PATHAPP . 'source/view/';
+        $this->viewFolder= $this->context->getPathApp() . 'source/view/';
     }
     
     /**

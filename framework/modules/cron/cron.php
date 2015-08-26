@@ -1,16 +1,24 @@
 <?php
-    namespace Enola\Cron;
-    use Enola\Error;
+namespace Enola\Cron;
+use Enola\Error;
 
-    /*
-     * Este modulo se encarga de cargar todas las clases necesarias para ejecutar Crons
-     */
-    //Interface y Clase base de la que deben extender todos los Cron
-    require 'class/En_CronController.php';
+/*
+ * Este modulo se encarga de cargar todas las clases necesarias para ejecutar Crons
+ */
+//Interface y Clase base de la que deben extender todos los Cron
+require 'class/En_CronController.php';
+
+class CronCore{
+    public $core;
+    
+    public function __construct($core) {
+        $this->core= $core;
+    }
+    
     /**
      * Ejecuta el cron indicado en el primer parametro pasado al cron
      */
-    function execute_cron_controller($params){
+    public function executeCronController($params){
         //Quito guiones iniciales
         $cronClass= ltrim($params[1], '-');
         $dir= PATHAPP . 'source/crons/' . $cronClass . '.php';
@@ -44,3 +52,4 @@
             Error::general_error('Cron Controller Error', 'The Cron Controller ' . $cronClass . ' dont exist');
         }
     }
+}

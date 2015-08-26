@@ -35,8 +35,8 @@ trait GenericBehavior {
     /**
      * Funcion que valida las variables de un objeto o de un array en base a una configuracion de validacion
      */
-    protected function validate($var, $lib= '\Enola\Lib\Validation'){
-        $validacion= new $lib(LOCALE_URI);
+    protected function validate($var, $lib= '\Enola\Lib\Validation', $locale = NULL){
+        $validacion= new $lib($locale);
         $reglas= $this->configValidation();
         if(is_object($var)){
             foreach ($reglas as $key => $regla) {

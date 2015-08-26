@@ -32,5 +32,8 @@
                 
     "libraries": {
         "validation": {"class": "Validation"}
+    },
+    
+    "composer": {
     }
 }

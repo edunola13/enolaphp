@@ -37,10 +37,11 @@ class En_DataBase extends Common\GenericLoader{
      * @return \PDO
      */
     protected function getConexion($nameDB = NULL){
+        $context= \EnolaContext::getInstance();
 	//Leo archivo de configuracion de BD si es la primera vez
         if(self::$config_db == NULL){            
-            if(defined('JSON_CONFIG_BD')){
-                $json_basededatos= file_get_contents(PATHAPP . CONFIGURATION . JSON_CONFIG_BD);
+            if($context->isDatabaseDefined()){
+                $json_basededatos= file_get_contents(PATHAPP . $context->ConfigurationFolder() . $context->getDatabaseConfiguration());
             }
             else {
                 general_error('Data Base', 'The configuration file of the Data Base is not especified', 'error_bd');
@@ -64,7 +65,7 @@ class En_DataBase extends Common\GenericLoader{
             //Abro la conexion                
             $gbd = new \PDO($dsn, $cbd['user'], $cbd['pass'], array(\PDO::ATTR_PERSISTENT => $cbd['persistent']));
             $gbd->exec("set names " . $cbd['charset']);
-            if(ENVIRONMENT == 'development'){
+            if($context->getEnvironment() == 'development'){
                 $gbd->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
             }else{
                 $gbd->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_SILENT);

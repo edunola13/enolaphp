@@ -3,11 +3,19 @@
      * Conjunto de funciones para cargar archivos del framewrok y de la aplicacion
      */
     /**
-     * Carga una libreria pasando una direccion
+     * Carga una libreria pasando una direccion desde librearies folder
      * @param string $dir
      */
     function import_librarie($dir){
         $dir= PATHAPP . 'libraries/' . $dir . '.php';
+        require_once $dir;
+    }
+    /**
+     * Cargo una libreria de composer pasando una direccion desde vendor folder
+     * @param string $dir
+     */
+    function import_librerie_composer($dir){
+        $dir= EnolaContext::getInstance()->getPathRoot() . 'vendor/' . $dir . '.php';
         require_once $dir;
     }
     /**
@@ -59,18 +67,17 @@
      * Es llamado por el Loader en su construccion para cargar las librerias correspondientes
      * Esta funcion supone que la libreria ya se encuentra importada
      */
-    function load_librarie_in_class($object, $type){
+    function load_libraries_in_class($object, $type){
         //Analiza las librerias que tienen seteado "load_in"
-        foreach ($GLOBALS['load_libraries_file'] as $name => $libreria) {
+        foreach (EnolaContext::getInstance()->getLoadLibraries() as $name => $libreria) {
             $types= explode(",", $libreria['load_in']);
             //Si la libreria contiene el tipo se carga
             if(in_array($type, $types)){
                 //Veo si tiene namespace y si tiene le agrego el mismo
-                $namespace= (isset($libreria['namespace']) ? $libreria['namespace'] : '');
-                if($namespace != '') $dir= "\\" . $namespace;
-                $dir .= "\\" . $libreria['class'];
-                $dir= explode("/", $dir);
+                $namespace= (isset($libreria['namespace']) ? $libreria['namespace'] : ''); 
+                $dir= explode("/", $libreria['class']);
                 $class= $dir[count($dir) - 1];
+                if($namespace != '') $class= "\\" . $namespace . "\\" . $class;
                 add_instance($class, $object, $name);
             }
         }
