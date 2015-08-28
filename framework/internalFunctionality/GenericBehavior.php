@@ -1,5 +1,6 @@
 <?php
-namespace Enola\Common;
+namespace Enola\CommonInternal;
+use Enola\Common;
 
 /**
  * Description of CommonClass
@@ -67,16 +68,18 @@ trait GenericBehavior {
      * Carga una vista PHP
      * @param type $view 
      */
-    protected function loadView($view, $params = NULL, $returnData = FALSE){
+    protected function loadView($view_template, $params = NULL, $returnData = FALSE){
         if($params != NULL && is_array($params)){
             foreach ($params as $key => $value) {
                 $$key= $value;
             }
         }
+        //Creo var view
+        $view= new Common\View();
         if($returnData){
             ob_start();            
         }
-        include $this->viewFolder . $view . '.php';
+        include $this->viewFolder . $view_template . '.php';
         if($returnData){
             $output = ob_get_contents();
             ob_end_clean();

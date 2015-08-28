@@ -104,7 +104,7 @@
         */
        public static function general_error($head, $message, $template = 'general_error', $code_error = 500){
            self::write_log($message, 'General Error');
-           Http\UrlUri::setEstadoHeader($code_error);
+           if(ENOLA_MODE == 'HTTP'){Http\UrlUri::setEstadoHeader($code_error);}
            if(error_reporting()){
                require_once PATHAPP . 'errors/' . $template . '.php'; 
            }        
@@ -160,7 +160,3 @@
            require_once PATHFRA . 'information/information.php';
        }
     }
-    
-    
-    
-    

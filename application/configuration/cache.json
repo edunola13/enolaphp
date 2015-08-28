@@ -1,0 +1,15 @@
+{
+    "defaultStore": "DataBase",
+    "prefix": "enolaphp",
+    "stores":{
+        "File":{
+            "driver": "file",
+            "folder": "cache"
+        },
+        "DataBase":{
+            "driver": "database",
+            "connection": "Local",
+            "table": "cache"
+        }
+    }
+}

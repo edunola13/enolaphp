@@ -14,7 +14,7 @@
      * Cargo una libreria de composer pasando una direccion desde vendor folder
      * @param string $dir
      */
-    function import_librerie_composer($dir){
+    function import_librarie_composer($dir){
         $dir= EnolaContext::getInstance()->getPathRoot() . 'vendor/' . $dir . '.php';
         require_once $dir;
     }

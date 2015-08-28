@@ -5,7 +5,7 @@
         "hostname": "localhost",
         "user": "ana",
         "pass": "ana",
-        "database": "appedunola",
+        "database": "enolaphp-tutorial",
         "driverbd": "mysql",
         "persistent": "FALSE",
         "charset": "utf8"

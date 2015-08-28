@@ -1,7 +1,6 @@
 <?php
 namespace Enola\Component;
 use Enola\Error;
-use Enola\Http;
     
 /**
  * Importa todo lo necesario para manejar los componentes
@@ -61,7 +60,7 @@ class ComponentCore{
             if(isset($components[$nombre])){
                 $comp= $components[$nombre];
                 if($comp['enabled-url'] == 'TRUE' || $comp['enabled-url'] == 'true'){
-                    execute_component($nombre, $params, $action);
+                    $this->executeComponent($nombre, $params, $action);
                 }
                 else{
                     echo "The component is disabled via URL";
@@ -87,8 +86,8 @@ class ComponentCore{
         $componente= NULL;
         if(isset($components[$nombre])){
             $comp= $components[$nombre];
-            $dir= Http\buildDir($comp, 'components');
-            $class= Http\buildClass($comp);
+            $dir= $this->buildDir($comp, 'components');
+            $class= $this->buildClass($comp);
             if(!class_exists($class)){
                 //Si la clase no existe intento cargarla
                 if(file_exists($dir)){
@@ -119,5 +118,23 @@ class ComponentCore{
         else{
             Error::general_error('Component Error', "The component $nombre dont exists");
         }
+    }
+    
+    function buildDir($definicion, $folder="controllers"){
+        $dir= "";
+        if(! isset($definicion['location'])){
+            $dir= $this->core->context->getPathApp() . 'source/' . $folder . '/' . $definicion['class'] . '.php';
+        }else{
+            $dir= $this->core->context->getPathRoot() . $definicion['location'] . '/' . $definicion['class'] . '.php';
+        }
+        return $dir;
+    }
+    function buildClass($definicion){
+        $namespace= (isset($definicion['namespace']) ? $definicion['namespace'] : '');
+        //Empiezo la carga del controlador
+        $dirExplode= explode("/", $definicion['class']);
+        $class= $dirExplode[count($dirExplode) - 1];
+        if($namespace != '') $class= "\\" . $namespace . "\\" . $class;
+        return $class;
     }
 }

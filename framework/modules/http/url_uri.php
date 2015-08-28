@@ -1,6 +1,6 @@
 <?php
 namespace Enola\Http;
-use Enola\Security;
+use Enola\Common\Security;
 use Enola;
 
 class UrlUri{
@@ -59,12 +59,8 @@ class UrlUri{
             $uri_locale= $uri_locale[0];
             
             //Consigo el resto de los posibles LOCALES
-            $locales= str_replace(" ", "", $context->getI18nLocales());
-            //Separo los LOCALE
-            $locales= explode(",", $locales);
-
             //Recorro todos los locale para ver si alguno coincide con la primer parte de la URL
-            foreach ($locales as $locale) {
+            foreach ($context->getI18nLocales() as $locale) {
                 //Cuando un locale coincide armo los datos correspondientes
                 if($uri_locale == $locale){
                     //Cambio el locale y el locale uri por el correspondiente

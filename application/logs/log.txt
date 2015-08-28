@@ -70,4 +70,60 @@
 ----------\n[2015-08-26 21:09:29.000000 127.0.0.1  - Error Fatal - Parse - Strict ] Class '' not found
 ----------\n[2015-08-26 21:09:36.000000 127.0.0.1  - General Error ] The controller  dont exists
 ----------\n[2015-08-26 21:09:36.000000 127.0.0.1  - Error Fatal - Parse - Strict ] Class '' not found
+----------\n[2015-08-27 15:58:15.000000 127.0.0.1  - Error Fatal - Parse - Strict ] Class 'Enola\Common\GenericLoader' not found
+----------\n[2015-08-27 15:58:45.000000 127.0.0.1  - Error Fatal - Parse - Strict ] Class 'Enola\Common\GenericLoader' not found
+----------\n[2015-08-27 16:02:19.000000 127.0.0.1  - Error Fatal - Parse - Strict ] Class 'Enola\Common\GenericLoader' not found
+----------\n[2015-08-27 16:02:50.000000 127.0.0.1  - Error Fatal - Parse - Strict ] Class 'View' not found
+----------\n[2015-08-27 16:04:33.000000 127.0.0.1  - Unknown ] Object of class Enola\Common\View could not be converted to string
+----------\n[2015-08-27 16:04:33.000000 127.0.0.1  - Unknown ] include(D:\xampp\htdocs\enolaphp\application/source/view/.php): failed to open stream: No such file or directory
+----------\n[2015-08-27 16:04:33.000000 127.0.0.1  - Unknown ] include(): Failed opening 'D:\xampp\htdocs\enolaphp\application/source/view/.php' for inclusion (include_path='.;D:\xampp\php\PEAR')
+----------\n[2015-08-27 16:04:36.000000 127.0.0.1  - Unknown ] Object of class Enola\Common\View could not be converted to string
+----------\n[2015-08-27 16:04:36.000000 127.0.0.1  - Unknown ] include(D:\xampp\htdocs\enolaphp\application/source/view/.php): failed to open stream: No such file or directory
+----------\n[2015-08-27 16:04:36.000000 127.0.0.1  - Unknown ] include(): Failed opening 'D:\xampp\htdocs\enolaphp\application/source/view/.php' for inclusion (include_path='.;D:\xampp\php\PEAR')
+----------\n[2015-08-28 17:12:18.000000 127.0.0.1  - Error Fatal - Parse - Strict ] Using $this when not in object context
+----------\n[2015-08-28 17:56:46.000000 127.0.0.1  - Error Fatal - Parse - Strict ] Call to a member function getLoadLibraries() on null
+----------\n[2015-08-28 20:54:33.000000 127.0.0.1  - Error Fatal - Parse - Strict ] syntax error, unexpected ')'
+----------\n[2015-08-28 20:55:29.000000 127.0.0.1  - Error Fatal - Parse - Strict ] syntax error, unexpected ')'
+----------\n[2015-08-28 20:55:40.000000 127.0.0.1  - Unknown ] Undefined property: EnolaContext::$core
+----------\n[2015-08-28 20:55:40.000000 127.0.0.1  - Unknown ] Trying to get property of non-object
+----------\n[2015-08-28 20:55:40.000000 127.0.0.1  - Unknown ] Trying to get property of non-object
+----------\n[2015-08-28 22:45:38.000000 127.0.0.1  - Unknown ] Undefined variable: context
+----------\n[2015-08-28 22:45:38.000000 127.0.0.1  - Error Fatal - Parse - Strict ] Call to a member function getConfigurationFolder() on null
+----------\n[2015-08-28 22:46:11.000000 127.0.0.1  - Unknown ] Trying to get property of non-object
+----------\n[2015-08-28 22:46:11.000000 127.0.0.1  - Unknown ] Trying to get property of non-object
+----------\n[2015-08-28 22:46:18.000000 127.0.0.1  - Unknown ] Trying to get property of non-object
+----------\n[2015-08-28 22:46:18.000000 127.0.0.1  - Unknown ] Trying to get property of non-object
+----------\n[2015-08-28 22:49:11.000000 127.0.0.1  - Unknown ] fopen(D:\xampp\htdocs\enolaphp\application/file/cache/ENOLAc893bad68927b457dbed39460e6afd62): failed to open stream: No such file or directory
+----------\n[2015-08-28 22:49:11.000000 127.0.0.1  - Error Fatal - Parse - Strict ] Uncaught exception 'Exception' with message 'Could not write to cache' in D:\xampp\htdocs\enolaphp\framework\userFunctionality\Cache.php:117
+Stack trace:
+#0 D:\xampp\htdocs\enolaphp\framework\userFunctionality\Cache.php(68): CacheFileSystem->store('prueba', 'asdasd', 0)
+#1 D:\xampp\htdocs\enolaphp\framework\core.php(126): Cache->store('prueba', 'asdasd')
+#2 D:\xampp\htdocs\enolaphp\framework\core.php(66): Enola\Application->loadCache()
+#3 D:\xampp\htdocs\enolaphp\framework\core.php(36): Enola\Application->request()
+#4 D:\xampp\htdocs\enolaphp\index.php(38): require('D:\\xampp\\htdocs...')
+#5 {main}
+  thrown
+----------\n[2015-08-28 22:50:50.000000 127.0.0.1  - Unknown ] Missing argument 1 for CacheFileSystem::delete(), called in D:\xampp\htdocs\enolaphp\framework\userFunctionality\Cache.php on line 71 and defined
+----------\n[2015-08-28 22:50:50.000000 127.0.0.1  - Unknown ] Undefined variable: key
+----------\n[2015-08-28 22:57:09.000000 127.0.0.1  - Unknown ] Invalid argument supplied for foreach()
+----------\n[2015-08-28 23:00:28.000000 127.0.0.1  - Error Fatal - Parse - Strict ] Uncaught exception 'PDOException' with message 'SQLSTATE[HY093]: Invalid parameter number: parameter was not defined' in D:\xampp\htdocs\enolaphp\framework\userFunctionality\En_DataBase.php:525
+Stack trace:
+#0 D:\xampp\htdocs\enolaphp\framework\userFunctionality\Cache.php(207): Enola\DB\En_DataBase->delete('cache')
+#1 D:\xampp\htdocs\enolaphp\framework\userFunctionality\Cache.php(71): CacheDataBase->delete('prueba')
+#2 D:\xampp\htdocs\enolaphp\framework\core.php(148): Cache->delete('prueba')
+#3 D:\xampp\htdocs\enolaphp\framework\core.php(68): Enola\Application->loadCache()
+#4 D:\xampp\htdocs\enolaphp\framework\core.php(36): Enola\Application->request()
+#5 D:\xampp\htdocs\enolaphp\index.php(38): require('D:\\xampp\\htdocs...')
+#6 {main}
+  thrown
+----------\n[2015-08-28 23:03:46.000000 127.0.0.1  - Error Fatal - Parse - Strict ] Uncaught exception 'PDOException' with message 'SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry 'ENOLAc893bad68927b457dbed39460e6afd62' for key 'PRIMARY'' in D:\xampp\htdocs\enolaphp\framework\userFunctionality\En_DataBase.php:453
+Stack trace:
+#0 D:\xampp\htdocs\enolaphp\framework\userFunctionality\Cache.php(201): Enola\DB\En_DataBase->insert('cache', Array)
+#1 D:\xampp\htdocs\enolaphp\framework\userFunctionality\Cache.php(68): CacheDataBase->store('prueba', 'asdasd', 0)
+#2 D:\xampp\htdocs\enolaphp\framework\core.php(147): Cache->store('prueba', 'asdasd')
+#3 D:\xampp\htdocs\enolaphp\framework\core.php(68): Enola\Application->loadCache()
+#4 D:\xampp\htdocs\enolaphp\framework\core.php(36): Enola\Application->request()
+#5 D:\xampp\htdocs\enolaphp\index.php(38): require('D:\\xampp\\htdocs...')
+#6 {main}
+  thrown
 ----------\n

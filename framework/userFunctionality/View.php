@@ -1,7 +1,26 @@
 <?php
-    /*
-     * Este modulo tiene funciones utiles para usar en la vista de la aplicacion
-     */       
+namespace Enola\Common;
+use EnolaContext;
+
+/*
+ * Este modulo tiene funciones utiles para usar en la vista de la aplicacion
+ */
+class View{
+    public $core;
+    public $context;
+    public $httpRequest;
+    //i18n
+    protected $locale;
+    protected $fileName;
+    protected $i18nContent;
+    
+    public function __construct() {
+        $this->context= EnolaContext::getInstance();
+        $this->core= $this->context->core;
+        if($this->core->httpCore != NULL){
+            $this->httpRequest= $this->core->httpCore->httpRequest;
+        }
+    }
     /**
      * Retorna la baseurl
      * @return string
@@ -14,14 +33,14 @@
      * @return string
      */
     function real_base(){
-        return Enola\Http\En_HttpRequest::getInstance()->realBaseUrl;
+        return $this->httpRequest->realBaseUrl;
     }    
     /**
      * Retorna la base url con el locale actual
      * @return string
      */
     function base_locale(){
-        return Enola\Http\En_HttpRequest::getInstance()->baseUrlLocale;
+        return $this->httpRequest->baseUrlLocale;
     }
     /**
      * Arma una url para un recurso
@@ -40,8 +59,8 @@
      */
     function urlFor($internalUri, $locale = NULL){
         $internalUri= ltrim($internalUri, '/');
-        if($locale == NULL)return Enola\Http\En_HttpRequest::getInstance()->realBaseUrl . $internalUri;
-        else return Enola\Http\En_HttpRequest::getInstance()->realBaseUrl . $locale . '/' . $internalUri;
+        if($locale == NULL)return $this->httpRequest->realBaseUrl . $internalUri;
+        else return $this->httpRequest->realBaseUrl . $locale . '/' . $internalUri;
     }
     /**
      * Arma una url internacionalizada para una URI interna
@@ -50,7 +69,7 @@
      */
     function urlLocaleFor($internalUri){
         $internalUri= ltrim($internalUri, '/');
-        return Enola\Http\En_HttpRequest::getInstance()->baseUrlLocale . $internalUri;
+        return $this->httpRequest->baseUrlLocale . $internalUri;
     }
     /**
      * Arma una url para acceder a un componente
@@ -61,9 +80,9 @@
      */
     function urlComponentFor($component, $params = "", $locale = NULL){
         $params= '/' . ltrim($params, '/');
-        $url_component= EnolaContext::getInstance()->getComponentUrl();
-        if($locale == NULL)return Enola\Http\En_HttpRequest::getInstance()->realBaseUrl . $url_component . '/' . $component . $params;
-        else return Enola\Http\En_HttpRequest::getInstance()->realBaseUrl . $locale . '/' . $url_component . '/' . $component . $params;
+        $url_component= $this->context->getComponentUrl();
+        if($locale == NULL)return $this->httpRequest->realBaseUrl . $url_component . '/' . $component . $params;
+        else return $this->httpRequest->realBaseUrl . $locale . '/' . $url_component . '/' . $component . $params;
     }
     /**
      * Arma un url para ejecutar una accion de un componente
@@ -75,9 +94,9 @@
      */
     function urlComponentActionFor($component, $action, $params = "", $locale = NULL){
         $params= '/' . ltrim($params, '/');
-        $url_component= EnolaContext::getInstance()->getComponentUrl();
-        if($locale == NULL)return Enola\Http\En_HttpRequest::getInstance()->realBaseUrl . $url_component . '/' . $component . '/actionComponent/' . $action . $params;
-        else return Enola\Http\En_HttpRequest::getInstance()->realBaseUrl . $locale . '/' . $url_component . '/' . $component . '/actionComponent/' . $action . $params;
+        $url_component= $this->context->getComponentUrl();
+        if($locale == NULL)return $this->httpRequest->realBaseUrl . $url_component . '/' . $component . '/actionComponent/' . $action . $params;
+        else return $this->httpRequest->realBaseUrl . $locale . '/' . $url_component . '/' . $component . '/actionComponent/' . $action . $params;
     }
     /**
      * Retorna el locale actual.
@@ -85,14 +104,14 @@
      * @return string
      */
     function locale(){
-        return Enola\Http\En_HttpRequest::getInstance()->locale;
+        return $this->httpRequest->locale;
     }    
     /**
      * Retorna el locale actual de la url
      * @return string
      */
     function locale_uri(){
-        return Enola\Http\En_HttpRequest::getInstance()->localeUri;
+        return $this->httpRequest->localeUri;
     }
     /**
      * reemplaza $for por $replace en el string $string
@@ -119,37 +138,36 @@
      */
     function component($name, $params = NULL, $action = NULL){
         //Llama a la funcion que ejecuta el componente definido en el modulo Componente
-        return Enola\Component\executeComponent($name, $params, $action);
+        return $this->core->componentCore->executeComponent($name, $params, $action);
     }    
     /**
      * Carga un archivo de internacionalizacion. Si no se especifica el locale carga el archivo por defecto, si no le agrega el locale pasado
-     * @param type $archivo
+     * @param type $file
      * @param type $locale
      */
     function i18n($file, $locale = NULL){
-        $archivo_cargado= NULL;
+        $this->fileName= $file;
+        $this->i18nContent= NULL;
         if($locale != NULL){
             if(file_exists(PATHAPP . 'source/content/' . $file . "_$locale" . '.txt')){
-                $archivo_cargado= load_application_file('source/content/' . $file . "_$locale" . '.txt');
-                $archivo_cargado= parse_properties($archivo_cargado);
-                $GLOBALS['i18n_locale']= $locale;
+                $this->i18nContent= load_application_file('source/content/' . $file . "_$locale" . '.txt');
+                $this->i18nContent= $this->parse_properties($this->i18nContent);
+                $this->locale= $locale;
             }
         }
-        if($archivo_cargado == NULL){
-            $archivo_cargado= load_application_file('source/content/' . $file . '.txt');
-            $archivo_cargado= parse_properties($archivo_cargado);
-            $GLOBALS['i18n_locale']= 'Default';
+        if($this->i18nContent == NULL){
+            $this->i18nContent= load_application_file('source/content/' . $file . '.txt');
+            $this->i18nContent= $this->parse_properties($this->i18nContent);
+            $this->locale= 'Default';
         }
-        $GLOBALS['i18n_language_file']= $archivo_cargado;
-        $GLOBALS['i18n_file']= $file;
     }    
     /**
      * Cambia el archivo de internacionalizacion cargado. Lo cambia segun el locale pasado
      * @param type $locale
      */
     function i18n_change_locale($locale){
-        if(isset($GLOBALS['i18n_file'])){
-            i18n($GLOBALS['i18n_file'], $locale);
+        if(isset($this->fileName)){
+            i18n($this->fileName, $locale);
         }
         else{
             general_error('I18n Error', 'Before call i18n_change_locale is necesary call i18n');
@@ -161,9 +179,9 @@
      * @return type
      */
     function i18n_value($val_key, $params = NULL){
-        if(isset($GLOBALS['i18n_language_file'])){
-            if(isset($GLOBALS['i18n_language_file'][$val_key])){
-                $mensaje= $GLOBALS['i18n_language_file'][$val_key];
+        if(isset($this->i18nContent)){
+            if(isset($this->i18nContent[$val_key])){
+                $mensaje= $this->i18nContent[$val_key];
                 
                 //Analiza si se pasaron parametros y si se pasaron cambia los valores correspondientes
                 if($params != NULL){
@@ -182,10 +200,9 @@
      * Retorna el locale configurado para el contenido internacionalizado
      */
     function i18n_locale(){
-        if(isset($GLOBALS['i18n_locale'])){
-            return $GLOBALS['i18n_locale'];
-        }
-        else{
+        if(isset($this->locale)){
+            return $this->locale;
+        }else{
             return 'Default';
         }
     }    
@@ -221,3 +238,4 @@
         }
         return $result;
    }
+}

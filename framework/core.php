@@ -2,17 +2,44 @@
 namespace Enola;
 use Enola\Error;
 
+require 'internalFunctionality/EnolaContext.php';
+
+$context= new \EnolaContext($path_root, $path_framework, $path_application); 
+
+//Seteo la codificacion de caracteres, casi siempre es o debe ser UTF-8
+ini_set('default_charset', $context->getCharset());
+//Seteo Default Zoine si no esta seteada
+if(! ini_get('date.timezone')){
+    date_default_timezone_set('GMT');
+}
+/*
+ * Algunas constantes - La idea es ir sacandolas
+ */
+// BASE_URL: Base url de la aplicacion - definida por el usuario en el archivo de configuracion 
+define('BASEURL', $context->getBaseUrl());
+//PATHFRA: direccion de la carpeta del framework - definida en index.php
+define('PATHFRA', $context->getPathFra());    
+//PATHAPP: direccion de la carpeta de la aplicacion - definida en index.php
+define('PATHAPP', $context->getPathApp());
+//ENOLA_MODE: Indica si la aplicacion se esta ejecutando via HTTP o CLI
+if(PHP_SAPI == 'cli' || !isset($_SERVER['REQUEST_METHOD'])){
+    define('ENOLA_MODE', 'CLI');
+}else{
+    define('ENOLA_MODE', 'HTTP');
+}
+
 /*
  * Empieza a trabajar el core del Framework
- * Futuro: Instanciar una solo vez la clase, luego sacarla de cache
  */
-$core= new Core($path_root, $path_framework, $path_application);
+$app= new Application($context);
 //Ejecuto el requerimiento
-$core->request();
-    
-class Core{
+$app->request();
+
+class Application{
     //Global    
     public $context;
+    public $cache;
+    private $prefixApp= 'APPLICATION';
     //Request
     public $httpCore;
     public $componentCore;
@@ -22,17 +49,9 @@ class Core{
     //Performance
     public $performance;
     
-    public function __construct($path_root, $path_framework, $path_application) {
-        $this->init($path_root, $path_framework, $path_application);
-    }
-    
-    /**
-     * Realiza la carga inicial
-     * Futuro: La idea es que esta clase solo ejecute el metodo init una vez y lueg la saque de cache
-     */
-    protected function init($path_root, $path_framework, $path_application){
-        //Creo la configuracion
-        $this->createContext($path_root, $path_framework, $path_application);
+    public function __construct($context) {
+        $this->context= $context;
+        $this->context->core= $this;
     }
     
     /**
@@ -40,12 +59,13 @@ class Core{
      */
     public function request(){
         //Inicializo el caluclo de la performance, si corresponde
-        $this->initPerformance();
-        
+        $this->initPerformance();        
         //Realizo la carga de modulos requeridos
-        $this->requiredModules();
+        $this->requiredModules();        
         //Cargo las librerias
         $this->loadLibraries();
+        //Cargo el modulo Cache
+        $this->loadCache();
         //Cargo el modulo Component
         $this->loadComponentModule();
         if(ENOLA_MODE == 'HTTP'){
@@ -56,53 +76,25 @@ class Core{
         $this->loadUserConfig();
         //Analizo si estoy en modo HTTP o CLI
         if(ENOLA_MODE == 'HTTP'){
-            //Analizo la ejecucion de componente via URL
-            if($this->componentCore != NULL){
-                $this->executeComponentByUrl();
+            //Analizo la ejecucion de componente via URL - Veo si hay componentes y si alguno mapea
+            if($this->componentCore != NULL && $this->componentCore->mapsComponents($this->httpCore->httpRequest)){
+                //Ejecuto el componente via URL
+                $this->componentCore->executeUrlComponent($this->httpCore->httpRequest);
+            }else{
+                //Filters before controller
+                $this->filter($this->context->getFiltersBeforeDefinition());
+                //Consigo el primer controlador que mapea y lo ejecuto
+                $this->actualController();
+                $this->httpCore->executeController($this->actualController);
+                //Filters after controller
+                $this->filter($this->context->getFiltersAfterDefinition());
             }
-            //Filters before controller
-            $this->filter($this->context->getFiltersBeforeDefinition());
-            //Consigo el primer controlador que mapea y lo ejecuto
-            $this->actualController();
-            $this->httpCore->executeController($this->actualController);
-            //Filters after controller
-            $this->filter($this->context->getFiltersAfterDefinition());
         }else{
             //Cargo el modulo cron y ejecuto el cron correspondiente
             $this->executeCron();
-        }
-        
+        }        
         //Termino e imprimo el calculo de la performance, si corresponde
         $this->finishPerformance();
-    }
-
-    /**
-     * Lee la configuracion
-     */
-    protected function createContext($path_root, $path_framework, $path_application){
-        require 'modules/commonFunctionality/class/EnolaContext.php';
-        $this->context= new \EnolaContext($path_root, $path_framework, $path_application);
-        //Seteo la codificacion de caracteres, casi siempre es o debe ser UTF-8
-        ini_set('default_charset', $this->context->getCharset());
-        //Seteo Default Zoine si no esta seteada
-        if(! ini_get('date.timezone')){
-            date_default_timezone_set('GMT');
-        }
-        /*
-         * Algunas constantes - La idea es ir sacandolas
-         */
-        // BASE_URL: Base url de la aplicacion - definida por el usuario en el archivo de configuracion 
-        define('BASEURL', $this->context->getBaseUrl());
-        //PATHFRA: direccion de la carpeta del framework - definida en index.php
-        define('PATHFRA', $this->context->getPathFra());    
-        //PATHAPP: direccion de la carpeta de la aplicacion - definida en index.php
-        define('PATHAPP', $this->context->getPathApp());
-        //ENOLA_MODE: Indica si la aplicacion se esta ejecutando via HTTP o CLI
-        if(PHP_SAPI == 'cli' || !isset($_SERVER['REQUEST_METHOD'])){
-            define('ENOLA_MODE', 'CLI');
-        }else{
-            define('ENOLA_MODE', 'HTTP');
-        }
     }
     
     /**
@@ -110,21 +102,19 @@ class Core{
      */ 
     protected function requiredModules(){           
         //Carga del modulo errores - se definen manejadores de errores
-        require $this->context->getPathFra() . 'modules/commonFunctionality/errors.php';    
+        require $this->context->getPathFra() . 'internalFunctionality/Errors.php';    
         //Carga de modulo para carga de archivos
-        require $this->context->getPathFra() . 'modules/commonFunctionality/load_files.php';
+        require $this->context->getPathFra() . 'internalFunctionality/load_files.php';
         //Carga de modulo con funciones para la vista
-        require $this->context->getPathFra() . 'modules/commonFunctionality/view.php';
+        require $this->context->getPathFra() . 'userFunctionality/View.php';
         //Carga de modulo de seguridad
-        require $this->context->getPathFra() . 'modules/commonFunctionality/security.php';
-        //Carga de modulo URL-URI
-        require $this->context->getPathFra() . 'modules/http/url_uri.php';
+        require $this->context->getPathFra() . 'userFunctionality/Security.php';        
         //Carga Clase Base Loader
-        require $this->context->getPathFra() . 'modules/commonFunctionality/class/GenericLoader.php';
+        require $this->context->getPathFra() . 'internalFunctionality/GenericLoader.php';
         //Carga Trait de funciones Comunes
-        require $this->context->getPathFra() . 'modules/commonFunctionality/class/GenericBehavior.php'; 
+        require $this->context->getPathFra() . 'internalFunctionality/GenericBehavior.php'; 
         //Carga Clase En_DataBase - Si se definio configuracion para la misma
-        if($this->context->isDatabaseDefined())require $this->context->getPathFra() . 'modules/commonFunctionality/class/En_DataBase.php';
+        if($this->context->isDatabaseDefined())require $this->context->getPathFra() . 'userFunctionality/En_DataBase.php';
     }
       
     /*
@@ -148,12 +138,39 @@ class Core{
         $this->context->setLoadLibraries($load_libraries);
     }
     
+    /**
+     * Cargo el modulo cache y creo una instancia de la cache correspondiente
+     */
+    private function loadCache(){
+        require $this->context->getPathFra() . 'userFunctionality/Cache.php';
+        $this->cache= new \Cache();
+        /*
+         * 
+         * 
+         * 
+         * 
+         * 
+         * 
+         * SEGUIR
+         * 
+         * VER PORQUE PdoException no puede atrapar, ver que onda eso, tal vez el error q tira es Exception seco
+         * 
+         * 
+         * 
+         * 
+         * 
+         * 
+         */
+        //$this->cache->store("prueba", 'asdasd');
+        echo $this->cache->get("prueba");
+    }
+    
     protected function loadComponentModule(){
         //Analizo la carga del modulo component segun si hay o no definiciones
         if(count($this->context->getComponentsDefinition())){            
             //Cargo el modulo componente e instancia el Core
             require $this->context->getPathFra() . 'modules/component/component.php';
-            $this->componentCore= new Component\ComponentCore();
+            $this->componentCore= new Component\ComponentCore($this);
         }
     }
     
@@ -174,15 +191,6 @@ class Core{
         require $this->context->getPathApp() . 'load_user_config.php';    
     }
     
-    protected function executeComponentByUrl(){
-        //Analiza si se ejecuta un componente via URL
-        if(ENOLA_MODE == 'HTTP' && $this->componentCore->mapsComponents($this->httpCore->httpRequest)){
-            $this->componentCore->executeUrlComponent($this->httpCore->httpRequest);
-            //Termina la ejecucion
-            exit;
-        }
-    }
-    
     protected function actualController(){
         /*
          * Lee los controladores. En caso de que no haya controladores avisa del error
@@ -193,7 +201,7 @@ class Core{
             $this->actualController= $this->httpCore->mappingController($this->context->getControllersDefinition());
         }
         else{
-            general_error('Controller Error', 'There isent define any controller');
+            Error::general_error('Controller Error', 'There isent define any controller');
         }
     }
     
@@ -208,19 +216,22 @@ class Core{
     }
     
     protected function executeCron(){
+        //Consigo las variables globales para linea de comandos
+        global $argv, $argc;
         //Analizo si se pasa por lo menos un parametros (nombre cron), el primer parametros es el nombre del archivo y el segundo en nombre de la clase
         //pregunta por >= 2
         if($argc >= 2){
             require $this->context->getPathFra() . 'modules/cron/cron.php';
+            $this->cronCore= new Cron\CronCore($this);
             $this->cronCore->executeCronController($argv);
         }else{
-            general_error('Cron Controller', 'There isent define any cron controller name');
+            Error::general_error('Cron Controller', 'There isent define any cron controller name');
         }    
     }
 
     protected function initPerformance(){
         //Carga la clase Rendimiento
-        require $this->context->getPathFra() . 'modules/commonFunctionality/class/Performance.php';
+        require $this->context->getPathFra() . 'userFunctionality/Performance.php';
         //Analiza si calcula el tiempo que tarda la aplicacion en ejecutarse
         $this->performance= NULL;
         if($this->context->CalculatePerformance()){
@@ -241,5 +252,30 @@ class Core{
             //Muestra la informacion al usuario
             Error::display_information($titulo, $mensaje);
         }
+    }
+    
+    /**
+     * Devuelve un atributo en cache a nivel aplicacion. Si no existe devuelve NULL.
+     * @param type $key
+     * @return data
+     */
+    public function getAttribute($key){
+        return $this->cache->get($this->prefixApp . $key);
+    }
+    /**
+     * Guarda un atributo en cache a nivel aplicacion. Por tiempo indefinido.
+     * @param type $key
+     * @param type $value
+     */
+    public function setAttribute($key, $value){
+        return $this->cache->store($key, $value);
+    }
+    /**
+     * Eliminar un atributo en cache a nivel aplicacion.
+     * @param type $key
+     * @return type
+     */
+    public function deleteAttribute($key){
+        return $this->cache->delete($this->prefixApp . $key);
     }
 }

@@ -1,13 +1,13 @@
 <?php
 namespace Enola\Http;
-use Enola\Common;
+use Enola\CommonInternal;
 
 /**
  * Clase de la que deben extender los controladores de la aplicacion para que se asegure el funcioneamiento del mismo
  * @author Enola
  */
-class En_Controller extends Common\GenericLoader implements Controller{
-    use Common\GenericBehavior;
+class En_Controller extends CommonInternal\GenericLoader implements Controller{
+    use CommonInternal\GenericBehavior;
     
     protected $request;
     protected $uriParams;
@@ -91,12 +91,12 @@ class En_Controller extends Common\GenericLoader implements Controller{
      */
     protected function fordward($uri, $filtrar = FALSE){
         if($filtrar){
-            executeFilters($this->context->getFiltersBeforeDefinition, $uri);
+            $this->context->httpCore->executeFilters($this->context->getFiltersBeforeDefinition, $uri);
         }
-        $con= mappingController($this->context->getControllersDefinition, $uri);
-        executeController($con, $uri);
+        $con= $this->context->httpCore->mappingController($this->context->getControllersDefinition, $uri);
+        $this->context->httpCore->executeController($con, $uri);
         if($filtrar){
-            executeFilters($this->context->getFiltersAfterDefinition, $uri);
+            $this->context->httpCore->executeFilters($this->context->getFiltersAfterDefinition, $uri);
         }
     }
 }

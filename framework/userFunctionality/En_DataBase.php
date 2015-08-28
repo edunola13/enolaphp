@@ -1,15 +1,15 @@
 <?php
 namespace Enola\DB;
-use Enola\Common;
+use Enola\CommonInternal;
 
 /**
  * Clase que se encarga de la configuracion de la BD.
  * Para utilizar la configuracion del Framework es necesario que las clases extiendan de esta clase
  * @author Enola
  */
-class En_DataBase extends Common\GenericLoader{
+class En_DataBase extends CommonInternal\GenericLoader{
     protected static $config_db;
-    public $conexion;
+    public $connection;
     protected $currentDB;
     protected $currentConfiguration;
     
@@ -30,18 +30,18 @@ class En_DataBase extends Common\GenericLoader{
      */
     function __construct($conect = TRUE, $nameDB = NULL) {
         parent::__construct('db');
-	if($conect)$this->conexion= $this->getConexion($nameDB);
+	if($conect)$this->connection= $this->getConnection($nameDB);
     }
     /**
      * Abre una conexion en base a la configuracion de la BD
      * @return \PDO
      */
-    protected function getConexion($nameDB = NULL){
+    protected function getConnection($nameDB = NULL){
         $context= \EnolaContext::getInstance();
 	//Leo archivo de configuracion de BD si es la primera vez
         if(self::$config_db == NULL){            
             if($context->isDatabaseDefined()){
-                $json_basededatos= file_get_contents(PATHAPP . $context->ConfigurationFolder() . $context->getDatabaseConfiguration());
+                $json_basededatos= file_get_contents(PATHAPP . $context->getConfigurationFolder() . $context->getDatabaseConfiguration());
             }
             else {
                 general_error('Data Base', 'The configuration file of the Data Base is not especified', 'error_bd');
@@ -97,7 +97,7 @@ class En_DataBase extends Common\GenericLoader{
     }
     /** Almacena los errores */
     protected function catchError($error){
-        if($this->conexion->inTransaction()){
+        if($this->connection->inTransaction()){
             $this->errorTran[]= $error;
             $this->stateTran= FALSE;
         }
@@ -106,25 +106,25 @@ class En_DataBase extends Common\GenericLoader{
     }
     
     /** Cierra la conexion */
-    public function closeConexion(){
-        $this->conexion= NULL;
+    public function closeConnection(){
+        $this->connection= NULL;
     }
     /** Cambia la conexion actual */
-    public function changeConexion($nameDB = NULL){
-        $this->conexion= $this->getConexion($nameDB);
+    public function changeConnection($nameDB = NULL){
+        $this->connection= $this->getConnection($nameDB);
     }
     /** Comienza una Transaccion */
     public function beginTransaction(){
         $this->stateTran= TRUE;
         $this->errorTran= array();
-        $this->conexion->beginTransaction();
+        $this->connection->beginTransaction();
     }
     /** Finaliza una Transaccion - Si fue todo bien realiza commit, en caso contrario rolllBack */
     public function finishTransaction(){
         if($this->stateTran){
-            $this->conexion->commit();
+            $this->connection->commit();
         }else{
-            $this->conexion->rollBack();
+            $this->connection->rollBack();
         }
     }
     
@@ -317,7 +317,7 @@ class En_DataBase extends Common\GenericLoader{
             $sql.= $this->order;
             $sql.= $this->limit;
             
-            $consulta= $this->conexion->prepare($sql);        
+            $consulta= $this->connection->prepare($sql);        
             foreach ($this->where_values as $key => $value){
                 if($value === FALSE){
                     $consulta->bindValue($key, 0);
@@ -374,7 +374,7 @@ class En_DataBase extends Common\GenericLoader{
                 if($offset != NULL)$sql.= ' OFFSET ' . $offset;
             }
             
-            $consulta= $this->conexion->prepare($sql);        
+            $consulta= $this->connection->prepare($sql);        
             foreach ($where_values as $key => $value){
                 if($value === FALSE){
                     $consulta->bindValue($key, 0);
@@ -432,7 +432,7 @@ class En_DataBase extends Common\GenericLoader{
             $sql = trim($sql, ',');
             $value = trim($value, ',');
             $sql .= ') ' . $value . ')';
-            $consulta= $this->conexion->prepare($sql);
+            $consulta= $this->connection->prepare($sql);
             foreach ($values as $key => $value) {
                 if($value === FALSE){
                     $consulta->bindValue($key, 0);
@@ -470,7 +470,7 @@ class En_DataBase extends Common\GenericLoader{
             $sql = trim($sql, ',');
             if($this->where != '')$sql.= " WHERE " . $this->where; 
 
-            $consulta= $this->conexion->prepare($sql);
+            $consulta= $this->connection->prepare($sql);
             $values= array_merge($values, $this->where_values);
             foreach ($values as $key => $value){
                 if($value === FALSE){
@@ -505,7 +505,7 @@ class En_DataBase extends Common\GenericLoader{
             $sql= 'DELETE FROM ' . $table . ' ';            
             if($this->where != '')$sql.= " WHERE " . $this->where; 
 
-            $consulta= $this->conexion->prepare($sql);
+            $consulta= $this->connection->prepare($sql);
             foreach ($this->where_values as $key => $value){
                 if($value === FALSE){
                     $consulta->bindValue($key, 0);
@@ -594,7 +594,7 @@ class En_DataBase extends Common\GenericLoader{
             $sql = trim($sql, ',');
             $values = trim($values, ',');
             $sql .= ') ' . $values . ')';
-            $consulta= $this->conexion->prepare($sql);
+            $consulta= $this->connection->prepare($sql);
             foreach ($vars as $key => $value) {
                 if($value === FALSE){
                     $consulta->bindValue($key, 0);
@@ -632,7 +632,7 @@ class En_DataBase extends Common\GenericLoader{
             if($where != ''){
                 $sql .= ' WHERE ' . $where;
             }
-            $consulta= $this->conexion->prepare($sql);
+            $consulta= $this->connection->prepare($sql);
             $vars = array_merge($vars, $where_values);
             foreach ($vars as $key => $value){
                 if($value === FALSE){

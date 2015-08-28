@@ -1,13 +1,13 @@
 <?php
 namespace Enola\Http;
-use Enola\Common;
+use Enola\CommonInternal;
 
 /**
  * Clase de la que deben extender los filtros de la aplicacion para funcionar correctamente
  * @author Enola
  */
-class En_Filter extends Common\GenericLoader implements Filter{
-    use Common\GenericBehavior;
+class En_Filter extends CommonInternal\GenericLoader implements Filter{
+    use CommonInternal\GenericBehavior;
     
     protected $request;
 

@@ -6,6 +6,8 @@ use Enola\Error;
  * Este modulo se encarga de cargar todas las clases necesarias para los requerimientos HTTP
  * Esto incluye los filtros , los controladores y todos los datos de los mismo.
  */
+//Carga de modulo URL-URI
+require 'url_uri.php';
 require 'class/Session.php';
 require 'class/En_HttpRequest.php';    
 //Interface y Clase base de la que deben extender todos los filtros
@@ -158,9 +160,9 @@ class HttpCore{
     function buildDir($definicion, $folder="controllers"){
         $dir= "";
         if(! isset($definicion['location'])){
-            $dir= PATHAPP . 'source/' . $folder . '/' . $definicion['class'] . '.php';
+            $dir= $this->core->context->getPathApp() . 'source/' . $folder . '/' . $definicion['class'] . '.php';
         }else{
-            $dir= ROOT_PATH . $definicion['location'] . '/' . $definicion['class'] . '.php';
+            $dir= $this->core->context->getPathRoot() . $definicion['location'] . '/' . $definicion['class'] . '.php';
         }
         return $dir;
     }
