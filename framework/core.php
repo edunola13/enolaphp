@@ -106,7 +106,7 @@ class Application{
         //Carga Clase Base Loader
         require $this->context->getPathFra() . 'internalFunctionality/GenericLoader.php';
         //Carga Trait de funciones Comunes
-        //require $this->context->getPathFra() . 'internalFunctionality/GenericBehavior.php'; 
+        require $this->context->getPathFra() . 'internalFunctionality/GenericBehavior.php'; 
         //Carga Clase En_DataBase - Si se definio configuracion para la misma
         if($this->context->isDatabaseDefined())require $this->context->getPathFra() . 'userFunctionality/En_DataBase.php';
     }
