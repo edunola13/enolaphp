@@ -51,7 +51,7 @@ class Application{
     
     public function __construct($context) {
         $this->context= $context;
-        $this->context->core= $this;
+        $this->context->app= $this;
     }
     
     /**
@@ -60,7 +60,7 @@ class Application{
     public function request(){
         //Inicializo el caluclo de la performance, si corresponde
         $this->initPerformance();        
-        //Realizo la carga de modulos requeridos
+        //Realizo la carga de modulos requeridos - Internal and Common Functionality
         $this->requiredModules();        
         //Cargo las librerias
         $this->loadLibraries();
@@ -81,13 +81,7 @@ class Application{
                 //Ejecuto el componente via URL
                 $this->componentCore->executeUrlComponent($this->httpCore->httpRequest);
             }else{
-                //Filters before controller
-                $this->filter($this->context->getFiltersBeforeDefinition());
-                //Consigo el primer controlador que mapea y lo ejecuto
-                $this->actualController();
-                $this->httpCore->executeController($this->actualController);
-                //Filters after controller
-                $this->filter($this->context->getFiltersAfterDefinition());
+                $this->httpCore->executeHttpRequest($this->actualController);
             }
         }else{
             //Cargo el modulo cron y ejecuto el cron correspondiente
@@ -112,7 +106,7 @@ class Application{
         //Carga Clase Base Loader
         require $this->context->getPathFra() . 'internalFunctionality/GenericLoader.php';
         //Carga Trait de funciones Comunes
-        require $this->context->getPathFra() . 'internalFunctionality/GenericBehavior.php'; 
+        //require $this->context->getPathFra() . 'internalFunctionality/GenericBehavior.php'; 
         //Carga Clase En_DataBase - Si se definio configuracion para la misma
         if($this->context->isDatabaseDefined())require $this->context->getPathFra() . 'userFunctionality/En_DataBase.php';
     }
@@ -144,25 +138,6 @@ class Application{
     private function loadCache(){
         require $this->context->getPathFra() . 'userFunctionality/Cache.php';
         $this->cache= new \Cache();
-        /*
-         * 
-         * 
-         * 
-         * 
-         * 
-         * 
-         * SEGUIR
-         * 
-         * VER PORQUE PdoException no puede atrapar, ver que onda eso, tal vez el error q tira es Exception seco
-         * 
-         * 
-         * 
-         * 
-         * 
-         * 
-         */
-        //$this->cache->store("prueba", 'asdasd');
-        echo $this->cache->get("prueba");
     }
     
     protected function loadComponentModule(){
@@ -192,10 +167,8 @@ class Application{
     }
     
     protected function actualController(){
-        /*
-         * Lee los controladores. En caso de que no haya controladores avisa del error
-         * Me quedo con el controlador que mapea
-         */
+        //Lee los controladores. En caso de que no haya controladores avisa del error
+        //Me quedo con el controlador que mapea
         $this->actualController= NULL;
         if(count($this->context->getControllersDefinition()) > 0){
             $this->actualController= $this->httpCore->mappingController($this->context->getControllersDefinition());
@@ -204,17 +177,7 @@ class Application{
             Error::general_error('Controller Error', 'There isent define any controller');
         }
     }
-    
-    protected function filter($filters){
-        /*
-         * Lee los filtros que se deben ejecutar antes del procesamiento y delega trabajo a archivo filtros.php
-         * En caso de que no haya filtros asignados no delega ningun trabajo
-         */
-        if(count($filters) > 0){
-            $this->httpCore->executeFilters($filters);
-        }
-    }
-    
+        
     protected function executeCron(){
         //Consigo las variables globales para linea de comandos
         global $argv, $argc;
@@ -268,7 +231,7 @@ class Application{
      * @param type $value
      */
     public function setAttribute($key, $value){
-        return $this->cache->store($key, $value);
+        return $this->cache->store($this->prefixApp . $key, $value);
     }
     /**
      * Eliminar un atributo en cache a nivel aplicacion.
