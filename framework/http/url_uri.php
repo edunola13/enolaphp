@@ -112,6 +112,8 @@ class UrlUri{
         //Saco de la uri actual o uriapp pasada como parametro los parametros
         $uri_explode= explode("?", En_HttpRequest::getInstance()->uriApp);
         if($uriapp !== NULL){
+            //Quito la barra si se agrego
+            $uriapp= ltrim($uriapp, "/");
             $uri_explode= explode("?", $uriapp);
         }
         $uri_front= $uri_explode[0];

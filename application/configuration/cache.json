@@ -1,5 +1,5 @@
 {
-    "defaultStore": "DataBase",
+    "defaultStore": "Apc",
     "prefix": "enolaphp",
     "stores":{
         "File":{
@@ -10,6 +10,21 @@
             "driver": "database",
             "connection": "Local",
             "table": "cache"
+        },
+        "Apc":{
+            "driver": "apc"
+        },
+        "Memcached":{
+            "driver": "memcached",
+            "servers":{
+                "server1":{"host": "localhost", "port": "11211", "weight": "0"}
+            }
+        },
+        "Redis":{
+            "driver": "redis",
+            "schema": "tcp",
+            "host": "localhost",
+            "port": "6379"
         }
     }
 }

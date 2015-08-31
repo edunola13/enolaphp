@@ -11,10 +11,10 @@ require 'class/Component.php';
 require 'class/En_Component.php';
 
 class ComponentCore{
-    public $core;
+    public $app;
     
-    public function __construct($core) {
-        $this->core= $core;
+    public function __construct($app) {
+        $this->app= $app;
     }
     
     /**
@@ -23,7 +23,7 @@ class ComponentCore{
      */
     public function mapsComponents($httpRequest){
         $partes_uri= explode("/", $httpRequest->uriApp);
-        if($partes_uri[0] == $this->core->context->getComponentUrl()){
+        if($partes_uri[0] == $this->app->context->getComponentUrl()){
             return TRUE; 
         }
         return FALSE;
@@ -55,7 +55,7 @@ class ComponentCore{
             }
         }
         if($nombre != ""){
-            $components= $this->core->context->getComponentsDefinition();
+            $components= $this->app->context->getComponentsDefinition();
             //Evalua si el componente existe y si se encuentra habilitado via URL
             if(isset($components[$nombre])){
                 $comp= $components[$nombre];
@@ -82,7 +82,7 @@ class ComponentCore{
      * @param type url
      */ 
     public function executeComponent($nombre, $parametros = NULL, $action = NULL){
-        $components= $this->core->context->getComponentsDefinition();
+        $components= $this->app->context->getComponentsDefinition();
         $componente= NULL;
         if(isset($components[$nombre])){
             $comp= $components[$nombre];
@@ -120,16 +120,16 @@ class ComponentCore{
         }
     }
     
-    function buildDir($definicion, $folder="controllers"){
+    protected function buildDir($definicion, $folder="controllers"){
         $dir= "";
         if(! isset($definicion['location'])){
-            $dir= $this->core->context->getPathApp() . 'source/' . $folder . '/' . $definicion['class'] . '.php';
+            $dir= $this->app->context->getPathApp() . 'source/' . $folder . '/' . $definicion['class'] . '.php';
         }else{
-            $dir= $this->core->context->getPathRoot() . $definicion['location'] . '/' . $definicion['class'] . '.php';
+            $dir= $this->app->context->getPathRoot() . $definicion['location'] . '/' . $definicion['class'] . '.php';
         }
         return $dir;
     }
-    function buildClass($definicion){
+    protected function buildClass($definicion){
         $namespace= (isset($definicion['namespace']) ? $definicion['namespace'] : '');
         //Empiezo la carga del controlador
         $dirExplode= explode("/", $definicion['class']);

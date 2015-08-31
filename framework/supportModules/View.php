@@ -6,7 +6,7 @@ use EnolaContext;
  * Este modulo tiene funciones utiles para usar en la vista de la aplicacion
  */
 class View{
-    public $core;
+    public $app;
     public $context;
     public $httpRequest;
     //i18n
@@ -16,9 +16,9 @@ class View{
     
     public function __construct() {
         $this->context= EnolaContext::getInstance();
-        $this->core= $this->context->core;
-        if($this->core->httpCore != NULL){
-            $this->httpRequest= $this->core->httpCore->httpRequest;
+        $this->app= $this->context->app;
+        if($this->app->httpCore != NULL){
+            $this->httpRequest= $this->app->httpCore->httpRequest;
         }
     }
     /**
@@ -138,7 +138,7 @@ class View{
      */
     function component($name, $params = NULL, $action = NULL){
         //Llama a la funcion que ejecuta el componente definido en el modulo Componente
-        return $this->core->componentCore->executeComponent($name, $params, $action);
+        return $this->app->componentCore->executeComponent($name, $params, $action);
     }    
     /**
      * Carga un archivo de internacionalizacion. Si no se especifica el locale carga el archivo por defecto, si no le agrega el locale pasado

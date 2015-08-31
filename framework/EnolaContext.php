@@ -6,7 +6,7 @@
  */
 class EnolaContext {
     private static $instance;
-    public $core;
+    public $app;
     
     private $pathRoot;
     private $pathFra;
@@ -39,13 +39,6 @@ class EnolaContext {
         //Guardo la instancia para qienes quieran consultar desde cualqueir ubicacion
         self::$instance= $this;
     }
-    
-//    public static function create($path_root, $path_framework, $path_application){
-//        if(self::$instance == NULL){
-//            self::$instance= new EnolaContext($path_root, $path_framework, $path_application);
-//        }
-//        return self::$instance;
-//    }
     
     public static function getInstance(){
         return self::$instance;

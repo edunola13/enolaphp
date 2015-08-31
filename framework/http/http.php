@@ -18,24 +18,58 @@ require 'class/Controller.php';
 require 'class/En_Controller.php';
     
 class HttpCore{
-    public $core;
+    public $app;
     public $httpRequest;
     
-    public function __construct($core) {
+    public function __construct($app) {
         //Defino la aplicacion URI y otros valores
-        $config= UrlUri::defineApplicationUri($core->context);
+        $config= UrlUri::defineApplicationUri($app->context);
         //Creo el Http request
         $this->httpRequest= new En_HttpRequest($config);
-        $this->core= $core;
+        $this->app= $app;
     }
-    /*
-     * Seccion de Filtros
+    /**
+     * Encuentra el controlador que mapea
+     * @param type $controladores
+     * @return type 
      */
+    public function mappingController($uriapp = NULL){
+        $controladores= $this->app->context->getControllersDefinition();
+        $mapea= FALSE;
+        //Recorre todos los controladores hasta que uno coincida con la URI actual
+        foreach ($controladores as $controlador_esp) {            
+            //Analiza si el controlador mapea con la uri actual
+            $mapea= UrlUri::mapsActualUrl($controlador_esp['url'], $uriapp);
+            if($mapea){
+                return $controlador_esp;
+            }
+        }
+        //si ningun controlador mapeo avisa el problema
+        if(! $mapea){
+            Error::error_404();
+        }
+    }
+    public function executeHttpRequest($actualController = NULL, $uriapp = NULL, $filter = TRUE){
+        //Si no se paso controlador, se busca el correspondiente
+        if($actualController == NULL){
+            $actualController= $this->mappingController($uriapp);
+        }
+        //Ejecuto los filtros pre-procesamiento
+        if($filter){
+            $this->executeFilters($this->app->context->getFiltersBeforeDefinition());
+        }
+        //Ejecuto el controlador
+        $this->executeController($actualController, $uriapp);
+        //Ejecuto los filtros post-procesamiento
+        if($filter){
+            $this->executeFilters($this->app->context->getFiltersAfterDefinition());
+        }
+    }
     /**
      * Analiza los filtros correspondientes y ejecuta los que correspondan
      * @param array[array] $filtros
      */
-    public function executeFilters($filtros, $uriapp = NULL){
+    protected function executeFilters($filtros, $uriapp = NULL){
         //Analizo los filtros y los aplico en caso de que corresponda
         foreach ($filtros as $filtro_esp) {
             $filtrar= UrlUri::mapsActualUrl($filtro_esp['filtered'], $uriapp);
@@ -62,35 +96,12 @@ class HttpCore{
                 }
             }
         }
-    }    
-    /**
-     * Seccion controladores
-     */
-    /**
-     * Encuentra el controlador que mapea
-     * @param type $controladores
-     * @return type 
-     */
-    public function mappingController($controladores, $uriapp = NULL){
-        $mapea= FALSE;
-        //Recorre todos los controladores hasta que uno coincida con la URI actual
-        foreach ($controladores as $controlador_esp) {            
-            //Analiza si el controlador mapea con la uri actual
-            $mapea= UrlUri::mapsActualUrl($controlador_esp['url'], $uriapp);
-            if($mapea){
-                return $controlador_esp;
-            }
-        }
-        //si ningun controlador mapeo avisa el problema
-        if(! $mapea){
-            Error::error_404();
-        }
     }
     /**
      * Ejecuta el controlador que mapeo anteriormente
      * @param type $controlador_esp 
      */
-    public function executeController($controlador_esp, $uriapp = NULL){
+    protected function executeController($controlador_esp, $uriapp = NULL){
         $dir= $this->buildDir($controlador_esp);
         $class= $this->buildClass($controlador_esp);
         if(!class_exists($class)){
@@ -157,16 +168,16 @@ class HttpCore{
         }
     }
     
-    function buildDir($definicion, $folder="controllers"){
+    protected function buildDir($definicion, $folder="controllers"){
         $dir= "";
         if(! isset($definicion['location'])){
-            $dir= $this->core->context->getPathApp() . 'source/' . $folder . '/' . $definicion['class'] . '.php';
+            $dir= $this->app->context->getPathApp() . 'source/' . $folder . '/' . $definicion['class'] . '.php';
         }else{
-            $dir= $this->core->context->getPathRoot() . $definicion['location'] . '/' . $definicion['class'] . '.php';
+            $dir= $this->app->context->getPathRoot() . $definicion['location'] . '/' . $definicion['class'] . '.php';
         }
         return $dir;
     }
-    function buildClass($definicion){
+    protected function buildClass($definicion){
         $namespace= (isset($definicion['namespace']) ? $definicion['namespace'] : '');
         //Empiezo la carga del controlador
         $dirExplode= explode("/", $definicion['class']);

@@ -89,14 +89,7 @@ class En_Controller extends CommonInternal\GenericLoader implements Controller{
      * @param type $uri
      * @param Bool $filtrar= FALSE. Indica si filtra
      */
-    protected function fordward($uri, $filtrar = FALSE){
-        if($filtrar){
-            $this->context->httpCore->executeFilters($this->context->getFiltersBeforeDefinition, $uri);
-        }
-        $con= $this->context->httpCore->mappingController($this->context->getControllersDefinition, $uri);
-        $this->context->httpCore->executeController($con, $uri);
-        if($filtrar){
-            $this->context->httpCore->executeFilters($this->context->getFiltersAfterDefinition, $uri);
-        }
+    protected function fordward($uri, $filter = FALSE){
+        $this->context->app->httpCore->executeHttpRequest(NULL, $uri, $filter);
     }
 }

@@ -26,7 +26,8 @@ interface CacheInterface {
 
 class Cache implements CacheInterface{
     private static $config;
-    private $store;
+    public $prefix;
+    public $store;
     
     public function __construct($store = "Default") {
         $context= \EnolaContext::getInstance();
@@ -34,6 +35,7 @@ class Cache implements CacheInterface{
             $json_cache= file_get_contents(PATHAPP . $context->getConfigurationFolder() . 'cache.json');
             self::$config= json_decode($json_cache, TRUE);
         }
+        $this->prefix= self::$config["prefix"];
         $this->setCacheStore($store);
     }
     
@@ -50,8 +52,10 @@ class Cache implements CacheInterface{
                 $this->store= new CacheDataBase($config['connection'], $config['table']);
                 break;
             case 'apc':
+                $this->store= new CacheApc();
                 break;
             case 'memcached':
+                $this->store= new CacheMemCache($this->prefix, $config["servers"]);
                 break;
             default:
                 break;
@@ -205,5 +209,85 @@ class CacheDataBase implements CacheInterface{
         $key= 'ENOLA' . md5($key);
         $this->connection->where('keyCache = :key', array('key' => $key));
         return $this->connection->delete($this->table);
+    }
+}
+
+class CacheApc implements CacheInterface{
+    public function __construct() {
+    }
+    
+    public function exists($key) {
+        //Version viejas no contiene la funcion apc_exists
+        if(function_exists("apc_exists")){
+            return apc_exists($key);
+        }else{
+            return (bool)apc_fetch($key);
+        }
+    }
+    
+    public function get($key){
+        return apc_fetch($key);
+    }
+    
+    public function store($key, $data, $ttl=0){
+        return apc_store($key, $data, $ttl);
+    }
+    
+    public function delete($key){
+        return apc_delete($key);
+    }
+}
+
+class CacheMemCache implements CacheInterface{
+    public $connection;
+
+    public function __construct($persistent_id = NULL, $servers = array()) {
+        $this->connection= new Memcached($persistent_id);
+        foreach ($servers as $key => $value) {
+            
+        }
+    }
+    
+    public function exists($key) {
+        return (bool)$this->connection->get($key);
+    }
+    
+    public function get($key){
+        $this->connection->get($key);
+    }
+    
+    public function store($key, $data, $ttl=0){
+        $this->connection->set($key, $data, $ttl);
+    }
+    
+    public function delete($key){
+        $this->connection->delete($key);
+    }
+    
+    public function addServer($host, $port, $weight=0){
+        $this->connection->addServer($host, $port, $weight);
+    }
+}
+
+class CacheRedis implements CacheInterface{
+    public $connection;
+
+    public function __construct() {
+    }
+    
+    public function exists($key) {
+        
+    }
+    
+    public function get($key){
+
+    }
+    
+    public function store($key, $data, $ttl=0){
+
+    }
+    
+    public function delete($key){
+
     }
 }

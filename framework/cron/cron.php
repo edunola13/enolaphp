@@ -9,10 +9,10 @@ use Enola\Error;
 require 'class/En_CronController.php';
 
 class CronCore{
-    public $core;
+    public $app;
     
-    public function __construct($core) {
-        $this->core= $core;
+    public function __construct($app) {
+        $this->app= $app;
     }
     
     /**
