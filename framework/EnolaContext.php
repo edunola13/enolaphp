@@ -1,21 +1,23 @@
 <?php
 /**
- * Description of EnolaContext
+ * Esta clase es la encargada de administrar toda la configuracion global de la aplicacion de una manera central y sencilla.
+ * Esta va a ser instanciada una unica vez.
  *
  * @author Enola
  */
 class EnolaContext {
     private static $instance;
+    //Referencia al Nucleo
     public $app;
-    
+    //Path basicos
     private $pathRoot;
     private $pathFra;
     private $pathApp;
-    
+    //URLs base
     private $baseUrl;
     private $indexPage;
     private $componentUrl;
-    
+    //Variables simples
     private $error;
     private $calculatePerformance;
     private $environment;
@@ -23,33 +25,49 @@ class EnolaContext {
     private $configurationFolder;
     private $databaseConfiguration;
     private $composerAutoload;
-    
+    //Definiciones de diferentes aspectos/partes
     private $librariesDefinition;
     private $loadLibraries;
     private $controllersDefinition;
     private $filtersBeforeDefinition;
     private $filtersAfterDefinition;
     private $componentsDefinition;
-    
+    //I18n
     private $i18nDefaultLocale;
     private $i18nLocales;
     
+    /**
+     * Crea una instancia de la clase, llama al metodo init y guarda la instancia
+     * @param string $path_root
+     * @param string $path_framework
+     * @param string $path_application
+     */
     public function __construct($path_root, $path_framework, $path_application) {
         $this->init($path_root, $path_framework, $path_application);
         //Guardo la instancia para qienes quieran consultar desde cualqueir ubicacion
         self::$instance= $this;
     }
     
+    /**
+     * Devuelve la instancia creada automaticamente por el framework en su carga
+     * @return EnolaContext
+     */
     public static function getInstance(){
         return self::$instance;
     }
-    
+    /**
+     * Setea la instancia de la clase
+     * @param EnolaContext $instance
+     */
     public static function setInstance($instance){
         self::$instance= $instance;
     }
     
     /**
-     * Realizar la carga del configuration.json
+     * Carga la configuracion global de la aplicacion 
+     * @param string $path_root
+     * @param string $path_framework
+     * @param string $path_application
      */
     private function init($path_root, $path_framework, $path_application){
         /*
@@ -84,14 +102,13 @@ class EnolaContext {
                 require $path_application . 'errors/general_error.php';
                 exit;
         }
-        //ROOT_PATH: direccion base donde se encuentra la aplicacion completa, es el directorio donde se encuentra el archivo index.php        
+        //PATH_ROOT: direccion base donde se encuentra la aplicacion completa, es el directorio donde se encuentra el archivo index.php        
         $this->pathRoot= $path_root;
         //PATHFRA: direccion de la carpeta del framework - definida en index.php
         $this->pathFra= $path_framework; 
         //PATHAPP: direccion de la carpeta de la aplicacion - definida en index.php
         $this->pathApp= $path_application;
         
-        // Define las constantes del sistema
         // BASE_URL: Base url de la aplicacion - definida por el usuario en el archivo de configuracion    
         $pos= strlen($config['base_url']) - 1;
         if($config['base_url'][$pos] != '/'){
@@ -100,16 +117,16 @@ class EnolaContext {
         $this->baseUrl= $config['base_url'];
         //INDEX_PAGE: Pagina inicial. En blanco si se utiliza mod_rewrite
         $this->indexPage= $config['index_page']; 
-        //URL_COMPONENT: URL con la cual se deben mapear los controladores
+        //URL_COMPONENT: URL con la cual se deben mapear los componentes via URL
         $this->componentUrl= trim($config['url-components'], '/');
         
-        //CALCULATe_PERFORMANCE
+        //CALCULATE_PERFORMANCE: Indica si el framework debe calcular el tiempo de respuesta o no
         $this->calculatePerformance= $config['calculate_performance'];
         //ENVIRONMENT: Indica el ambiente de la aplicacion
         $this->environment= $config['environment'];
         //CHARSET: Indica el charset que se esta utilizando en PHP
         $this->charset= $config['charset'];
-        //CONFIGURATION: carpeta base de configuracion - definida por el usuario en el archivo de configuracion
+        //CONFIGURATION: Carpeta base de configuracion - definida por el usuario en el archivo de configuracion
         $this->configurationFolder= $config['configuration'];  
         //JSON_CONFIG_BD: archivo de configuracion para la base de datos
         //Si el usuario definio que va a tener bd, en el archivo de configuracion guarda el archivo de configuracion de la BD
@@ -121,7 +138,7 @@ class EnolaContext {
             $this->composerAutoload= $config['composer']['autoload_file'];
         }
         
-        //Internacionalizacion
+        //Internacionalizacion: En caso que se defina se setea el locale por defecto y todos los locales soportados
         if(isset($config['i18n'])){
             $this->i18nDefaultLocale= $config['i18n']['default'];
             if(isset($config['i18n']['locales'])){
@@ -130,7 +147,7 @@ class EnolaContext {
             }
         }
         
-        //Especificaciones
+        //Diferentes definiciones
         $this->librariesDefinition= $config['libraries'];
         $this->controllersDefinition= $config['controllers'];
         $this->filtersBeforeDefinition= $config['filters'];
@@ -139,7 +156,7 @@ class EnolaContext {
     }
     
     /*
-     * Getters y Setters
+     * Getters
      */
     
     public function getPathRoot(){
@@ -209,31 +226,47 @@ class EnolaContext {
     /*
      * Metodos facilitadores
      */
+    /**
+     * Retorna si se debe o no calcular el tiempo de respuesta
+     * @return boolean
+     */
     public function CalculatePerformance(){
         return ($this->calculatePerformance == 'TRUE' || $this->calculatePerformance == 'true');
     }
-    
+    /**
+     * Retorna si se definicio configuracion de base de datos
+     * @return boolean
+     */
     public function isDatabaseDefined(){
         if($this->databaseConfiguration != NULL){
             return TRUE;
         }
         return FALSE;
     }
-    
+    /**
+     * Retorna si se definio e archivo autoload de composer
+     * @return boolean
+     */
     public function isAutoloadDefined(){
         if($this->composerAutoload != NULL){
             return TRUE;
         }
         return FALSE;
     }
-    
+    /**
+     * Retorna si se definieron los locales soportados
+     * @return boolean
+     */
     public function isLocalesDefined(){
         if($this->i18nLocales != NULL){
             return TRUE;
         }
         return FALSE;
     }
-    
+    /**
+     * Setea las librerias que se definieron para que se carguen automaticamente en diferentes componentes
+     * @param type $libraries
+     */
     public function setLoadLibraries($libraries){
         $this->loadLibraries= $libraries;
     }

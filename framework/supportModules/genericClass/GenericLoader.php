@@ -1,5 +1,5 @@
 <?php
-namespace Enola\CommonInternal;
+namespace Enola\Support;
 
 /**
  * @author Enola

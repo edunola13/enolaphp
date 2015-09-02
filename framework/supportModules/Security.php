@@ -1,5 +1,5 @@
 <?php
-    namespace Enola\Common;
+    namespace Enola\Support;
     
     /**
      * Este modulo realiza acciones de seguridad

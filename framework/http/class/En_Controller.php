@@ -1,13 +1,13 @@
 <?php
 namespace Enola\Http;
-use Enola\CommonInternal;
+use Enola\Support;
 
 /**
  * Clase de la que deben extender los controladores de la aplicacion para que se asegure el funcioneamiento del mismo
  * @author Enola
  */
-class En_Controller extends CommonInternal\GenericLoader implements Controller{
-    use CommonInternal\GenericBehavior;
+class En_Controller extends Support\GenericLoader implements Controller{
+    use Support\GenericBehavior;
     
     protected $request;
     protected $uriParams;

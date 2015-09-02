@@ -3,11 +3,12 @@ namespace Enola\Http;
 use Enola\Error;
 
 /*
- * Este modulo se encarga de cargar todas las clases necesarias para los requerimientos HTTP
- * Esto incluye los filtros , los controladores y todos los datos de los mismo.
+ * Este modulo es el encargado de todo lo referente a las solicitudes HTTP
+ * Importa todos los modulos de soporte - clases que necesita para el correcto funcionamiento
  */
 //Carga de modulo URL-URI
 require 'url_uri.php';
+//Carga de clases Basicas
 require 'class/Session.php';
 require 'class/En_HttpRequest.php';    
 //Interface y Clase base de la que deben extender todos los filtros
@@ -16,11 +17,25 @@ require 'class/En_Filter.php';
 //Interface y Clase base de la que deben extender todos los Controllers
 require 'class/Controller.php';
 require 'class/En_Controller.php';
-    
+/**
+ * Esta clase representa el Nucleo del modulo HTTP y es donde se encuentra toda la funcionalidad del mismo
+ * En su instanciacion definira la URI actual y el HttpRequest.
+ * Luego proveera metodos para saber que controlador mapea segun determinada URI y ejecutar un controlador aplicando o no
+ * los filtros correspondientes. Luego estas delegaran trabajo a los diferentes metodos privados.
+ * Esta clase tiene una dependencia de la clase UrlUri para resolver cuestiones de URLs y URIs
+ * 
+ * @author Eduardo Sebastian Nola <edunola13@gmail.com>
+ * @category Enola\Http
+ * @internal
+ */
 class HttpCore{
     public $app;
     public $httpRequest;
-    
+    /**
+     * Se instancia el nucleo.
+     * Se define todo lo respectivo a la URI y se define el Http Request actual
+     * @param Application $app
+     */
     public function __construct($app) {
         //Defino la aplicacion URI y otros valores
         $config= UrlUri::defineApplicationUri($app->context);
@@ -29,26 +44,36 @@ class HttpCore{
         $this->app= $app;
     }
     /**
-     * Encuentra el controlador que mapea
-     * @param type $controladores
-     * @return type 
+     * Retorna la especificacion del controlador que mapea con la URI actual
+     * Levanta error 404 si ningun controlador mapeame voy a comer
+     * 
+     * @param string $uriapp
+     * @return array 
      */
     public function mappingController($uriapp = NULL){
-        $controladores= $this->app->context->getControllersDefinition();
-        $mapea= FALSE;
+        $controllers= $this->app->context->getControllersDefinition();
+        $maps= FALSE;
         //Recorre todos los controladores hasta que uno coincida con la URI actual
-        foreach ($controladores as $controlador_esp) {            
+        foreach ($controllers as $controller_esp) {            
             //Analiza si el controlador mapea con la uri actual
-            $mapea= UrlUri::mapsActualUrl($controlador_esp['url'], $uriapp);
-            if($mapea){
-                return $controlador_esp;
+            $maps= UrlUri::mapsActualUrl($controller_esp['url'], $uriapp);
+            if($maps){
+                return $controller_esp;
             }
         }
         //si ningun controlador mapeo avisa el problema
-        if(! $mapea){
+        if(! $maps){
             Error::error_404();
         }
     }
+    /**
+     * Ejecuta la especificacion de controlador pasada como parametro en base a una URI ejecutando o no filtros. En caso de 
+     * que no se le pase el controlador lo consigue en base a la URI y en caso de que no se pase la URI especifica se usa 
+     * la de la peticion actual.  
+     * @param array $actualController
+     * @param string $uriapp
+     * @param boolean $filter
+     */
     public function executeHttpRequest($actualController = NULL, $uriapp = NULL, $filter = TRUE){
         //Si no se paso controlador, se busca el correspondiente
         if($actualController == NULL){
@@ -66,24 +91,25 @@ class HttpCore{
         }
     }
     /**
-     * Analiza los filtros correspondientes y ejecuta los que correspondan
-     * @param array[array] $filtros
+     * Analiza los filtros que mapean con la URI pasada y ejecuta los que correspondan. En caso de no pasar URI se utiliza
+     * la de la peticion actual.
+     * @param array[array] $filters
      */
-    protected function executeFilters($filtros, $uriapp = NULL){
+    protected function executeFilters($filters, $uriapp = NULL){
         //Analizo los filtros y los aplico en caso de que corresponda
-        foreach ($filtros as $filtro_esp) {
-            $filtrar= UrlUri::mapsActualUrl($filtro_esp['filtered'], $uriapp);
+        foreach ($filters as $filter_esp) {
+            $filter= UrlUri::mapsActualUrl($filter_esp['filtered'], $uriapp);
             //Si debe filtrar carga el filtro correspondiente y realiza el llamo al metodo filtrar()
-            if($filtrar){
-                $dir= $this->buildDir($filtro_esp,'filters');
-                $class= $this->buildClass($filtro_esp);
+            if($filter){
+                $dir= $this->buildDir($filter_esp,'filters');
+                $class= $this->buildClass($filter_esp);
                 if(!class_exists($class)){
                     //Si la clase no existe intento cargarla
                     if(file_exists($dir)){
                         require_once $dir;
                     }else{
                         //Avisa que el archivo no existe
-                        Error::general_error('Controller Error', 'The controller ' . $filtro_esp['class'] . ' dont exists');
+                        Error::general_error('Controller Error', 'The controller ' . $filter_esp['class'] . ' dont exists');
                     } 
                 }
                 $filtro= new $class();
@@ -92,95 +118,107 @@ class HttpCore{
                     $filtro->filter();
                 }
                 else{
-                    Error::general_error('Filter Error', 'The filter ' . $filtro_esp['class'] . ' dont implement the method filter()');
+                    Error::general_error('Filter Error', 'The filter ' . $filter_esp['class'] . ' dont implement the method filter()');
                 }
             }
         }
     }
     /**
-     * Ejecuta el controlador que mapeo anteriormente
-     * @param type $controlador_esp 
+     * Ejecuta el controlador que mapeo anteriormente. Segun su definicion en la configuracion se ejecutara al estilo REST
+     * o mediante nombre de funciones
+     * @param array $controller_esp 
+     * @param string $uriapp
      */
-    protected function executeController($controlador_esp, $uriapp = NULL){
-        $dir= $this->buildDir($controlador_esp);
-        $class= $this->buildClass($controlador_esp);
+    protected function executeController($controller_esp, $uriapp = NULL){
+        $dir= $this->buildDir($controller_esp);
+        $class= $this->buildClass($controller_esp);
         if(!class_exists($class)){
             //Si la clase no existe intento cargarla
             if(file_exists($dir)){
                 require_once $dir;
             }else{
                 //Avisa que el archivo no existe
-                Error::general_error('Controller Error', 'The controller ' . $controlador_esp['class'] . ' dont exists');
+                Error::general_error('Controller Error', 'The controller ' . $controller_esp['class'] . ' dont exists');
             } 
         }
-        $controlador= new $class();
+        $controller= new $class();
         //Agrego los parametros URI
-        $uri_params= UrlUri::uriParams($controlador_esp['url'], $uriapp);
+        $uri_params= UrlUri::uriParams($controller_esp['url'], $uriapp);
         $dinamic_method= $uri_params['dinamic'];
         $method= $uri_params['method'];
-        $controlador->setUriParams($uri_params['params']);
+        $controller->setUriParams($uri_params['params']);
         //Analizo si hay parametros en la configuracion
-        if(isset($controlador_esp['params'])){
-            foreach ($controlador_esp['params'] as $key => $value) {
-                $controlador->$key= $value;
+        if(isset($controller_esp['params'])){
+            foreach ($controller_esp['params'] as $key => $value) {
+                $controller->$key= $value;
             }
         }       
         //Saca el metodo HTPP y en base a eso hace una llamada al metodo correspondiente
-        $metodo= $_SERVER['REQUEST_METHOD'];
+        $methodHttp= $_SERVER['REQUEST_METHOD'];
         if($dinamic_method){
-            if(method_exists($controlador, $method)){
-                $controlador->$method();
+            if(method_exists($controller, $method)){
+                $controller->$method();
             }else{
                 Error::general_error('HTTP Method Error', "The HTTP method $method is not supported");
             }
         }else{
-           switch ($metodo) {
+           switch ($methodHttp) {
             case 'GET':
-                $controlador->doGet();
+                $controller->doGet();
                 break;
             case 'POST':
-                $controlador->doPost();
+                $controller->doPost();
                 break;
             case 'UPDATE':
-                $controlador->doUpdate();
+                $controller->doUpdate();
                 break;
             case 'DELETE':
-                $controlador->doDelete();
+                $controller->doDelete();
                 break;
             case 'HEAD':
-                $controlador->doHead();
+                $controller->doHead();
                 break;
             case 'TRACE':
-                $controlador->doTrace();
+                $controller->doTrace();
                 break;
             case 'URI':
-                $controlador->doUri();
+                $controller->doUri();
                 break;
             case "OPTIONS":
-                $controlador->doOptions();
+                $controller->doOptions();
                 break;
             case 'CONNECT':
-                $controlador->doConnect();
+                $controller->doConnect();
                 break;
             default :                
-                Error::general_error('HTTP Method Error', "The HTTP method $metodo is not supported");
+                Error::general_error('HTTP Method Error', "The HTTP method $methodHttp is not supported");
             }
         }
-    }
-    
-    protected function buildDir($definicion, $folder="controllers"){
+    }    
+    /**
+     * Retorna el path de la carpeta donde se encuentra el controlador/filtro en base a su definicion
+     * @param type $definition
+     * @param type $folder
+     * @return string
+     */
+    protected function buildDir($definition, $folder="controllers"){
         $dir= "";
-        if(! isset($definicion['location'])){
-            $dir= $this->app->context->getPathApp() . 'source/' . $folder . '/' . $definicion['class'] . '.php';
+        if(! isset($definition['location'])){
+            $dir= $this->app->context->getPathApp() . 'source/' . $folder . '/' . $definition['class'] . '.php';
         }else{
-            $dir= $this->app->context->getPathRoot() . $definicion['location'] . '/' . $definicion['class'] . '.php';
+            $dir= $this->app->context->getPathRoot() . $definition['location'] . '/' . $definition['class'] . '.php';
         }
         return $dir;
     }
-    protected function buildClass($definicion){
-        $namespace= (isset($definicion['namespace']) ? $definicion['namespace'] : '');
+    /**
+     * Retorna el nombre de la clase completo (con namespace) del controlador/filtro en base a su definicion
+     * @param array $definition
+     * @return string
+     */
+    protected function buildClass($definition){
+        $namespace= (isset($definition['namespace']) ? $definition['namespace'] : '');
         //Empiezo la carga del controlador
-        $dirExplode= explode("/", $definicion['class']);
+        $dirExplode= explode("/", $definition['class']);
         $class= $dirExplode[count($dirExplode) - 1];
         if($namespace != '') $class= "\\" . $namespace . "\\" . $class;
         return $class;

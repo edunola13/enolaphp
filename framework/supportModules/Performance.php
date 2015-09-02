@@ -1,5 +1,5 @@
 <?php
-namespace Enola\Common;
+namespace Enola\Support;
 
 /**
  * Clase utilizada para calcular el rendimiento de la aplicacion-framework

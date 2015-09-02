@@ -1,24 +1,34 @@
 <?php
 namespace Enola\Http;
-use Enola\Common\Security;
+use Enola\Support\Security;
 use Enola;
 
+/**
+ * En esta clase se encuentra toda la funcionalidad para analizar las distintas URLs y URIs que trata la aplicacion.
+ * Esta clase contiene todos sus metodos estaticos y toda su comportamiento le realiza soporte al modulo HTTP
+ * Esta mediante su comportamiento define la URI de la aplicacion (real base url, locale url, etc), permite consultar
+ * si una URL mapea con una URI, quitar los parametros de una URL en base a una URI, etc
+ * 
+ * @author Eduardo Sebastian Nola <edunola13@gmail.com>
+ * @category Enola\Http
+ * @internal
+ */
 class UrlUri{
-    /*
-     * Conjunto de funciones que ayudan al framework a realizar tareas con URL y URI
-     * Tambien pueden ser utilizadas por el usuario del framework
-     */
     /**
-     * Creo la URI ACTUAL de la aplicacion
-     * Crea una URI con el Locale y otra sin Locale
+     * 
      * Almacena el LOCALE de la URI
      * Usada solo por el framework en la etapa de configuracion
      */
+    
+    /**
+     * Se crea la URI ACTUAL de la aplicacion, una URI con el Locale y otra sin Locale, se define la base url real, etc.
+     * @param EnolaContext $context
+     * @return void
+     */
     public static function defineApplicationUri($context){
-        //Resultado de Configuracion
-        $result= array();
-        
-        //Cargo la URI segun el servidor - Esta siempre es todo lo que esta despues de www.edunola.com.ar o localhost/
+        //Resultado de Configuracion - DefinirURI
+        $result= array();        
+        //Cargo la URI segun el servidor - Esta casi siempre es todo lo que esta despues de www.edunola.com.ar o localhost/
         $uri_actual= $_SERVER['REQUEST_URI'];
         //Analizo la cantidad de partes de la baseurl + indexpage(si corresponde) para poder crear la URI correspondiente para la aplicacion
         $url_base= BASEURL;
@@ -26,7 +36,7 @@ class UrlUri{
         if($index_page != ''){
             $url_base .= trim($index_page, '/') . '/';
         }
-        //REAL_BASE_URL: Real Base url de la aplicacion - Es la union de BASE_URL y INDEX_PAGE
+        //REAL_BASE_URL: Real Base Url de la aplicacion - Es la union de BASE_URL y INDEX_PAGE
         $result['REAL_BASE_URL']= $url_base;
         $url_base= explode("/", $url_base);
         $uri_app= "";
@@ -56,8 +66,7 @@ class UrlUri{
             $locale_actual= $context->getI18nDefaultLocale();
             //Consigo la primer parte de la URI para ver si esta internacionalizada
             $uri_locale= explode("/", $uri_actual);
-            $uri_locale= $uri_locale[0];
-            
+            $uri_locale= $uri_locale[0];            
             //Consigo el resto de los posibles LOCALES
             //Recorro todos los locale para ver si alguno coincide con la primer parte de la URL
             foreach ($context->getI18nLocales() as $locale) {
@@ -95,10 +104,10 @@ class UrlUri{
         return $result;
     }
     /**
-     * En base a una URL pasada como parametro ve si esta mapea a la URL actual de la aplicacion
+     * En base a una URL pasada como parametro ve si esta mapea a la URI actual de la aplicacion
      * Se pasan las url-uri definidas en los archivos de configuracion
-     * @param string $url
-     * @param string uriapp - Si no deseo utilizar el URIAPP por defecto de la aplicacion, sirve para el MVC 
+     * @param string $url - del controlador o filtro
+     * @param string uriapp - Si no deseo utilizar el URIAPP por defecto de la aplicacion
      * @return boolean
      */
     public static function mapsActualUrl($url, $uriapp = NULL){
@@ -107,7 +116,7 @@ class UrlUri{
             $url= substr($url, 1);
         }        
         //Separa la url pasada y la uri en partes para poder analizarlas
-        $partes_url= explode("/", $url);
+        $url_parts= explode("/", $url);
         
         //Saco de la uri actual o uriapp pasada como parametro los parametros
         $uri_explode= explode("?", En_HttpRequest::getInstance()->uriApp);
@@ -118,50 +127,50 @@ class UrlUri{
         }
         $uri_front= $uri_explode[0];
         //Separo la uri actual
-        $partes_uri_actual= explode("/", $uri_front);        
-        $mapea= TRUE;        
+        $actual_uri_parts= explode("/", $uri_front);        
+        $maps= TRUE;        
         //Analiza que url-uri tiene mas elementos
-        if(count($partes_url) >= count($partes_uri_actual)){
+        if(count($url_parts) >= count($actual_uri_parts)){
             //Si el tamano de la url es igual o mayor que la uri actual uso el for recorriendo las partes de la url
-            $count_partes_uri= count($partes_url);
-            for($i= 0; $i < $count_partes_uri; $i++) {
-                if(count($partes_uri_actual) >= ($i + 1)){
+            $count_uri_parts= count($url_parts);
+            for($i= 0; $i < $count_uri_parts; $i++) {
+                if(count($actual_uri_parts) >= ($i + 1)){
                     //Si hay un * o un - no me importa que viene despues, mapea todo, no deberia haber nada despues
-                    if($partes_url[$i] != "*" && $partes_url[$i] != "-"){
-                        $pos_ocurrencia= strpos($partes_url[$i], "*");
+                    if($url_parts[$i] != "*" && $url_parts[$i] != "-"){
+                        $pos_ocurrencia= strpos($url_parts[$i], "*");
                         if($pos_ocurrencia != FALSE){
-                            $parte_url= explode("*", $partes_url[$i]);
-                            $parte_url= $parte_url[0];
-                            if(strlen($partes_uri_actual[$i]) >= strlen($parte_url)){
-                                $parte_uri_actual= substr($partes_uri_actual[$i], 0, strlen($parte_url));
-                                if($parte_url == $parte_uri_actual){
+                            $url_part= explode("*", $url_parts[$i]);
+                            $url_part= $url_part[0];
+                            if(strlen($actual_uri_parts[$i]) >= strlen($url_part)){
+                                $actual_uri_part= substr($actual_uri_parts[$i], 0, strlen($url_part));
+                                if($url_part == $actual_uri_part){
                                     break;
                                 }
                                 else{
-                                    $mapea= FALSE;
+                                    $maps= FALSE;
                                     break;
                                 }
                             }
                             else{
-                                $mapea= FALSE;
+                                $maps= FALSE;
                                 break;
                             }
                         }                        
                         //Si alguna esta vacia no compara el mapeo con () y voy directo a la comparacion
-                        if(empty($partes_url[$i]) || empty($partes_uri_actual[$i])){
+                        if(empty($url_parts[$i]) || empty($actual_uri_parts[$i])){
                             //Si no coinciden las partes no mapean
-                            if($partes_url[$i] != $partes_uri_actual[$i]){
-                                $mapea= FALSE;
+                            if($url_parts[$i] != $actual_uri_parts[$i]){
+                                $maps= FALSE;
                                 break;
                             }
                         }
                         else{
                             //Si la parte de la uri empieza con ( y termina con ) puede ir cualquier string ahi por lo que pasa directamente esta parte de la validacion
-                            if(! ($partes_url[$i]{0} == "(" and $partes_url[$i]{strlen($partes_url[$i]) -1} == ")")){
+                            if(! ($url_parts[$i]{0} == "(" and $url_parts[$i]{strlen($url_parts[$i]) -1} == ")")){
                                 //Si no contiene ( y ) debe mapear
                                 //Si no coinciden las partes no mapean
-                                if($partes_url[$i] != $partes_uri_actual[$i]){
-                                    $mapea= FALSE;
+                                if($url_parts[$i] != $actual_uri_parts[$i]){
+                                    $maps= FALSE;
                                     break;
                                 }
                             }
@@ -174,8 +183,8 @@ class UrlUri{
                 else{
                     //La uri actual no tiene mas partes y no hay coincidencia completa
                     //Si lo que sigue es un - o un * mapea
-                    if($partes_url[$i] != "-" && $partes_url[$i] != "*"){
-                        $mapea= FALSE;
+                    if($url_parts[$i] != "-" && $url_parts[$i] != "*"){
+                        $maps= FALSE;
                     }
                     break;                 
                 }
@@ -183,45 +192,45 @@ class UrlUri{
         }
         else{
             //Si el tamano de la url pasada es menor que la uri uso el for recorriendo las partes de la uri
-            $count_partes_uri_actual= count($partes_uri_actual);
-            for($i= 0; $i < $count_partes_uri_actual; $i++){
-                if(count($partes_url) >= ($i + 1)){                
+            $count_uri_parts_actual= count($actual_uri_parts);
+            for($i= 0; $i < $count_uri_parts_actual; $i++){
+                if(count($url_parts) >= ($i + 1)){                
                     //Si hay un * o un - no me importa que viene despues, mapea todo, no deberia haber nada despues
-                    if($partes_url[$i] != "*" && $partes_url[$i] != "-"){
-                        $pos_ocurrencia= strpos($partes_url[$i], "*");
+                    if($url_parts[$i] != "*" && $url_parts[$i] != "-"){
+                        $pos_ocurrencia= strpos($url_parts[$i], "*");
                         if($pos_ocurrencia != FALSE){
-                            $parte_url= explode("*", $partes_url[$i]);
-                            $parte_url= $parte_url[0];
-                            if(strlen($partes_uri_actual[$i]) >= strlen($parte_url)){
-                                $parte_uri_actual= substr($partes_uri_actual[$i], 0, strlen($parte_url));
-                                if($parte_url == $parte_uri_actual){
+                            $url_part= explode("*", $url_parts[$i]);
+                            $url_part= $url_part[0];
+                            if(strlen($actual_uri_parts[$i]) >= strlen($url_part)){
+                                $actual_uri_part= substr($actual_uri_parts[$i], 0, strlen($url_part));
+                                if($url_part == $actual_uri_part){
                                     break;
                                 }
                                 else{
-                                    $mapea= FALSE;
+                                    $maps= FALSE;
                                     break;
                                 }
                             }
                             else{
-                                $mapea= FALSE;
+                                $maps= FALSE;
                                 break;
                             }
                         }
                         //Si alguna esta vacia no compara el mapeo con () y voy directo a la comparacion
-                        if(empty($partes_url[$i]) || empty($partes_uri_actual[$i])){
+                        if(empty($url_parts[$i]) || empty($actual_uri_parts[$i])){
                             //Si no coinciden las partes no mapean
-                            if($partes_url[$i] != $partes_uri_actual[$i]){
-                                $mapea= FALSE;
+                            if($url_parts[$i] != $actual_uri_parts[$i]){
+                                $maps= FALSE;
                                 break;
                             }
                         }
                         else{
                             //Si la parte de la uri empieza con ( y termina con ) puede ir cualquier string ahi por lo que pasa directamente esta parte de la validacion
-                            if(! ($partes_url[$i]{0} == "(" and $partes_url[$i]{strlen($partes_url[$i]) -1} == ")")){
+                            if(! ($url_parts[$i]{0} == "(" and $url_parts[$i]{strlen($url_parts[$i]) -1} == ")")){
                                 //Si no contiene ( y ) debe mapear                        
                                 //Si no coinciden las partes no mapean
-                                if($partes_url[$i] != $partes_uri_actual[$i]){
-                                    $mapea= FALSE;
+                                if($url_parts[$i] != $actual_uri_parts[$i]){
+                                    $maps= FALSE;
                                     break;
                                 }
                             }
@@ -233,16 +242,16 @@ class UrlUri{
                 }
                 else{
                     //La url pasada no tiene mas partes y no hay coincidencia completa
-                    $mapea= FALSE;
+                    $maps= FALSE;
                     break;
                 }
             }
         }        
-        return $mapea;
+        return $maps;
     }    
     /**
      * Redireccionar a otra pagina pasando una uri relativa a la aplicacion
-     * @param En_HttpRequest
+     * @param En_HttpRequest $httpRequest
      * @param string $uri
      */
     public static function redirect($httpRequest, $uri){
@@ -262,77 +271,79 @@ class UrlUri{
         exit;
     }    
     /**
-     * Esta funcion devuelve los parametros de la uri, estos son los parametros que en mapeo fueron definidos entre ()
+     * Esta funcion devuelve los parametros de la URI en base a la URL que mapeo
+     * Devuelve los distintos tipos de parametros que se pueden armar en la configuracion, los que se pueden armar entre ()
+     * o en caso de definir la url con un "-" final todos lo que viene despues de este separado por "/"
      * No son los parametros GET ni POST
      * @param string $url
      * @return array[string]
      */
     public static function uriParams($url, $uriapp = NULL){
-        $parametros= NULL;
+        $parameters= NULL;
         $method= 'index';
         $dinamic= FALSE;
         //Elimino el primer caracter si es igual a "/"
         $url= ltrim($url, '/');
         //Separa la url y la uri en partes para poder analizarlas
-        $partes_url= explode("/", $url);
+        $url_parts= explode("/", $url);
         $uri_explode= explode("?", En_HttpRequest::getInstance()->uriApp);
         if($uriapp !== NULL){
             $uri_explode= explode("?", $uriapp);
         }
         $uri_front= $uri_explode[0];
-        $partes_uri_actual= explode("/", $uri_front);
+        $actual_uri_parts= explode("/", $uri_front);
         //Si en la url hay un * o un - limpio paso todo lo que venga desde la url real como un parametro
-        $in_array_guion= in_array('-', $partes_url);
-        $in_array_aster= in_array('*', $partes_url);
+        $in_array_guion= in_array('-', $url_parts);
+        $in_array_aster= in_array('*', $url_parts);
         if($in_array_guion || $in_array_aster){
-            $count_partes_uri_actual= count($partes_uri_actual);
-            $encontrado= FALSE;
-            for($i= 0; $i < $count_partes_uri_actual; $i++){
-                if(!$encontrado){
-                    if($partes_url[$i] == '-' || $partes_url[$i] == '*'){
-                        $encontrado= TRUE;
-                        if($partes_url[$i] == '-' && $partes_uri_actual[$i] != ''){
-                            $method= $partes_uri_actual[$i];                            
+            $count_uri_parts_actual= count($actual_uri_parts);
+            $found= FALSE;
+            for($i= 0; $i < $count_uri_parts_actual; $i++){
+                if(!$found){
+                    if($url_parts[$i] == '-' || $url_parts[$i] == '*'){
+                        $found= TRUE;
+                        if($url_parts[$i] == '-' && $actual_uri_parts[$i] != ''){
+                            $method= $actual_uri_parts[$i];                            
                             continue;
                         }
                     }else{
                         continue;
                     }
                 }
-                $parametros[]= $partes_uri_actual[$i];
+                $parameters[]= $actual_uri_parts[$i];
             }
             if($in_array_guion){
                 $dinamic= TRUE;
             }
         }        
         //Pase lo que pase arriba esto puede ir siempre, ya que puede estar anterior al * o al -
-        $count_partes_uri= count($partes_url);
-        for($i= 0; $i < $count_partes_uri; $i++){
-            if(empty($partes_url[$i]) || empty($partes_uri_actual[$i])){
+        $count_uri_parts= count($url_parts);
+        for($i= 0; $i < $count_uri_parts; $i++){
+            if(empty($url_parts[$i]) || empty($actual_uri_parts[$i])){
                 //Si alguno esta vacio ya no hay parametros uri, es decir ()
                 break;
             }
             else{
                 //Si la parte de la url comienza con ( y termina con ) le paso el parametro
-                if($partes_url[$i]{0} == "(" and $partes_url[$i]{strlen($partes_url[$i]) -1} == ")"){
-                    $nombre= trim($partes_url[$i], "()");
-                    $parametros[$nombre]= $partes_uri_actual[$i];
+                if($url_parts[$i]{0} == "(" and $url_parts[$i]{strlen($url_parts[$i]) -1} == ")"){
+                    $nombre= trim($url_parts[$i], "()");
+                    $parameters[$nombre]= $actual_uri_parts[$i];
                 }
             }
         }        
-        if($parametros != NULL){
-            $parametros= Security::clean_vars($parametros);
+        if($parameters != NULL){
+            $parameters= Security::clean_vars($parameters);
         }
-        return array('params' => $parametros, 'method' => $method, 'dinamic' => $dinamic);
+        return array('params' => $parameters, 'method' => $method, 'dinamic' => $dinamic);
     }
     /**
-     * Funcion para setear el codigo del header HTTP
+     * Setea el codigo del header HTTP
      * @param int $codigo
      * @param string $text
      */
     public static function setEstadoHeader($codigo = 200, $text = ''){
         //Arreglo con todos los codigos y su respectivo texto
-        $estados = array(
+        $states = array(
                                                         100     => 'Continue',
                                                         101     => 'Switching Protocols',
                                                         103     => 'Checkpoint',            
@@ -378,12 +389,12 @@ class UrlUri{
                                                         511     => 'Network Authentication Required'
 						);
         //Me fijo que el codigo no sea un string 
-        if ($codigo == '' OR ! is_numeric($codigo)){
+        if ($code == '' OR ! is_numeric($code)){
             Enola\Error::general_error('Error Estado HTTP', 'El codigo de estado debe ser numerico');
 	}
         //Veo si se paso o no texto y si no, le asigo el del codigo
-	if (isset($estados[$codigo]) AND $text == ''){
-            $text = $estados[$codigo];
+	if (isset($states[$code]) AND $text == ''){
+            $text = $states[$code];
 	}
         //Me fijo que el texto no este vacio
         if ($text == ''){
@@ -394,13 +405,13 @@ class UrlUri{
 
         //Segun el protocolo modifico el header HTTP
 	if (substr(php_sapi_name(), 0, 3) == 'cgi'){
-            header("Status: {$codigo} {$text}", TRUE);
+            header("Status: {$code} {$text}", TRUE);
 	}
 	elseif ($server_protocol == 'HTTP/1.1' OR $server_protocol == 'HTTP/1.0'){
-            header($server_protocol." {$codigo} {$text}", TRUE, $codigo);
+            header($server_protocol." {$code} {$text}", TRUE, $code);
 	}
 	else{
-            header("HTTP/1.1 {$codigo} {$text}", TRUE, $codigo);
+            header("HTTP/1.1 {$code} {$text}", TRUE, $code);
 	}
     }
 }

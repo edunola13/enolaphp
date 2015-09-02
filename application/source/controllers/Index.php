@@ -13,7 +13,7 @@ class Index extends Http\En_Controller{
     }
     
     public function doGet(){
-        $this->loadView("index");
+        $this->loadView("index", NULL);
     }
 
 }

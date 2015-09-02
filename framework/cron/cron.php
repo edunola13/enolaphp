@@ -3,20 +3,32 @@ namespace Enola\Cron;
 use Enola\Error;
 
 /*
- * Este modulo se encarga de cargar todas las clases necesarias para ejecutar Crons
+ * Este modulo es el encargado de todo lo referente a los Cron Jobs
+ * Importa todos los modulos de soporte - clases que necesita para el correcto funcionamiento
  */
 //Interface y Clase base de la que deben extender todos los Cron
 require 'class/En_CronController.php';
-
+/**
+ * Esta clase representa el Nucleo del modulo Cron y es donde se encuentra toda la funcionalidad del mismo.
+ * Este provee un unico metodo para ejecutar el cron correspondiente en base a los parametros pasados por la linea de comandos
+ * 
+ * @author Eduardo Sebastian Nola <edunola13@gmail.com>
+ * @category Enola\Cron
+ * @internal
+ */
 class CronCore{
     public $app;
-    
+    /** 
+     * @param Application $app
+     */
     public function __construct($app) {
         $this->app= $app;
-    }
-    
+    }    
     /**
-     * Ejecuta el cron indicado en el primer parametro pasado al cron
+     * Ejecuta el cron correspondiente en base a los parametros pasados por la linea de comandos
+     * El primer parametros es el index.php, el segundo es el nombre (clase) del cron y despues puede ser el metodo a ejecutar
+     * y luego son todos parametros de entrada al Cron correspondiente.
+     * @param array[string] $params
      */
     public function executeCronController($params){
         //Quito guiones iniciales

@@ -46,4 +46,7 @@
 ----------\n[2015-08-30 19:59:42.000000 ::1  - Unknown ] Cannot modify header information - headers already sent by (output started at C:\xampp\htdocs\enolaphp\application\source\filters\Authorization.php:20)
 ----------\n[2015-08-30 19:59:42.000000 ::1  - Unknown ] Cannot modify header information - headers already sent by (output started at C:\xampp\htdocs\enolaphp\application\source\filters\Authorization.php:20)
 ----------\n[2015-08-30 20:01:31.000000 ::1  - Unknown ] Cannot modify header information - headers already sent by (output started at C:\xampp\htdocs\enolaphp\application\source\filters\Authorization.php:20)
+----------\n[2015-08-31 15:24:57.000000 127.0.0.1  - Unknown ] require(D:\xampp\htdocs\enolaphp\framework/genericClass/GenericLoader.php): failed to open stream: No such file or directory
+----------\n[2015-08-31 15:44:24.000000 127.0.0.1  - Error Fatal - Parse - Strict ] Class 'Enola\Cache\EnolaContext' not found
+----------\n[2015-08-31 15:48:53.000000 127.0.0.1  - Error Fatal - Parse - Strict ] Call to undefined function Enola\Cache\apc_fetch()
 ----------\n

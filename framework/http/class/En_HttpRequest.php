@@ -1,6 +1,6 @@
 <?php
 namespace Enola\Http;
-use Enola\Common\Security;
+use Enola\Support\Security;
 
 /**
  * @author Enola

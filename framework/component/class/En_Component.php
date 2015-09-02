@@ -1,13 +1,13 @@
 <?php
 namespace Enola\Component;
 use Enola\Http\En_HttpRequest;
-use Enola\CommonInternal;
+use Enola\Support;
 
 /**
  * @author Enola
  */
-class En_Component extends CommonInternal\GenericLoader implements Component{ 
-    use CommonInternal\GenericBehavior;
+class En_Component extends Support\GenericLoader implements Component{ 
+    use Support\GenericBehavior;
     
     protected $viewFolder;
     protected $request;

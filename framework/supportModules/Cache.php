@@ -1,4 +1,6 @@
 <?php
+namespace Enola\Cache;
+use Enola\DB\En_DataBase;
 
 interface CacheInterface {
     /**
@@ -63,16 +65,20 @@ class Cache implements CacheInterface{
     }
     
     public function exists($key){
-        return $this->store->exists($key);
+        return $this->store->exists($this->realKey($key));
     }
     public function get($key){
-        return $this->store->get($key);
+        return $this->store->get($this->realKey($key));
     }
     public function store($key, $data, $ttl = 0) {
-        return $this->store->store($key, $data, $ttl);
+        return $this->store->store($this->realKey($key), $data, $ttl);
     }
     public function delete($key){
-        return $this->store->delete($key);
+        return $this->store->delete($this->realKey($key));
+    }
+    
+    protected function realKey($key){
+        return $this->prefix . md5($key);
     }
 }
 
@@ -80,12 +86,11 @@ class CacheFileSystem implements CacheInterface{
     public $folder;
     
     public function __construct($folder) {
-        $this->folder= EnolaContext::getInstance()->getPathApp() . $folder . '/';
+        $this->folder= \EnolaContext::getInstance()->getPathApp() . $folder . '/';
     }    
     
     public function exists($key) {
-        $filename = $this->getFileName($key);
-        return file_exists($filename);
+        return (bool) $this->get($key);
     }
     
     public function get($key) {
@@ -143,8 +148,8 @@ class CacheFileSystem implements CacheInterface{
         }
     }
 
-    private function getFileName($key) {
-        return $this->folder . 'ENOLA' . md5($key);
+    private function getFileName($key) {        
+        return $this->folder . $key;
     }
 }
 
@@ -156,7 +161,7 @@ class CacheDataBase implements CacheInterface{
     public function __construct($nameDB, $table) {
         $this->nameDB= $nameDB;
         $this->table= $table;
-        $this->connection= new \Enola\DB\En_DataBase(TRUE, $nameDB);
+        $this->connection= new En_DataBase(TRUE, $nameDB);
     }
     
     public function setConnection($nameDB, $table){
@@ -166,17 +171,6 @@ class CacheDataBase implements CacheInterface{
     }
     
     public function exists($key){
-        $key= 'ENOLA' . md5($key);
-        $result= $this->connection->getFromWhere($this->table, 'keyCache = :key', array('key' => $key));
-        if($result->fetch() != NULL){
-            return TRUE;
-        }else{
-            return FALSE;
-        }
-    }
-    
-    public function get($key){
-        $key= 'ENOLA' . md5($key);
         $result= $this->connection->getFromWhere($this->table, 'keyCache = :key', array('key' => $key));
         $fila= $result->fetch();
         if($fila != NULL){
@@ -184,12 +178,32 @@ class CacheDataBase implements CacheInterface{
             $data = unserialize($fila['data']);
             if (!$data) {
                 //Datos corrompidos, elimino la fila
-                $this->connection->where('keyCache = :key', array('key' => $key));
-                $this->delete($this->table);
+                $this->delete($key);
+                return FALSE;
             }else if(time() > $data[0] && $data[0] != 0){
                 //Se expiraron los datos, elimino el archivo
-                $this->connection->where('keyCache = :key', array('key' => $key));
-                $this->delete($this->table);
+                $this->delete($key);
+                return FALSE;
+            }
+            return TRUE;
+        }
+        return FALSE;
+    }
+    
+    public function get($key){
+        $result= $this->connection->getFromWhere($this->table, 'keyCache = :key', array('key' => $key));
+        $fila= $result->fetch();
+        if($fila != NULL){
+            //Unserialize los datos y veo que no esten corrompidos o se haya expirado el tiempo
+            $data = unserialize($fila['data']);
+            if (!$data) {
+                //Datos corrompidos, elimino la fila
+                $this->delete($key);
+                return NULL;
+            }else if(time() > $data[0] && $data[0] != 0){
+                //Se expiraron los datos, elimino el archivo
+                $this->delete($key);
+                return NULL;
             }
             return $data[1];
         }
@@ -197,7 +211,6 @@ class CacheDataBase implements CacheInterface{
     }
     
     public function store($key, $data, $ttl = 0) {
-        $key= 'ENOLA' . md5($key);
         if($ttl != 0){
             $ttl= time() + $ttl;
         }
@@ -206,7 +219,6 @@ class CacheDataBase implements CacheInterface{
     }
     
     public function delete($key){
-        $key= 'ENOLA' . md5($key);
         $this->connection->where('keyCache = :key', array('key' => $key));
         return $this->connection->delete($this->table);
     }
@@ -243,8 +255,8 @@ class CacheMemCache implements CacheInterface{
 
     public function __construct($persistent_id = NULL, $servers = array()) {
         $this->connection= new Memcached($persistent_id);
-        foreach ($servers as $key => $value) {
-            
+        foreach ($servers as $value) {
+            $this->addServer($value['host'], $value['port'], $value['weight']);
         }
     }
     

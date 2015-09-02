@@ -1,5 +1,5 @@
 <?php
-namespace Enola\Common;
+namespace Enola\Support;
 use EnolaContext;
 
 /*
