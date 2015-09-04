@@ -2,16 +2,16 @@
     namespace Enola;
 
     /*
-     * Maneja los errores del framework
+     * Este modulo Maneja los errores de la aplicacion
      * Contiene tambien la seccion de Informacion del Framework hacia el usuario
      */    
     /**
      * Funcion para manejar los errores php. 
      * Esta se superpone a la propia de php cuando es seteada en el nucleo.php
-     * @param $nivel_error
-     * @param string $mensaje
-     * @param string $archivo
-     * @param int $linea
+     * @param $level
+     * @param string $message
+     * @param string $file
+     * @param int $line
      * @return boolean
      */
     function _error_handler($level, $message, $file, $line){
@@ -67,96 +67,108 @@
     set_error_handler('Enola\_error_handler');
     //Define un manejador de fin de cierre - definido en el modulo de errores
     register_shutdown_function('Enola\_shutdown'); 
-    
+    /**
+     * Esta clase prove funciones para registrar los errores
+     * Como no es necesario mantener ningun estado los metodos se pueden acceder estaticamente
+     * @author Eduardo Sebastian Nola <edunola13@gmail.com>
+     * @category Enola\Support
+     */
     class Error{
         /**
-        * Funcion que es llamada para crear una respuesta de error php - usada por el manejador de errores definido por el framework
-        * @param string $tipo_error
-        * @param $nivel_error
-        * @param string $mensaje
-        * @param string $archivo
-        * @param int $linea
-        */
-       public static function error_php($type, $level, $message, $file, $line){
-           self::write_log($message, $type, $file, $line);
-           if(error_reporting()){
-               require_once PATHAPP . 'errors/error_php.php';
-           }
-       }    
-       /**
-        * Funcion que es llamada para crear un respuesta de error 404
-        * Usada por el framework y/o el usuario
-        */
-       public static function error_404(){
-           $head= '404 Pagina no Encontrada';
-           $message= 'La pagina que solicitaste no existe';
-           Http\UrlUri::setEstadoHeader(404);
-           require_once PATHAPP . 'errors/error_404.php';
-           exit;
-       }    
-       /**
-        * Funcion que es llamada para crear una respuesta de error general
-        * Usada por el framework y/o el usuario
-        * @param string $cabecera
-        * @param string $mensaje
-        * @param string $template
-        * @param int $codigo_error
-        */
-       public static function general_error($head, $message, $template = 'general_error', $code_error = 500){
-           self::write_log($message, 'General Error');
-           if(ENOLA_MODE == 'HTTP'){Http\UrlUri::setEstadoHeader($code_error);}
-           if(error_reporting()){
-               require_once PATHAPP . 'errors/' . $template . '.php'; 
-           }        
-       }
-       /**
-        * Crea o abre un archivo de log y escribe el error correspondiente
-        * @param String $cadena
-        * @param String $tipo
-        */
-       public static function write_log($cadena, $tipo, $file="", $line=""){
-           if(filesize(PATHAPP . 'logs/log.txt') > 100000){           
-               $arch= fopen(PATHAPP . 'logs/log.txt', "w");
-               fclose($arch); 
-           }
-           $arch = fopen(PATHAPP . 'logs/log.txt', "a+"); 
-           if(ENOLA_MODE == 'HTTP'){
-               fwrite($arch, "[".date("Y-m-d H:i:s.u")." ".$_SERVER['REMOTE_ADDR']." ".
-                      " - $tipo ] ".$cadena."\n");
-           }else{
-               fwrite($arch, "[".date("Y-m-d H:i:s.u")." MODE CLI ".
-                      " - $tipo ] ".$cadena." - $file - $line \n");
-           }
-           fwrite($arch, '----------\n');
-           fclose($arch);
-       }    
-       /**
-        * Analiza si se envia a traves de un parametro get un error HTTP
-        */
-       public static function catch_server_error(){
-           if(isset($_GET['error_apache_enola'])){
-               //Cargo el archivo con los errores
-               $errores= load_framework_file('information/errorsHTTP.ini');
-               $errores= parse_properties($errores);
-               //Escribo el Log
-               self::write_log('error_http', $errores[$_GET['error_apache_enola']]);
-               //Muestro el error correspondiente
-               self::general_error('Error ' . $_GET['error_apache_enola'], $errores[$_GET['error_apache_enola']] , 'general_error', $_GET['error_apache_enola']);
-               //No continuo la ejecucion
-               exit;
-           }
-       }
-       
-       /*
-        * Sector Informacion
-        * Este modulo contiene funciones utilizadas por el framework para mostrar informacion al usuario
-        */
-       /**
-        * Muestra un mensaje al usuario
-        * @param string $titulo
-        * @param string $mensaje
-        */ 
-       public static function display_information($title, $message){
-           require_once PATHFRA . 'information/information.php';
-       }
+         * Crea una respuesta de error php - usada por el manejador de errores definido por el framework
+         * Escribe en log
+         * @param string $type
+         * @param $level
+         * @param string $message
+         * @param string $file
+         * @param int $line
+         */
+        public static function error_php($type, $level, $message, $file, $line){
+            self::write_log($message, $type, $file, $line);
+            if(error_reporting()){
+                require_once PATHAPP . 'errors/error_php.php';
+            }
+        }    
+        /**
+         * Crea una respuesta de error 404
+         * Usada por el framework y/o el usuario
+         * Escribe en log
+         */
+        public static function error_404(){
+            $head= '404 Pagina no Encontrada';
+            $message= 'La pagina que solicitaste no existe';
+            Http\UrlUri::setEstadoHeader(404);
+            require_once PATHAPP . 'errors/error_404.php';
+            exit;
+        }    
+        /**
+         * Crea una respuesta de error general
+         * Usada por el framework y/o el usuario
+         * Escribe en log
+         * @param string $head
+         * @param string $message
+         * @param string $template
+         * @param int $code_error Solo aplica si esta en modo HTTP
+         */
+        public static function general_error($head, $message, $template = 'general_error', $code_error = 500){
+            self::write_log($message, 'General Error');
+            if(ENOLA_MODE == 'HTTP'){Http\UrlUri::setEstadoHeader($code_error);}
+            if(error_reporting()){
+                require_once PATHAPP . 'errors/' . $template . '.php'; 
+            }        
+        }
+        /**
+         * Crea o abre un archivo de log y escribe el error correspondiente
+         * Escribe en log
+         * @param String $chain
+         * @param String $type
+         * @param string $file
+         * @param string $line
+         */
+        public static function write_log($chain, $type, $file="", $line=""){
+            if(filesize(PATHAPP . 'logs/log.txt') > 100000){           
+                $arch= fopen(PATHAPP . 'logs/log.txt', "w");
+                fclose($arch); 
+            }
+            $arch = fopen(PATHAPP . 'logs/log.txt', "a+"); 
+            if(ENOLA_MODE == 'HTTP'){
+                fwrite($arch, "[".date("Y-m-d H:i:s.u")." ".$_SERVER['REMOTE_ADDR']." ".
+                       " - $type ] ".$chain."\n");
+            }else{
+                fwrite($arch, "[".date("Y-m-d H:i:s.u")." MODE CLI ".
+                       " - $type ] ".$chain." - $file - $line \n");
+            }
+            fwrite($arch, '----------\n');
+            fclose($arch);
+        }    
+        /**
+         * Analiza si se envia a traves de un parametro get un error HTTP
+         * Escribe en log
+         */
+        public static function catch_server_error(){
+            if(isset($_GET['error_apache_enola'])){
+                //Cargo el archivo con los errores
+                $errores= load_framework_file('information/errorsHTTP.ini');
+                $errores= parse_properties($errores);
+                //Escribo el Log
+                self::write_log('error_http', $errores[$_GET['error_apache_enola']]);
+                //Muestro el error correspondiente
+                self::general_error('Error ' . $_GET['error_apache_enola'], $errores[$_GET['error_apache_enola']] , 'general_error', $_GET['error_apache_enola']);
+                //No continuo la ejecucion
+                exit;
+            }
+        }
+
+        /*
+         * Sector Informacion
+         * Este modulo contiene funciones utilizadas por el framework para mostrar informacion al usuario
+         */
+        /**
+         * Muestra un mensaje al usuario
+         * @param string $title
+         * @param string $message
+         */ 
+        public static function display_information($title, $message){
+            require_once PATHFRA . 'information/information.php';
+        }
     }

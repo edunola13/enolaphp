@@ -2,43 +2,47 @@
 namespace Enola\Http;
 
 /**
- * @author Enola
+ * Esta interface establece los metodos que debe proveer un Controller que responde peticiones HTTP para que el framework 
+ * lo pueda administrar correctamente. * 
+ * @author Eduardo Sebastian Nola <edunola13@gmail.com>
+ * @category Enola\Http
  */
 interface Controller {
     /**
-     * Funcion que es llamada cuando el metodo HTTP es GET
+     * Atiende la peticion HTTP de tipo GET
      */
     public function doGet();    
     /**
-     * Funcion que es llamada cuando el metodo HTTP es POST
+     * Atiende la peticion HTTP de tipo POST
      */
     public function doPost();
     /**
-     * Funcion que es llamada cuando el metodo HTTP es DELETE
+     * Atiende la peticion HTTP de tipo DELETE
      */
     public function doDelete();
     /**
-     * Funcion que es llamada cuando el metodo HTTP es PUT
+     * Atiende la peticion HTTP de tipo PUT
      */
     public function doPut();
     /**
-     * Funcion que es llamada cuando el metodo HTTP es HEAD
+     * Atiende la peticion HTTP de tipo HEAD
      */
     public function doHead();
     /**
-     * Funcion que es llamada cuando el metodo HTTP es TRACE
+     * Atiende la peticion HTTP de tipo TRACE
      */
     public function doTrace();
     /**
-     * Funcion que es llamada cuando el metodo HTTP es OPTIONS
+     * Atiende la peticion HTTP de tipo OPTIONS
      */
     public function doOptions();
     /**
-     * Funcion que es llamada cuando el metodo HTTP es CONNECT
+     * Atiende la peticion HTTP de tipo CONNECT
      */
     public function doConnect();
     /**
-     * Setea los uri_params
+     * Setea los uri_params de la peticion actual
+     * @param type $uri_params
      */
     public function setUriParams($uri_params);
 }

@@ -2,8 +2,11 @@
 namespace Enola\Support;
 use EnolaContext;
 
-/*
- * Este modulo tiene funciones utiles para usar en la vista de la aplicacion
+/**
+ * Esta clase provee comportamiento para facilitar el armado de la vista proveyendo diferentes metodos que simplifican situacines
+ * tipicas en el armado de la vista.
+ * @author Eduardo Sebastian Nola <edunola13@gmail.com>
+ * @category Enola\Support
  */
 class View{
     public $app;
@@ -13,7 +16,9 @@ class View{
     protected $locale;
     protected $fileName;
     protected $i18nContent;
-    
+    /*
+     * Constructor - Setea variables que necesitara luego para resolver su comportamiento 
+     */
     public function __construct() {
         $this->context= EnolaContext::getInstance();
         $this->app= $this->context->app;
@@ -44,7 +49,7 @@ class View{
     }
     /**
      * Arma una url para un recurso
-     * @param type $internalUri
+     * @param string $internalUri
      * @return string 
      */
     function urlResourceFor($internalUri){
@@ -63,8 +68,8 @@ class View{
         else return $this->httpRequest->realBaseUrl . $locale . '/' . $internalUri;
     }
     /**
-     * Arma una url internacionalizada para una URI interna
-     * @param type $internalUri
+     * Arma una url internacionalizada (locale actual) para una URI interna
+     * @param string $internalUri
      * @return string 
      */
     function urlLocaleFor($internalUri){
@@ -72,8 +77,8 @@ class View{
         return $this->httpRequest->baseUrlLocale . $internalUri;
     }
     /**
-     * Arma una url para acceder a un componente
-     * @param type $component
+     * Arma una url para renderizar un componente
+     * @param string $component
      * @param string $params
      * @param type $locale
      * @return string 
@@ -86,8 +91,8 @@ class View{
     }
     /**
      * Arma un url para ejecutar una accion de un componente
-     * @param type $component
-     * @param type $action
+     * @param string $component
+     * @param string $action
      * @param string $params
      * @param type $locale
      * @return string 
@@ -108,7 +113,7 @@ class View{
     }    
     /**
      * Retorna el locale actual de la url
-     * @return string
+     * @return string o null
      */
     function locale_uri(){
         return $this->httpRequest->localeUri;
@@ -132,16 +137,18 @@ class View{
         return str_replace(" ", "-", $string);
     }    
     /**
-     * Realiza el llamado a la funcion que ejecuta el metodo renderizar del componente
-     * @param type $nombre
-     * @param type $parametros
+     * Ejecuta un componente en base la especificacion indicada
+     * @param string $name
+     * @param array $params
+     * @param string action
      */
     function component($name, $params = NULL, $action = NULL){
         //Llama a la funcion que ejecuta el componente definido en el modulo Componente
         return $this->app->componentCore->executeComponent($name, $params, $action);
     }    
     /**
-     * Carga un archivo de internacionalizacion. Si no se especifica el locale carga el archivo por defecto, si no le agrega el locale pasado
+     * Carga un archivo de internacionalizacion. Si no se especifica el locale carga el archivo por defecto, si no
+     * le agrega el locale pasado como parametro
      * @param type $file
      * @param type $locale
      */
@@ -175,8 +182,9 @@ class View{
     }    
     /**
      * Devuelve el valor segun el archivo de internacionalizacion que se encuentre cargado
-     * @param type $clave
-     * @return type
+     * @param string $val_key
+     * @param array $params
+     * @return string
      */
     function i18n_value($val_key, $params = NULL){
         if(isset($this->i18nContent)){
@@ -209,8 +217,8 @@ class View{
     /**
      * Este proceso analiza de a una las lineas del archivo de internacionalizacion usado. En este caso txt file y me arma lo que seria
      * un array asociativo clave valor en base a la linea.
-     * @param type $lineas
-     * @return type
+     * @param array[string] $lineas
+     * @return array[string]
      */
     function parse_properties($lineas) {
         $result= NULL;

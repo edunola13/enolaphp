@@ -15,8 +15,7 @@ require 'class/En_Component.php';
  * internamente
  * que controlador mapea segun determinada URI y ejecutar un controlador aplicando o no
  * los filtros correspondientes. Luego estas delegaran trabajo a los diferentes metodos privados.
- * Esta clase tiene una dependencia de la clase UrlUri para resolver cuestiones de URLs y URIs
- * 
+ * Esta clase tiene una dependencia de la clase UrlUri para resolver cuestiones de URLs y URIs. 
  * @author Eduardo Sebastian Nola <edunola13@gmail.com>
  * @category Enola\Component
  * @internal

@@ -49,4 +49,34 @@
 ----------\n[2015-08-31 15:24:57.000000 127.0.0.1  - Unknown ] require(D:\xampp\htdocs\enolaphp\framework/genericClass/GenericLoader.php): failed to open stream: No such file or directory
 ----------\n[2015-08-31 15:44:24.000000 127.0.0.1  - Error Fatal - Parse - Strict ] Class 'Enola\Cache\EnolaContext' not found
 ----------\n[2015-08-31 15:48:53.000000 127.0.0.1  - Error Fatal - Parse - Strict ] Call to undefined function Enola\Cache\apc_fetch()
+----------\n[2015-09-03 21:03:06.000000 MODE CLI  - Error Fatal - Parse - Strict ] Class 'Enola\Cron\En_CronRequest' not found - D:\xampp\htdocs\enolaphp\framework\cron\cron.php - 31 
+----------\n[2015-09-03 21:03:58.000000 MODE CLI  - Unknown ] Undefined index: params - D:\xampp\htdocs\enolaphp\framework\cron\class\En_CronRequest.php - 22 
+----------\n[2015-09-03 21:03:58.000000 MODE CLI  - Unknown ] Undefined index: allParams - D:\xampp\htdocs\enolaphp\framework\cron\class\En_CronRequest.php - 23 
+----------\n[2015-09-03 21:03:58.000000 MODE CLI  - General Error ] The Cron Controller  dont exist -  -  
+----------\n[2015-09-03 21:04:31.000000 MODE CLI  - Error Fatal - Parse - Strict ] Class 'Enola\Cron\Security' not found - D:\xampp\htdocs\enolaphp\framework\cron\class\En_CronRequest.php - 78 
+----------\n[2015-09-03 21:05:18.000000 MODE CLI  - Error Fatal - Parse - Strict ] Class 'Enola\Cron\Security' not found - D:\xampp\htdocs\enolaphp\framework\cron\class\En_CronRequest.php - 79 
+----------\n[2015-09-03 21:05:43.000000 MODE CLI  - Unknown ] require_once(D:\xampp\htdocs\enolaphp\application/source/daos/ProductDao.php): failed to open stream: No such file or directory - D:\xampp\htdocs\enolaphp\framework\supportModules\load_files.php - 27 
+----------\n[2015-09-03 21:06:05.000000 MODE CLI  - Error Fatal - Parse - Strict ] Class 'ProductDao' not found - D:\xampp\htdocs\enolaphp\application\source\crons\Daily.php - 9 
+----------\n[2015-09-03 21:06:20.000000 MODE CLI  - Unknown ] Object of class Daily could not be converted to string - D:\xampp\htdocs\enolaphp\framework\cron\cron.php - 95 
+----------\n[2015-09-03 21:06:20.000000 MODE CLI  - General Error ] The Cron Controller  dont implement the method asd() -  -  
+----------\n[2015-09-03 21:07:31.000000 MODE CLI  - Unknown ] Object of class Daily could not be converted to string - D:\xampp\htdocs\enolaphp\framework\cron\cron.php - 97 
+----------\n[2015-09-03 21:07:31.000000 MODE CLI  - General Error ] The Cron Controller  dont implement the method asd() -  -  
+----------\n[2015-09-03 21:07:56.000000 MODE CLI  - Unknown ] Object of class Daily could not be converted to string - D:\xampp\htdocs\enolaphp\framework\cron\cron.php - 98 
+----------\n[2015-09-03 21:07:56.000000 MODE CLI  - General Error ] The Cron Controller  dont implement the method asd() -  -  
+----------\n[2015-09-03 21:08:50.000000 MODE CLI  - Unknown ] Object of class Daily could not be converted to string - D:\xampp\htdocs\enolaphp\framework\cron\cron.php - 99 
+----------\n[2015-09-03 21:08:51.000000 MODE CLI  - General Error ] The Cron Controller  dont implement the method asd() -  -  
+----------\n[2015-09-03 21:12:22.000000 MODE CLI  - Error Fatal - Parse - Strict ] Access to undeclared static property: Enola\Cron\En_CronRequest::$instance - D:\xampp\htdocs\enolaphp\framework\cron\class\En_CronRequest.php - 26 
+----------\n[2015-09-03 21:12:44.000000 MODE CLI  - Error Fatal - Parse - Strict ] Access to undeclared static property: Enola\Cron\En_CronRequest::$instance - D:\xampp\htdocs\enolaphp\framework\cron\class\En_CronRequest.php - 26 
+----------\n[2015-09-03 21:13:03.000000 MODE CLI  - Error Fatal - Parse - Strict ] Call to a member function getParam() on null - D:\xampp\htdocs\enolaphp\application\source\crons\Daily.php - 12 
+----------\n[2015-09-04 21:57:50.000000 127.0.0.1  - Error Fatal - Parse - Strict ] Uncaught exception 'Exception' with message 'SQLSTATE[HY000] [2002] No se puede establecer una conexión ya que el equipo de destino denegó expresamente dicha conexión.
+' in D:\xampp\htdocs\enolaphp\framework\supportModules\En_DataBase.php:85
+Stack trace:
+#0 D:\xampp\htdocs\enolaphp\framework\supportModules\En_DataBase.php(39): Enola\DB\En_DataBase->getConnection('Local')
+#1 D:\xampp\htdocs\enolaphp\framework\supportModules\Cache.php(242): Enola\DB\En_DataBase->__construct(true, 'Local')
+#2 D:\xampp\htdocs\enolaphp\framework\supportModules\Cache.php(77): Enola\Cache\CacheDataBase->__construct('Local', 'cache')
+#3 D:\xampp\htdocs\enolaphp\framework\supportModules\Cache.php(61): Enola\Cache\Cache->setCacheStore('Default')
+#4 D:\xampp\htdocs\enolaphp\framework\core.php(154): Enola\Cache\Cache->__construct()
+#5 D:\xampp\htdocs\enolaphp\framework\core.php(109): Enola\Application->loadCache()
+#6 D:\xampp\htdocs\enolaphp\framework\core.php(64): Enola\Application->init()
+#7 D:\xampp\htdocs\enolaphp\framework\core.php
 ----------\n

@@ -3,13 +3,18 @@ namespace Enola\Http;
 use Enola\Support\Security;
 
 /**
- * @author Enola
+ * Esta clase representa una solicitud HTTP y por lo tanto provee todas las propiedades basicas de una peticion HTTP como
+ * asi tambien propiedades de peticion propias del framework (como es baseUrlLocale, etc).
+ * Ademas provee comportamiento basico para leer parametros y redireccionar solicitudes. 
+ * @author Eduardo Sebastian Nola <edunola13@gmail.com>
+ * @category Enola\Http
  */
 class En_HttpRequest {
-    private static $instance;    
-    public $getParams;
-    public $postParams;
+    private static $instance;
     public $attributes;
+    //Propias de la peticion HTTP
+    public $getParams;
+    public $postParams;    
     public $session;
     public $requestMethod;
     public $queryString;
@@ -18,7 +23,7 @@ class En_HttpRequest {
     public $httpAccept;
     public $httpAcceptLanguage;
     public $httpUserAgent;
-    
+    //Propias del Framework
     public $realBaseUrl;
     public $baseUrlLocale;
     public $uriApp;
@@ -26,18 +31,25 @@ class En_HttpRequest {
     public $localeUri;
     public $locale;
     
+    /**
+     * Crea la instancia del request en base a la configuracion pasada
+     * @param type $config
+     */
     public function __construct($config){
         $this->init($config);
         self::$instance= $this;
-    }
-    
+    }    
     /**
      * Devuelve la isntancia que se esta utilizando
      */
     public static function getInstance(){
         return self::$instance;
     } 
-    
+    /**
+     * Setea todas las propiedades de la instancia
+     * GET - POST - SERVER y FRAMEWORK
+     * @param type $config
+     */
     private function init($config){
         //Configuro valores basicos-genericos
         $this->getParams= $_GET;
@@ -62,71 +74,74 @@ class En_HttpRequest {
        
     /**
      * Devuelve un parametro GET si existe y si no devuelve NULL
-     * @param string $nombre
+     * @param string $name
      * @return null o string
      */
-    public function getParam($nombre){
-        if(isset($this->getParams[$nombre])){
-            return $this->getParams[$nombre];
-        }
-        else{
+    public function getParam($name){
+        if(isset($this->getParams[$name])){
+            return $this->getParams[$name];
+        }else{
             return NULL;
         }
     }    
     /**
      * Devuelve un parametro POST si existe y si no devuelve NULL
-     * @param string $nombre
+     * @param string $name
      * @return null o string
      */
-    public function postParam($nombre){
-        if(isset($this->postParams[$nombre])){
-            return $this->postParams[$nombre];
-        }
-        else{
+    public function postParam($name){
+        if(isset($this->postParams[$name])){
+            return $this->postParams[$name];
+        }else{
             return NULL;
         }
     }
     /**
      * Devuelve un parametro GET limpiado si existe y si no devuelve NULL
-     * @param string $nombre
+     * @param string $name
      * @return null o string
      */
-    public function getCleanParam($nombre){
-        if(isset($this->getParams[$nombre])){            
-            return Security::clean_vars($this->getParams[$nombre]);
-        }
-        else{
+    public function getCleanParam($name){
+        if(isset($this->getParams[$name])){            
+            return Security::clean_vars($this->getParams[$name]);
+        }else{
             return NULL;
         }
     }    
     /**
      * Devuelve un parametro POST limpiado si existe y si no devuelve NULL
-     * @param string $nombre
+     * @param string $name
      * @return null o string
      */
-    public function postCleanParam($nombre){
-        if(isset($this->postParams[$nombre])){
-            return Security::clean_vars($this->postParams[$nombre]);
-        }
-        else{
+    public function postCleanParam($name){
+        if(isset($this->postParams[$name])){
+            return Security::clean_vars($this->postParams[$name]);
+        }else{
             return NULL;
         }
     }
     /**
      * Devuelve un atributo, si existe y si no devuelve NULL
-     * @param string $nombre
+     * @param string $key
      * @return null o string
      */
-    public function getAttributes($nombre){
-        if(isset($this->attributes[$nombre])){            
-            return $this->attributes[$nombre];
-        }
-        else{
+    public function getAttribute($key){
+        if(isset($this->attributes[$key])){            
+            return $this->attributes[$key];
+        }else{
             return NULL;
         }
     }
     /**
-     * Redireccionar a otra pagina pasando una uri relativa a la aplicacion
+     * Setea un atributo al requerimiento
+     * @param type $key
+     * @param type $value
+     */
+    public function setAttribute($key, $value){
+        $this->attributes[$key]= $value;
+    }
+    /**
+     * Redirecciona a otra pagina pasando una uri relativa a la aplicacion
      * @param string $uri
      */
     public function redirect($uri){

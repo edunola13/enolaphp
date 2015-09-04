@@ -7,19 +7,12 @@ use Enola;
  * En esta clase se encuentra toda la funcionalidad para analizar las distintas URLs y URIs que trata la aplicacion.
  * Esta clase contiene todos sus metodos estaticos y toda su comportamiento le realiza soporte al modulo HTTP
  * Esta mediante su comportamiento define la URI de la aplicacion (real base url, locale url, etc), permite consultar
- * si una URL mapea con una URI, quitar los parametros de una URL en base a una URI, etc
- * 
+ * si una URL mapea con una URI, quitar los parametros de una URL en base a una URI, etc. 
  * @author Eduardo Sebastian Nola <edunola13@gmail.com>
  * @category Enola\Http
  * @internal
  */
-class UrlUri{
-    /**
-     * 
-     * Almacena el LOCALE de la URI
-     * Usada solo por el framework en la etapa de configuracion
-     */
-    
+class UrlUri{    
     /**
      * Se crea la URI ACTUAL de la aplicacion, una URI con el Locale y otra sin Locale, se define la base url real, etc.
      * @param EnolaContext $context

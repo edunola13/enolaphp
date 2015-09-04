@@ -3,7 +3,7 @@ namespace Enola;
 use Enola\Error;
 
 require 'EnolaContext.php';
-//Instancio la Clase EnolaContext que contiene la configuracion de la aplicacion
+//Instancio la Clase EnolaContext que carga la configuracion de la aplicacion
 $context= new \EnolaContext($path_root, $path_framework, $path_application); 
 
 //Seteo la codificacion de caracteres, casi siempre es o debe ser UTF-8
@@ -39,8 +39,7 @@ $app->request();
  * sin importar el tipo de requerimiento.
  * Mediante el metodo request atendera el requerimiento actual donde segun el tipo del mismo cargara los modulos principales
  * correspondientes y les cedera el control a cada uno como corresponda.
- * Permite la administracion de variables de tipo aplicacion mediante la cache.
- * 
+ * Permite la administracion de variables de tipo aplicacion mediante la cache. 
  * @author Eduardo Sebastian Nola <edunola13@gmail.com>
  * @category Enola
  * @internal
@@ -58,19 +57,24 @@ class Application{
     public $actualController;
     //Performance
     public $performance;
-    
+    /**
+     * Constructor - Ejecuta metodo init
+     * @param EnolaContext $context
+     */
     public function __construct($context) {
         $this->context= $context;
         $this->context->app= $this;
         $this->init();
     }
-    
+    /**
+     * Destructor - Termina el calculo de performance
+     */
     public function __destruct() {
         //Termino e imprimo el calculo de la performance, si corresponde
         $this->finishPerformance();
     }    
     /**
-     * Responde al requerimiento sin importar el tipo del mismo, HTTP,CLI,COMPONENT,ETC.
+     * Responde al requerimiento analizando el tipo del mismo, HTTP,CLI,COMPONENT,ETC.
      */
     public function request(){        
         //Cargo el modulo Component
@@ -197,7 +201,7 @@ class Application{
         }
     }        
     /**
-     * Carga el modulo cron y ejecuto el Cron correspondiente
+     * Carga el modulo cron y ejecuta el Cron correspondiente
      * @global array $argv
      * @global array $argc
      */
@@ -208,8 +212,8 @@ class Application{
         //pregunta por >= 2
         if($argc >= 2){
             require $this->context->getPathFra() . 'cron/cron.php';
-            $this->cronCore= new Cron\CronCore($this);
-            $this->cronCore->executeCronController($argv);
+            $this->cronCore= new Cron\CronCore($this, $argv);
+            $this->cronCore->executeCronController();
         }else{
             Error::general_error('Cron Controller', 'There isent define any cron controller name');
         }    

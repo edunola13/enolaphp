@@ -3,16 +3,19 @@ namespace Enola\DB;
 use Enola\Support;
 
 /**
- * Clase que se encarga de la configuracion de la BD.
- * Para utilizar la configuracion del Framework es necesario que las clases extiendan de esta clase
- * @author Enola
+ * Esta clase provee una abstraccion a la Base de Datos mediante PDO y su armador de consultas al estilo Active Record. 
+ * Permite hacer la conexion a la Base de datos de una manera rapida y transparente.
+ * Permite realizar consultas al estilo Active Record de una manera sencilla sin tener que escribir codigo SQL. Ademas,
+ * permite mapear los resultados de la base en objetos.
+ * @author Eduardo Sebastian Nola <edunola13@gmail.com>
+ * @category Enola\DataBase
  */
 class En_DataBase extends Support\GenericLoader{
     protected static $config_db;
     public $connection;
     protected $currentDB;
     protected $currentConfiguration;
-    
+    //Campos Active Record
     protected $select= "*";
     protected $from= '';
     protected $where= '';
@@ -21,12 +24,14 @@ class En_DataBase extends Support\GenericLoader{
     protected $having= '';
     protected $order= '';
     protected $limit= '';
-    
+    //Estado de Transaccion
     public $stateTran= TRUE;
     public $errorTran= array();
     public $lastError= NULL;
     /**
      * Constructor que conecta a la bd y carga las librerias que se indicaron en el archivo de configuracion
+     * @param bool $conect
+     * @param string $nameDB
      */
     function __construct($conect = TRUE, $nameDB = NULL) {
         parent::__construct('db');
@@ -34,7 +39,9 @@ class En_DataBase extends Support\GenericLoader{
     }
     /**
      * Abre una conexion en base a la configuracion de la BD
+     * @param string $nameDB
      * @return \PDO
+     * @throws \Exception
      */
     protected function getConnection($nameDB = NULL){
         $context= \EnolaContext::getInstance();
@@ -61,7 +68,7 @@ class En_DataBase extends Support\GenericLoader{
             // Versiones anteriores usaba $cbd['driverbd'].':host='.$cbd['hostname'].';dbname='.$cbd['database'].';charset=utf8';
             
             //Creo el dsn
-            $dsn=  $cbd['driverbd'].':host='.$cbd['hostname'].';dbname='.$cbd['database'];
+            $dsn= $cbd['driverbd'].':host='.$cbd['hostname'].';port='.$cbd['port'].';dbname='.$cbd['database'];
             //Abro la conexion                
             $gbd = new \PDO($dsn, $cbd['user'], $cbd['pass'], array(\PDO::ATTR_PERSISTENT => $cbd['persistent']));
             $gbd->exec("set names " . $cbd['charset']);
@@ -89,7 +96,7 @@ class En_DataBase extends Support\GenericLoader{
         $this->limit= '';
     }    
     /** Elimina elementos de $vars que tengan como clave el valor de un elemento de $excepts_vars */
-    private function deleteVars($vars, $excepts_vars){
+    protected function deleteVars($vars, $excepts_vars){
         foreach ($excepts_vars as $value) {
             unset($vars[$value]);
         }
@@ -109,7 +116,10 @@ class En_DataBase extends Support\GenericLoader{
     public function closeConnection(){
         $this->connection= NULL;
     }
-    /** Cambia la conexion actual */
+    /**
+     * Cambia la conexion actual
+     * @param string $nameDB
+     */
     public function changeConnection($nameDB = NULL){
         $this->connection= $this->getConnection($nameDB);
     }
@@ -201,7 +211,14 @@ class En_DataBase extends Support\GenericLoader{
     public function or_where_like($field, $match, $joker='both', $not=FALSE){
         if($this->where != '')$this->where.='OR ';
         $this->like($field, $match, $joker, $not);
-    }    
+    }
+    /**
+     * Arma el Like para el where and o or
+     * @param string $field
+     * @param type $match
+     * @param string $joker
+     * @param bool $not
+     */
     protected function like($field, $match, $joker='both', $not=FALSE){
         $this->where.= $field . ' ';
         if($not)$this->where.= 'NOT ';
@@ -237,7 +254,13 @@ class En_DataBase extends Support\GenericLoader{
     public function or_where_in($field, array $values, $not=FALSE){
         if($this->where != '')$this->where.='OR ';
         $this->in($field, $values, $not);
-    }    
+    }
+    /**
+     * Arma el in para el where and o or
+     * @param string $field
+     * @param array $values
+     * @param bool $not
+     */
     protected function in($field, array $values, $not=FALSE){
         $this->where.= $field . ' ';
         if($not)$this->where.= 'NOT ';
@@ -316,19 +339,19 @@ class En_DataBase extends Support\GenericLoader{
             if($this->having != '')$sql.= "HAVING " . $this->having;
             $sql.= $this->order;
             $sql.= $this->limit;
-            
-            $consulta= $this->connection->prepare($sql);        
+            //Prepara la consulta, setea los parametros y ejecuta
+            $query= $this->connection->prepare($sql);        
             foreach ($this->where_values as $key => $value){
                 if($value === FALSE){
-                    $consulta->bindValue($key, 0);
+                    $query->bindValue($key, 0);
                 }else{
-                    $consulta->bindValue($key, $value);
+                    $query->bindValue($key, $value);
                 }
             }
-            $consulta->execute();
-            $error= $consulta->errorInfo();
+            $query->execute();
+            $error= $query->errorInfo();
             if($error[0] == '00000'){
-                $res= $consulta;
+                $res= $query;
             }else{
                 $this->catchError($error);
             }
@@ -341,7 +364,7 @@ class En_DataBase extends Support\GenericLoader{
     /**
      * Devuelve un conjunto de objetos de la clase especificada en base a la consulta armada de la forma ActiveRecord
      * @param string $class
-     * @return PDOStatement
+     * @return array[object]
      */
     public function getInObjects($class){
         $res= $this->get();
@@ -351,14 +374,14 @@ class En_DataBase extends Support\GenericLoader{
         return $res;
     }
     /**
-     * Devuelve el resultado de la consulta armada
+     * Devuelve el resultado de la consulta armada en base a los parametros
      * @param string $from
      * @param string $where
      * @param array $where_values
      * @param string $order
      * @param type $limit
      * @param type $offset
-     * @return 
+     * @return PDOStatement
      * @throws PDOStatement
      */
     public function getFromWhere($from, $where=NULL, $where_values=array(), $order=NULL, $limit=NULL, $offset=NULL){
@@ -373,19 +396,19 @@ class En_DataBase extends Support\GenericLoader{
                 $sql.= " LIMIT " . $limit;
                 if($offset != NULL)$sql.= ' OFFSET ' . $offset;
             }
-            
-            $consulta= $this->connection->prepare($sql);        
+            //Prepara la consulta, setea los parametros y ejecuta
+            $query= $this->connection->prepare($sql);        
             foreach ($where_values as $key => $value){
                 if($value === FALSE){
-                    $consulta->bindValue($key, 0);
+                    $query->bindValue($key, 0);
                 }else{
-                    $consulta->bindValue($key, $value);
+                    $query->bindValue($key, $value);
                 }
             }
-            $consulta->execute();
-            $error= $consulta->errorInfo();
+            $query->execute();
+            $error= $query->errorInfo();
             if($error[0] == '00000'){
-                $res= $consulta;
+                $res= $query;
             }else{
                 $this->catchError($error);
             }
@@ -396,7 +419,7 @@ class En_DataBase extends Support\GenericLoader{
         return $res;
     }
     /**
-     * Devuelve un conjunto de objetos de la clase especificada en base a la consulta armada
+     * Devuelve un conjunto de objetos de la clase especificada en base a la consulta armada en base a los parametros
      * @param string $class
      * @param string $from
      * @param string $where
@@ -404,7 +427,7 @@ class En_DataBase extends Support\GenericLoader{
      * @param string $order
      * @param type $limit
      * @param type $offset
-     * @return 
+     * @return array[object]
      * @throws PDOStatement
      */
     public function getFromWhereInObjects($class, $from, $where=NULL, $where_values=array(), $order=NULL, $limit=NULL, $offset=NULL){
@@ -432,21 +455,20 @@ class En_DataBase extends Support\GenericLoader{
             $sql = trim($sql, ',');
             $value = trim($value, ',');
             $sql .= ') ' . $value . ')';
-            $consulta= $this->connection->prepare($sql);
+            $query= $this->connection->prepare($sql);
             foreach ($values as $key => $value) {
                 if($value === FALSE){
-                    $consulta->bindValue($key, 0);
+                    $query->bindValue($key, 0);
                 }else{
-                    $consulta->bindValue($key, $value);
+                    $query->bindValue($key, $value);
                 }
             }
-            $consulta->execute();
-            $error= $consulta->errorInfo();
+            $query->execute();
+            $error= $query->errorInfo();
             if($error[0] != '00000'){
                 $this->catchError($error);
                 return FALSE;
-            }
-            else{
+            }else{
                 return TRUE;
             }
         } catch (\PDOException $e) {
@@ -454,7 +476,7 @@ class En_DataBase extends Support\GenericLoader{
         }
     }
     /**
-     * Actualiza una tabla en base a los datos indicados y la consulta armada en forma ActiveRecord
+     * Actualiza una tabla en base a los datos indicados y la consulta armada al estilo Active Record
      * @param string $table
      * @param array $values
      * @return boolean
@@ -470,17 +492,17 @@ class En_DataBase extends Support\GenericLoader{
             $sql = trim($sql, ',');
             if($this->where != '')$sql.= " WHERE " . $this->where; 
 
-            $consulta= $this->connection->prepare($sql);
+            $query= $this->connection->prepare($sql);
             $values= array_merge($values, $this->where_values);
             foreach ($values as $key => $value){
                 if($value === FALSE){
-                    $consulta->bindValue($key, 0);
+                    $query->bindValue($key, 0);
                 }else{
-                    $consulta->bindValue($key, $value);
+                    $query->bindValue($key, $value);
                 }
             }
-            $consulta->execute();
-            $error= $consulta->errorInfo();
+            $query->execute();
+            $error= $query->errorInfo();
             if($error[0] == '00000'){
                 $res= TRUE;
             }else{
@@ -494,7 +516,7 @@ class En_DataBase extends Support\GenericLoader{
         return $res;
     }
     /**
-     * Elimina tuplas de una tabla en base a la consulta armada de la forma ActiveRecord
+     * Elimina tuplas de una tabla en base a la consulta armada de la forma Active Record
      * @param string $table
      * @return boolean
      * @throws PDOException
@@ -505,16 +527,16 @@ class En_DataBase extends Support\GenericLoader{
             $sql= 'DELETE FROM ' . $table . ' ';            
             if($this->where != '')$sql.= " WHERE " . $this->where; 
 
-            $consulta= $this->connection->prepare($sql);
+            $query= $this->connection->prepare($sql);
             foreach ($this->where_values as $key => $value){
                 if($value === FALSE){
-                    $consulta->bindValue($key, 0);
+                    $query->bindValue($key, 0);
                 }else{
-                    $consulta->bindValue($key, $value);
+                    $query->bindValue($key, $value);
                 }
             }
-            $consulta->execute();            
-            $error= $consulta->errorInfo();
+            $query->execute();            
+            $error= $query->errorInfo();
             if($error[0] != '00000'){
                 $res= FALSE;
                 $this->catch_error($error);                
@@ -531,9 +553,9 @@ class En_DataBase extends Support\GenericLoader{
     /**
      * En base a la ejecucion de una consulta y una clase devuelve un arreglo con instancias de la clase pasada
      * con los respectivos valores que trajo la consulta
-     * @param type $PdoStatement
-     * @param type $class
-     * @return \class
+     * @param PdoStatement $PdoStatement
+     * @param string $class
+     * @return array[object]
      */
     public function resultsInObjects($PdoStatement, $class){
         $result= array();
@@ -552,9 +574,9 @@ class En_DataBase extends Support\GenericLoader{
     /**
      * En base a la ejecucion de una consulta y una clase devuelve una instancia de la clase pasada
      * con los respectivos valores que trajo la consulta
-     * @param type $PdoStatement
-     * @param type $class
-     * @return null|\class
+     * @param PdoStatement $PdoStatement
+     * @param string $class
+     * @return null|object
      */
     public function firstResultInObject($PdoStatement, $class){
         $tupla= $PdoStatement->fetchObject();
@@ -575,9 +597,9 @@ class En_DataBase extends Support\GenericLoader{
     /**
      * En base a una tabla especificada y un objeto agrega el objeto en la tabla. 
      * Usa todos los atributos publicos del objeto
-     * @param type $table
+     * @param string $table
      * @param type $object
-     * @param type $excepts_vars
+     * @param array $excepts_vars
      * @return boolean
      */
     public function insertObject($table, $object, $excepts_vars = array()){
@@ -594,21 +616,20 @@ class En_DataBase extends Support\GenericLoader{
             $sql = trim($sql, ',');
             $values = trim($values, ',');
             $sql .= ') ' . $values . ')';
-            $consulta= $this->connection->prepare($sql);
+            $query= $this->connection->prepare($sql);
             foreach ($vars as $key => $value) {
                 if($value === FALSE){
-                    $consulta->bindValue($key, 0);
+                    $query->bindValue($key, 0);
                 }else{
-                    $consulta->bindValue($key, $value);
+                    $query->bindValue($key, $value);
                 }
             }
-            $consulta->execute();
-            $error= $consulta->errorInfo();
+            $query->execute();
+            $error= $query->errorInfo();
             if($error[0] != '00000'){
                 $this->catchError($error);
                 return FALSE;
-            }
-            else{
+            }else{
                 return TRUE;
             }
         } catch (\PDOException $e) {
@@ -618,6 +639,16 @@ class En_DataBase extends Support\GenericLoader{
     /**
      * En base a una tabla especificada y un objeto modifica el objeto en la tabla. 
      * Usa todos los atributos publicos del objeto
+     */
+    /**
+     * 
+     * @param string $table
+     * @param type $object
+     * @param string $where
+     * @param array $where_values
+     * @param array $excepts_vars
+     * @return boolean
+     * @throws \PDOException
      */
     public function updateObject($table, $object, $where = '', $where_values = array(), $excepts_vars = array()){
         try{
@@ -632,22 +663,21 @@ class En_DataBase extends Support\GenericLoader{
             if($where != ''){
                 $sql .= ' WHERE ' . $where;
             }
-            $consulta= $this->connection->prepare($sql);
+            $query= $this->connection->prepare($sql);
             $vars = array_merge($vars, $where_values);
             foreach ($vars as $key => $value){
                 if($value === FALSE){
-                    $consulta->bindValue($key, 0);
+                    $query->bindValue($key, 0);
                 }else{
-                    $consulta->bindValue($key, $value);
+                    $query->bindValue($key, $value);
                 }
             }
-            $consulta->execute();
-            $error= $consulta->errorInfo();
+            $query->execute();
+            $error= $query->errorInfo();
             if($error[0] != '00000'){
                 $this->catchError($error);
                 return FALSE;
-            }
-            else{
+            }else{
                 return TRUE;
             }
         } catch (\PDOException $e) {

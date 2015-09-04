@@ -4,8 +4,10 @@ use Enola\Error;
 
 session_start();
 /**
- * Libreria que maneja los datos y la seguridad de la sesion
- * @author Enola
+ * Esta clase representa la session del usuario y va a proveer todo el comportamiento asociada a la session mediante
+ * la funcionalidad que permite php. * 
+ * @author Eduardo Sebastian Nola <edunola13@gmail.com>
+ * @category Enola\Http
  */
 class Session {    
     /**
@@ -15,29 +17,29 @@ class Session {
         $this->checkIdentity();
     }    
     /**
-     * Setea un dato a la sesion
-     * @param string $nombre
-     * @param DATO $valor
+     * Agrega un dato a la session mediante una clave
+     * @param string $key
+     * @param DATO $value
      */
-    public function set($name,$value){
-        $_SESSION[$name] = $value;
+    public function set($key,$value){
+        $_SESSION[$key] = $value;
     }
     /**
-     * Setea un dato a la sesion serializandolo previamente
-     * @param type $nombre
-     * @param type $valor
+     * Agrega un dato a la session mediante una clave serializandolo previamente
+     * @param type $key
+     * @param type $value
      */
-    public function setSerialize($name,$value){
-        $_SESSION[$name]= serialize($value);
+    public function setSerialize($key,$value){
+        $_SESSION[$key]= serialize($value);
     }
     /**
      * Devuelve un dato de la sesion o NULL si no existe
-     * @param string $nombre
-     * @return NULL o DATO
+     * @param string $key
+     * @return NULL o value
      */
-    public function get($name){
-        if (isset ($_SESSION[$name])) {
-            return $_SESSION[$name];
+    public function get($key){
+        if (isset ($_SESSION[$key])) {
+            return $_SESSION[$key];
         }
         else {
             return NULL;
@@ -45,24 +47,24 @@ class Session {
     }
     /**
      * Devuelve un dato deserializado de la sesion o NULL si no existe
-     * @param type $name
-     * @return null 
+     * @param type $key
+     * @return null o value
      */
-    public function getUnserialize($name){
-        if (isset ($_SESSION[$name])) {
-            return unserialize($_SESSION[$name]);
+    public function getUnserialize($key){
+        if (isset ($_SESSION[$key])) {
+            return unserialize($_SESSION[$key]);
         }
         else {
             return NULL;
         }
     }
     /**
-     * Analza si existe un determinado dato asociado a la sesion
-     * @param string $nombre
+     * Analza si existe una determinada clave asociada a la sesion
+     * @param string $key
      * @return boolean
      */
-    public function exist($name){
-        if (isset ($_SESSION[$name])) {
+    public function exist($key){
+        if (isset ($_SESSION[$key])) {
             return TRUE;
         }
         else{
@@ -71,10 +73,10 @@ class Session {
     }    
     /**
      * Borra un dato asociado a la sesion
-     * @param string $nombre
+     * @param string $key
      */
-    public function unsetVar($name){
-        unset ($_SESSION[$name] ) ;
+    public function unsetVar($key){
+        unset ($_SESSION[$key] ) ;
     }    
     /**
      * Borra la sesion

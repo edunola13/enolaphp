@@ -3,7 +3,8 @@ namespace Enola\Support;
 
 /**
  * Clase utilizada para calcular el rendimiento de la aplicacion-framework
- * @author Enola
+ * @author Eduardo Sebastian Nola <edunola13@gmail.com>
+ * @category Enola\Support
  */
 class Performance {
     protected $timeBegin;
@@ -21,7 +22,7 @@ class Performance {
         $this->timeEnd= NULL;
     }
     /**
-     * Inicial el calculo del tiempo para luego poder terminar y calcular el tiempo
+     * Inicia el calculo del tiempo para luego poder terminar y calcular el tiempo
      */
     public function start(){
         //Guarda el tiempo actual en segundos
@@ -35,12 +36,12 @@ class Performance {
         $this->timeEnd = microtime(TRUE);
     }    
     /**
-     * Calcula el tiempo consumido entre el inicio fin de calculo
+     * Calcula el tiempo consumido entre el inicio y fin del calculo
      * @return float o NULL
      */
     public function elapsed(){
         if(isset($this->timeBegin) && isset($this->timeEnd)){
-            return $this->timeEnd - $this->timeBegin;
+            return number_format($this->timeEnd - $this->timeBegin, 5);
         }
         else{
             if(! isset($this->timeBegin)){

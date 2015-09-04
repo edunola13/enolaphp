@@ -22,8 +22,7 @@ require 'class/En_Controller.php';
  * En su instanciacion definira la URI actual y el HttpRequest.
  * Luego proveera metodos para saber que controlador mapea segun determinada URI y ejecutar un controlador aplicando o no
  * los filtros correspondientes. Luego estas delegaran trabajo a los diferentes metodos privados.
- * Esta clase tiene una dependencia de la clase UrlUri para resolver cuestiones de URLs y URIs
- * 
+ * Esta clase tiene una dependencia de la clase UrlUri para resolver cuestiones de URLs y URIs * 
  * @author Eduardo Sebastian Nola <edunola13@gmail.com>
  * @category Enola\Http
  * @internal
@@ -45,8 +44,7 @@ class HttpCore{
     }
     /**
      * Retorna la especificacion del controlador que mapea con la URI actual
-     * Levanta error 404 si ningun controlador mapeame voy a comer
-     * 
+     * Levanta error 404 si ningun controlador mapeame voy a comer 
      * @param string $uriapp
      * @return array 
      */

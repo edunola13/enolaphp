@@ -2,13 +2,15 @@
     namespace Enola\Support;
     
     /**
-     * Este modulo realiza acciones de seguridad
-     * Contiene funciones que son utilizadas por el framework
-     * Con tiene funciones tambien que sirven para el usuario
+     * Esta clase realiza acciones de seguridad basicas
+     * el comportamiento que provee es utilizada tanto por el framework como para el usuario
+     * Como no se necesita tener ningun estado para el comportamiento todos los metodos estan disponibles estaticamente.
+     * @author Eduardo Sebastian Nola <edunola13@gmail.com>
+     * @category Enola\Support
      */
     class Security{    
         /**
-         * Funcion para codificar datos en md5
+         * Codificar datos en md5
          * @param string $value
          * @return string
         */
@@ -16,7 +18,7 @@
             return md5($value);
         }
         /**
-         * Funcion para codificar datos en sha1
+         * Codificar datos en sha1
          * @param string $value
          * @return string
          */
@@ -24,7 +26,7 @@
             return sha1($value);
         }     
         /**
-         * Funcion para codificar datos en md5 y sha1
+         * Codificar datos en md5 y sha1
          * @param string $value
          * @return string
          */
@@ -34,7 +36,6 @@
         }     
         /**
          * Simple filtro que saca las '' y "" para que no se pueda realizar xss
-         * Hay que mejorarlo
          * @param string $value
          * @return string
          */
@@ -44,7 +45,7 @@
         }     
         /**
          * Realiza la limpieza de un string o conjunto de string llamando a la funcion filtro_xss
-         * @param string o array[string] $valor
+         * @param string o array[string] $value
          * @return string o array[string]
          */
         public static function clean_vars($value){

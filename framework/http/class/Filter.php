@@ -2,11 +2,13 @@
 namespace Enola\Http;
 
 /**
- * @author Enola
+ * Esta interface establece los metodos que debe proveer un Filter para que el framework lo pueda administrar correctamente.
+ * @author Eduardo Sebastian Nola <edunola13@gmail.com>
+ * @category Enola\Http
  */
 interface Filter {
     /**
-     * Funcion que es llamada para realizar el filtro correspondiente
+     * Realiza la ejecucion del filtro
      */
     public function filter();
 }

@@ -1,5 +1,5 @@
 {
-    "defaultStore": "File",
+    "defaultStore": "DataBase",
     "prefix": "enolaphp",
     "stores":{
         "File":{

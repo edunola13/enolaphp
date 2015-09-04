@@ -2,8 +2,9 @@
 /**
  * Esta clase es la encargada de administrar toda la configuracion global de la aplicacion de una manera central y sencilla.
  * Esta va a ser instanciada una unica vez.
- *
- * @author Enola
+ * @author Eduardo Sebastian Nola <edunola13@gmail.com>
+ * @category Enola
+ * @internal
  */
 class EnolaContext {
     private static $instance;

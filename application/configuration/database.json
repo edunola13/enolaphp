@@ -3,6 +3,7 @@
           
     "Local": {
         "hostname": "localhost",
+        "port": "3306",
         "user": "ana",
         "pass": "ana",
         "database": "enolaphp-tutorial",
@@ -13,6 +14,7 @@
     
     "Servidor": {
         "hostname": "localhost",
+        "port": "3306",
         "user": "user",
         "pass": "pass",
         "database": "db",

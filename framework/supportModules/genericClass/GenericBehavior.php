@@ -2,13 +2,19 @@
 namespace Enola\Support;
 
 /**
- * Description of CommonClass
- *
- * @author Enola
+ * Esta trait contiene comportamiento comun que es utilizado por los diferentes controladores de los diferentes modulos 
+ * como el controller http, el component o el controller cron. Ademas se puede utilizar en la clase que el usuario desee
+ * si necesita el comportamiento aca definido.
+ * @author Eduardo Sebastian Nola <edunola13@gmail.com>
+ * @category Enola\Support
  */
 trait GenericBehavior {
     /**
-     * Funcion lee los campos de un formulario y asigna a una variable el objeto con todos sus atributos o un array asociativo
+     * Lee los campos de un formulario y devuelve un objeto o un array con todos los valores correspondientes
+     * si se devuelve un objeto los nombres de los campos deben coincidir con el de la clase.
+     * @param type $var
+     * @param type $class
+     * @return type
      */
     protected function readFields(&$var, $class = NULL){
         $vars= array();
@@ -31,9 +37,14 @@ trait GenericBehavior {
             $var= $vars;
         }
         return $var;
-    }    
+    }
     /**
-     * Funcion que valida las variables de un objeto o de un array en base a una configuracion de validacion
+     * Valida las variables de un objeto o de un array en base a una definicion de configuracion de validacion
+     * Se puede utilizar la libreria que se desee pere debe respetar la inerfaz de la proporcionada por el framework.
+     * @param type $var
+     * @param type $lib
+     * @param type $locale
+     * @return boolean
      */
     protected function validate($var, $lib= '\Enola\Lib\Validation', $locale = NULL){
         $validacion= new $lib($locale);
@@ -58,14 +69,20 @@ trait GenericBehavior {
         }
     }    
     /**
-     * Funcion que arma una configuracion para la validacion
+     * Devuelve la configuracion de validacion
+     * Deberia ser sobrescrita por la clase que desee validar, si no, no validara nada.
      */
     protected function configValidation(){
         return array();
-    }    
+    }
     /**
-     * Carga una vista PHP
-     * @param type $view 
+     * Carga una vista PHP pasandole parametros y teniendo la oportunidad de guardar de retornar la vista para guardar 
+     * en una variable.
+     * Se crea una instancia de la clase Enola\Support\View en la variable $view
+     * @param type $view_template
+     * @param type $params
+     * @param type $returnData
+     * @return type
      */
     protected function loadView($view_template, $params = NULL, $returnData = FALSE){
         if($params != NULL && is_array($params)){
@@ -84,10 +101,11 @@ trait GenericBehavior {
             ob_end_clean();
             return $output;
         }
-    }    
-    /*
-     * Carga la instancia de objeto en una variable del objeto pasado como parametro
-     * Supone que la clase ya se encuentra importada
+    }
+    /**
+     * Carga la instancia de una clase pasada como parametro en una variable del objeto actual con el nombre indicado
+     * @param type $class
+     * @param type $name
      */
     protected function add_instance($class, $name = ""){
         if($name == ""){
@@ -96,9 +114,11 @@ trait GenericBehavior {
         $this->$name= new $class();
     }
     /**
-     * Realiza el llamado a la funcion que ejecuta el metodo renderizar del componente
-     * @param type $nombre
-     * @param type $parametros
+     * Realiza un llamado al componente indicado con las configuracion especificada
+     * @param type $name
+     * @param type $params
+     * @param type $action
+     * @return type
      */
     protected  function component($name, $params = NULL, $action = NULL){
         //Llama a la funcion que ejecuta el componente definido en el modulo Componente
