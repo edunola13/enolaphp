@@ -1,6 +1,7 @@
 <?php
 namespace Enola\Component;
 use Enola\Http\En_HttpRequest;
+use Enola\Http\En_HttpResponse;
 use Enola\Support;
 
 /**
@@ -16,12 +17,16 @@ class En_Component extends Support\GenericLoader implements Component{
     
     protected $viewFolder;
     protected $request;
+    protected $response;
     /**
      * Inicializa el component llamando al constructor de su padre y seteando el HttpRequest correspondiente
      */
     public function __construct() {        
         parent::__construct('component');
-        if(ENOLA_MODE == 'HTTP')$this->request= En_HttpRequest::getInstance();
+        if(ENOLA_MODE == 'HTTP'){
+            $this->request= En_HttpRequest::getInstance();
+            $this->response= En_HttpResponse::getInstance();
+        }
         $this->viewFolder= $this->context->getPathApp() . 'source/view/';
     }    
     /**

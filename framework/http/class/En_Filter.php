@@ -14,12 +14,14 @@ class En_Filter extends Support\GenericLoader implements Filter{
     use Support\GenericBehavior;
     
     protected $request;
+    protected $response;
     /**
      * Inicializa el controlador llamando al constructor de su padre y seteando el HttpRequest correspondiente
      */
     function __construct() {
         parent::__construct('filter');
         $this->request= En_HttpRequest::getInstance();
+        $this->response= En_HttpResponse::getInstance();
     }
     /**
      * Realiza la ejecucion del filtro

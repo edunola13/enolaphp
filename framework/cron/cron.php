@@ -78,7 +78,7 @@ class CronCore{
     }
     /**
      * Ejecuta el Cron mediante el metodo indicado
-     * Este es utilizado por el metodo fordward del CronController y de uso interno al modulo
+     * Este es utilizado por el metodo forward del CronController y de uso interno al modulo
      * @param type $cron
      * @param type $method
      */

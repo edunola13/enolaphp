@@ -10,7 +10,8 @@ use Enola\Error;
 require 'url_uri.php';
 //Carga de clases Basicas
 require 'class/Session.php';
-require 'class/En_HttpRequest.php';    
+require 'class/En_HttpRequest.php';   
+require 'class/En_HttpResponse.php';
 //Interface y Clase base de la que deben extender todos los filtros
 require 'class/Filter.php';
 require 'class/En_Filter.php';
@@ -30,6 +31,7 @@ require 'class/En_Controller.php';
 class HttpCore{
     public $app;
     public $httpRequest;
+    public $httpResponse;
     /**
      * Se instancia el nucleo.
      * Se define todo lo respectivo a la URI y se define el Http Request actual
@@ -40,6 +42,7 @@ class HttpCore{
         $config= UrlUri::defineApplicationUri($app->context);
         //Creo el Http request
         $this->httpRequest= new En_HttpRequest($config);
+        $this->httpResponse= new En_HttpResponse();
         $this->app= $app;
     }
     /**

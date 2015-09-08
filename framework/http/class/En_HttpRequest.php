@@ -5,7 +5,7 @@ use Enola\Support\Security;
 /**
  * Esta clase representa una solicitud HTTP y por lo tanto provee todas las propiedades basicas de una peticion HTTP como
  * asi tambien propiedades de peticion propias del framework (como es baseUrlLocale, etc).
- * Ademas provee comportamiento basico para leer parametros y redireccionar solicitudes. 
+ * Ademas provee comportamiento basico para leer parametros. 
  * @author Eduardo Sebastian Nola <edunola13@gmail.com>
  * @category Enola\Http
  */
@@ -139,19 +139,5 @@ class En_HttpRequest {
      */
     public function setAttribute($key, $value){
         $this->attributes[$key]= $value;
-    }
-    /**
-     * Redirecciona a otra pagina pasando una uri relativa a la aplicacion
-     * @param string $uri
-     */
-    public function redirect($uri){
-        UrlUri::redirect($this, $uri);
-    }
-    /**
-     * Redirecciona a una pagina externa a la aplicacion actual
-     * @param string $url
-     */
-    public function external_redirect($url){
-        UrlUri::externalRedirect($url);
     }
 }

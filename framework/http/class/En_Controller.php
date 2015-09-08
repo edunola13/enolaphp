@@ -14,6 +14,7 @@ class En_Controller extends Support\GenericLoader implements Controller{
     use Support\GenericBehavior;
     
     protected $request;
+    protected $response;
     protected $uriParams;
     protected $viewFolder;
     //errors
@@ -24,6 +25,7 @@ class En_Controller extends Support\GenericLoader implements Controller{
     function __construct(){
         parent::__construct('controller');
         $this->request= En_HttpRequest::getInstance();
+        $this->response= En_HttpResponse::getInstance();
         $this->viewFolder= $this->context->getPathApp() . 'source/view/';
     }  
 
@@ -87,7 +89,7 @@ class En_Controller extends Support\GenericLoader implements Controller{
      * @param type $uri
      * @param Bool $filter
      */
-    protected function fordward($uri, $filter = FALSE){
+    protected function forward($uri, $filter = FALSE){
         $this->context->app->httpCore->executeHttpRequest(NULL, $uri, $filter);
     }
 }
