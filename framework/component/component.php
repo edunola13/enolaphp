@@ -22,11 +22,15 @@ require 'class/En_Component.php';
  */
 class ComponentCore{
     public $app;
+    public $request;
+    public $response;
     /** 
      * @param Application $app
      */
-    public function __construct($app) {
+    public function __construct($app, $request, $response) {
         $this->app= $app;
+        $this->request= $request;
+        $this->response= $response;
     }    
     /**
      * Analiza si mapea la URI actual con la URL de componentes definida
@@ -118,12 +122,12 @@ class ComponentCore{
             if(method_exists($componente, 'rendering')){
                 if($action != NULL){
                     if(method_exists($componente, $action)){
-                        $componente->$action($parameters);
+                        $componente->$action($this->request, $this->response, $parameters);
                     }else{
                         Error::general_error('Component Error', 'The component ' . $name . ' dont implement the action ' . $action . '()');
                     }
                 }
-                return $componente->rendering($parameters);
+                return $componente->rendering($this->request, $this->response, $parameters);
             }
             else{
                 Error::general_error('Component Error', 'The component ' . $name . ' dont implement the method rendering()');

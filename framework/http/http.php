@@ -42,7 +42,7 @@ class HttpCore{
         $config= UrlUri::defineApplicationUri($app->context);
         //Creo el Http request
         $this->httpRequest= new En_HttpRequest($config);
-        $this->httpResponse= new En_HttpResponse();
+        $this->httpResponse= new En_HttpResponse($this->httpRequest);
         $this->app= $app;
     }
     /**
@@ -116,7 +116,7 @@ class HttpCore{
                 $filtro= new $class();
                 //Analiza si existe el metodo filtrar
                 if(method_exists($filtro, 'filter')){
-                    $filtro->filter();
+                    $filtro->filter($this->httpRequest, $this->httpResponse);
                 }
                 else{
                     Error::general_error('Filter Error', 'The filter ' . $filter_esp['class'] . ' dont implement the method filter()');
@@ -158,38 +158,38 @@ class HttpCore{
         $methodHttp= $_SERVER['REQUEST_METHOD'];
         if($dinamic_method){
             if(method_exists($controller, $method)){
-                $controller->$method();
+                $controller->$method($this->httpRequest, $this->httpResponse);
             }else{
                 Error::general_error('HTTP Method Error', "The HTTP method $method is not supported");
             }
         }else{
            switch ($methodHttp) {
             case 'GET':
-                $controller->doGet();
+                $controller->doGet($this->httpRequest, $this->httpResponse);
                 break;
             case 'POST':
-                $controller->doPost();
+                $controller->doPost($this->httpRequest, $this->httpResponse);
                 break;
             case 'UPDATE':
-                $controller->doUpdate();
+                $controller->doUpdate($this->httpRequest, $this->httpResponse);
                 break;
             case 'DELETE':
-                $controller->doDelete();
+                $controller->doDelete($this->httpRequest, $this->httpResponse);
                 break;
             case 'HEAD':
-                $controller->doHead();
+                $controller->doHead($this->httpRequest, $this->httpResponse);
                 break;
             case 'TRACE':
-                $controller->doTrace();
+                $controller->doTrace($this->httpRequest, $this->httpResponse);
                 break;
             case 'URI':
-                $controller->doUri();
+                $controller->doUri($this->httpRequest, $this->httpResponse);
                 break;
             case "OPTIONS":
-                $controller->doOptions();
+                $controller->doOptions($this->httpRequest, $this->httpResponse);
                 break;
             case 'CONNECT':
-                $controller->doConnect();
+                $controller->doConnect($this->httpRequest, $this->httpResponse);
                 break;
             default :                
                 Error::general_error('HTTP Method Error', "The HTTP method $methodHttp is not supported");

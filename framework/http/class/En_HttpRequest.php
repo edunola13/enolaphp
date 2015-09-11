@@ -1,5 +1,6 @@
 <?php
 namespace Enola\Http;
+use Enola\Support\Request;
 use Enola\Support\Security;
 
 /**
@@ -9,9 +10,7 @@ use Enola\Support\Security;
  * @author Eduardo Sebastian Nola <edunola13@gmail.com>
  * @category Enola\Http
  */
-class En_HttpRequest {
-    private static $instance;
-    public $attributes;
+class En_HttpRequest extends Request{
     //Propias de la peticion HTTP
     public $getParams;
     public $postParams;    
@@ -38,13 +37,7 @@ class En_HttpRequest {
     public function __construct($config){
         $this->init($config);
         self::$instance= $this;
-    }    
-    /**
-     * Devuelve la isntancia que se esta utilizando
-     */
-    public static function getInstance(){
-        return self::$instance;
-    } 
+    }
     /**
      * Setea todas las propiedades de la instancia
      * GET - POST - SERVER y FRAMEWORK
@@ -121,23 +114,32 @@ class En_HttpRequest {
         }
     }
     /**
-     * Devuelve un atributo, si existe y si no devuelve NULL
-     * @param string $key
-     * @return null o string
+     * Lee los campos de un formulario y devuelve un objeto o un array con todos los valores correspondientes
+     * si se devuelve un objeto los nombres de los campos deben coincidir con el de la clase.
+     * @param type $var
+     * @param type $class
+     * @return type
      */
-    public function getAttribute($key){
-        if(isset($this->attributes[$key])){            
-            return $this->attributes[$key];
-        }else{
-            return NULL;
+    public function readFields(&$var, $class = NULL){
+        $vars= array();
+        if($this->requestMethod == 'POST'){
+            $vars= $this->postParams;
         }
-    }
-    /**
-     * Setea un atributo al requerimiento
-     * @param type $key
-     * @param type $value
-     */
-    public function setAttribute($key, $value){
-        $this->attributes[$key]= $value;
+        else{
+            $vars= $this->getParams;
+        }
+        if($class != NULL){                    
+            $object= new $class();
+            foreach ($vars as $key => $value) {
+                if(property_exists($object, $key)){
+                    $object->$key= $value;
+                }
+            }
+            $var= $object;
+        }
+        else{
+            $var= $vars;
+        }
+        return $var;
     }
 }

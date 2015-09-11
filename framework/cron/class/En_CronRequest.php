@@ -1,5 +1,6 @@
 <?php
 namespace Enola\Cron;
+use Enola\Support\Request;
 use Enola\Support\Security;
 
 /**
@@ -9,11 +10,9 @@ use Enola\Support\Security;
  * @author Eduardo Sebastian Nola <edunola13@gmail.com>
  * @category Enola\Cron
  */
-class En_CronRequest {
-    private static $instance;
+class En_CronRequest extends Request{
     protected $params;
-    protected $allParams;    
-    public $attributes;
+    protected $allParams;
  
     /**
      * Crea la instancia del request en base a la configuracion pasada
@@ -23,14 +22,7 @@ class En_CronRequest {
         $this->params= $config['clean'];
         $this->allParams= $config['real'];
         self::$instance= $this;
-    }    
-    /**
-     * Devuelve la isntancia que se esta utilizando
-     */
-    public static function getInstance(){
-        return self::$instance;
     }
-    
     /**
      * Retorna todos los parameters de la linea de comandos que no fueron utilizados por el framework para la toma
      * de deciciones.
@@ -95,26 +87,5 @@ class En_CronRequest {
         else{
             return NULL;
         }
-    }
-    /**
-     * Devuelve un atributo, si existe y si no devuelve NULL
-     * @param string $key
-     * @return null o string
-     */
-    public function getAttribute($key){
-        if(isset($this->attributes[$key])){            
-            return $this->attributes[$key];
-        }
-        else{
-            return NULL;
-        }
-    }
-    /**
-     * Setea un atributo al requerimiento
-     * @param type $key
-     * @param type $value
-     */
-    public function setAttribute($key, $value){
-        $this->attributes[$key]= $value;
     }
 }

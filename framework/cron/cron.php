@@ -1,5 +1,6 @@
 <?php
 namespace Enola\Cron;
+use \Enola\Support\Response;
 use Enola\Error;
 
 /*
@@ -19,6 +20,7 @@ require 'class/En_CronRequest.php';
 class CronCore{
     public $app;
     public $cronRequest;
+    public $cronResponse;
     
     /** 
      * Se instancia el nucleo.
@@ -29,6 +31,7 @@ class CronCore{
         $this->app= $app;
         $config= $this->analyzeParameters($params);
         $this->cronRequest= new En_CronRequest($config);
+        $this->cronResponse= new Response();
     }    
     /**
      * Analiza los parametros y devuelvo los parametros ordenados para su posterior uso
@@ -92,7 +95,7 @@ class CronCore{
             $cron= new $class();
             //Analiza si existe el metodo indicado
             if(method_exists($cron, $method)){
-                $cron->$method();                
+                $cron->$method($this->cronRequest, $this->cronResponse);                
             }else{
                 Error::general_error('Cron Controller Error', 'The Cron Controller ' . $cron . ' dont implement the method ' . $method . '()');
             }

@@ -76,13 +76,17 @@ class Application{
     /**
      * Responde al requerimiento analizando el tipo del mismo, HTTP,CLI,COMPONENT,ETC.
      */
-    public function request(){        
-        //Cargo el modulo Component
-        $this->loadComponentModule();
+    public function request(){ 
+        //Cargo el modulo correspondiente en base al tipo de requerimiento
         if(ENOLA_MODE == 'HTTP'){
             //Cargo el modulo Http
-            $this->loadInitialiceHttpModule();
+            $this->loadHttpModule();
+        }else{
+            //Cargo el modulo Cron
+            $this->loadCronModule();
         }
+        //Cargo el modulo Component
+        $this->loadComponentModule();
         //Cargo la configuracion del usuario
         $this->loadUserConfig();
         //Analizo si estoy en modo HTTP o CLI
@@ -92,11 +96,12 @@ class Application{
                 //Ejecuto el componente via URL
                 $this->componentCore->executeUrlComponent($this->httpCore->httpRequest);
             }else{
+                //Ejecuto el controlador correspondiente
                 $this->httpCore->executeHttpRequest($this->actualController);
             }
         }else{
-            //Cargo el modulo cron y ejecuto el cron correspondiente
-            $this->executeCron();
+            //Ejecuta el cron controller
+            $this->cronCore->executeCronController();
         }        
     }    
     /**
@@ -128,9 +133,13 @@ class Application{
         //Carga Clase Base Loader
         require $this->context->getPathFra() . 'supportModules/genericClass/GenericLoader.php';
         //Carga Trait de funciones Comunes
-        require $this->context->getPathFra() . 'supportModules/genericClass/GenericBehavior.php'; 
+        require $this->context->getPathFra() . 'supportModules/genericClass/GenericBehavior.php';
+        //Carga Clase Base Requerimiento
+        require $this->context->getPathFra() . 'supportModules/genericClass/Request.php';
+        //Carga Clase Base Response
+        require $this->context->getPathFra() . 'supportModules/genericClass/Response.php'; 
         //Carga Clase En_DataBase - Si se definio configuracion para la misma
-        if($this->context->isDatabaseDefined())require $this->context->getPathFra() . 'supportModules/En_DataBase.php';
+        if($this->context->isDatabaseDefined()){require $this->context->getPathFra() . 'supportModules/En_DataBase.php';}
     }      
     /*
      * Carga todas las librerias particulares de la aplicacion que se cargaran automaticamente indicadas en el archivo de configuracion
@@ -145,7 +154,7 @@ class Application{
         foreach ($this->context->getLibrariesDefinition() as $name => $libreria) {
             //$libreria['class'] tiene la direccion completa desde LIBRARIE, no solo el nombre
             $dir= $libreria['class'];
-            if(isset($libreria['load_in']))$load_libraries[$name]= $libreria;
+            if(isset($libreria['load_in'])){$load_libraries[$name]= $libreria;}
             import_librarie($dir);
         }
         //Seteo las librerias que son auto instanciables
@@ -157,7 +166,34 @@ class Application{
     private function loadCache(){
         require $this->context->getPathFra() . 'supportModules/Cache.php';
         $this->cache= new Cache\Cache();
-    }    
+    }
+    /**
+     * Carga e inicializa el modulo HTTP
+     */
+    protected function loadHttpModule(){
+        //Analiza el paso de un error HTTP
+        Error::catch_server_error();
+        //Cargo el modulo HTTP e instancio el Core que se encarga de crear el HttpRequest que representa el requerimiento HTTP
+        require $this->context->getPathFra() . 'http/http.php';
+        $this->httpCore= new Http\HttpCore($this);
+    }
+    /**
+     * Carga el modulo cron y ejecuta el Cron correspondiente
+     * @global array $argv
+     * @global array $argc
+     */
+    protected function loadCronModule(){
+        //Consigo las variables globales para linea de comandos
+        global $argv, $argc;
+        //Analizo si se pasa por lo menos un parametros (nombre cron), el primer parametros es el nombre del archivo y el segundo en nombre de la clase
+        //pregunta por >= 2
+        if($argc >= 2){
+            require $this->context->getPathFra() . 'cron/cron.php';
+            $this->cronCore= new Cron\CronCore($this, $argv);            
+        }else{
+            Error::general_error('Cron Controller', 'There isent define any cron controller name');
+        }    
+    }
     /**
      * Carga el modulo Component si se definio por lo menos un component
      */
@@ -166,19 +202,9 @@ class Application{
         if(count($this->context->getComponentsDefinition())){            
             //Cargo el modulo componente e instancia el Core
             require $this->context->getPathFra() . 'component/component.php';
-            $this->componentCore= new Component\ComponentCore($this);
+            $this->componentCore= new Component\ComponentCore($this,$this->getRequest(),$this->getResponse());
         }
-    }    
-    /**
-     * Carga e inicializa el modulo HTTP
-     */
-    protected function loadInitialiceHttpModule(){
-        //Analiza el paso de un error HTTP
-        Error::catch_server_error();
-        //Cargo el modulo HTTP e instancio el Core que se encarga de crear el HttpRequest que representa el requerimiento HTTP
-        require $this->context->getPathFra() . 'http/http.php';
-        $this->httpCore= new Http\HttpCore($this);
-    }    
+    }       
     /**
      * Despues de la carga inicial y las libreria permite que el usuario realice su propia configuracion
      * Antes de atender el requerimiento HTTP o CLI
@@ -199,25 +225,7 @@ class Application{
         else{
             Error::general_error('Controller Error', 'There isent define any controller');
         }
-    }        
-    /**
-     * Carga el modulo cron y ejecuta el Cron correspondiente
-     * @global array $argv
-     * @global array $argc
-     */
-    protected function executeCron(){
-        //Consigo las variables globales para linea de comandos
-        global $argv, $argc;
-        //Analizo si se pasa por lo menos un parametros (nombre cron), el primer parametros es el nombre del archivo y el segundo en nombre de la clase
-        //pregunta por >= 2
-        if($argc >= 2){
-            require $this->context->getPathFra() . 'cron/cron.php';
-            $this->cronCore= new Cron\CronCore($this, $argv);
-            $this->cronCore->executeCronController();
-        }else{
-            Error::general_error('Cron Controller', 'There isent define any cron controller name');
-        }    
-    }
+    }    
     /**
      * Si corresponde:
      * Inicializa el calculo del tiempo de respuesta
@@ -247,6 +255,28 @@ class Application{
         }
     }
     
+    /**
+     * Retorna el Requerimiento actual
+     * @return Request
+     */
+    public function getRequest(){
+        if($this->httpCore != NULL){
+            return $this->httpCore->httpRequest;
+        }else{
+            return $this->cronCore->cronRequest;
+        }
+    }
+    /**
+     * Retorna el Response actual
+     * @return Response
+     */
+    public function getResponse(){
+        if($this->httpCore != NULL){
+            return $this->httpCore->httpResponse;
+        }else{
+            return $this->cronCore->cronResponse;
+        }
+    }
     /**
      * Devuelve un atributo en cache a nivel aplicacion. Si no existe devuelve NULL.
      * @param string $key

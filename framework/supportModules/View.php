@@ -11,7 +11,8 @@ use EnolaContext;
 class View{
     public $app;
     public $context;
-    public $httpRequest;
+    public $request;
+    public $response;
     //i18n
     protected $locale;
     protected $fileName;
@@ -22,9 +23,8 @@ class View{
     public function __construct() {
         $this->context= EnolaContext::getInstance();
         $this->app= $this->context->app;
-        if($this->app->httpCore != NULL){
-            $this->httpRequest= $this->app->httpCore->httpRequest;
-        }
+        $this->request= $this->app->getRequest();
+        $this->response= $this->app->getResponse();
     }
     /**
      * Retorna la baseurl
@@ -37,15 +37,15 @@ class View{
      * Retorna la real_baseurl
      * @return string
      */
-    function real_base(){
-        return $this->httpRequest->realBaseUrl;
+    function realBase(){
+        return $this->request->realBaseUrl;
     }    
     /**
      * Retorna la base url con el locale actual
      * @return string
      */
-    function base_locale(){
-        return $this->httpRequest->baseUrlLocale;
+    function baseLocale(){
+        return $this->request->baseUrlLocale;
     }
     /**
      * Arma una url para un recurso
@@ -64,8 +64,8 @@ class View{
      */
     function urlFor($internalUri, $locale = NULL){
         $internalUri= ltrim($internalUri, '/');
-        if($locale == NULL)return $this->httpRequest->realBaseUrl . $internalUri;
-        else return $this->httpRequest->realBaseUrl . $locale . '/' . $internalUri;
+        if($locale == NULL)return $this->request->realBaseUrl . $internalUri;
+        else return $this->request->realBaseUrl . $locale . '/' . $internalUri;
     }
     /**
      * Arma una url internacionalizada (locale actual) para una URI interna
@@ -74,7 +74,7 @@ class View{
      */
     function urlLocaleFor($internalUri){
         $internalUri= ltrim($internalUri, '/');
-        return $this->httpRequest->baseUrlLocale . $internalUri;
+        return $this->request->baseUrlLocale . $internalUri;
     }
     /**
      * Arma una url para renderizar un componente
@@ -86,8 +86,8 @@ class View{
     function urlComponentFor($component, $params = "", $locale = NULL){
         $params= '/' . ltrim($params, '/');
         $url_component= $this->context->getComponentUrl();
-        if($locale == NULL)return $this->httpRequest->realBaseUrl . $url_component . '/' . $component . $params;
-        else return $this->httpRequest->realBaseUrl . $locale . '/' . $url_component . '/' . $component . $params;
+        if($locale == NULL)return $this->request->realBaseUrl . $url_component . '/' . $component . $params;
+        else return $this->request->realBaseUrl . $locale . '/' . $url_component . '/' . $component . $params;
     }
     /**
      * Arma un url para ejecutar una accion de un componente
@@ -100,8 +100,8 @@ class View{
     function urlComponentActionFor($component, $action, $params = "", $locale = NULL){
         $params= '/' . ltrim($params, '/');
         $url_component= $this->context->getComponentUrl();
-        if($locale == NULL)return $this->httpRequest->realBaseUrl . $url_component . '/' . $component . '/actionComponent/' . $action . $params;
-        else return $this->httpRequest->realBaseUrl . $locale . '/' . $url_component . '/' . $component . '/actionComponent/' . $action . $params;
+        if($locale == NULL)return $this->request->realBaseUrl . $url_component . '/' . $component . '/actionComponent/' . $action . $params;
+        else return $this->request->realBaseUrl . $locale . '/' . $url_component . '/' . $component . '/actionComponent/' . $action . $params;
     }
     /**
      * Retorna el locale actual.
@@ -109,14 +109,14 @@ class View{
      * @return string
      */
     function locale(){
-        return $this->httpRequest->locale;
+        return $this->request->locale;
     }    
     /**
      * Retorna el locale actual de la url
      * @return string o null
      */
-    function locale_uri(){
-        return $this->httpRequest->localeUri;
+    function localeUri(){
+        return $this->request->localeUri;
     }
     /**
      * reemplaza $for por $replace en el string $string
@@ -133,7 +133,7 @@ class View{
      * @param string $string
      * @return string
      */
-    function replace_spaces($string){
+    function replaceSpaces($string){
         return str_replace(" ", "-", $string);
     }    
     /**
@@ -142,9 +142,17 @@ class View{
      * @param array $params
      * @param string action
      */
-    function component($name, $params = NULL, $action = NULL){
+    function component($name, $params = NULL, $action = NULL, $buffer = FALSE){
+        if($buffer){
+            ob_start();            
+        }
         //Llama a la funcion que ejecuta el componente definido en el modulo Componente
-        return $this->app->componentCore->executeComponent($name, $params, $action);
+        $this->app->componentCore->executeComponent($name, $params, $action);
+        if($buffer){
+            $output = ob_get_contents();
+            ob_end_clean();
+            return $output;
+        }
     }    
     /**
      * Carga un archivo de internacionalizacion. Si no se especifica el locale carga el archivo por defecto, si no

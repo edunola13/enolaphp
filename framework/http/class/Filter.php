@@ -9,6 +9,8 @@ namespace Enola\Http;
 interface Filter {
     /**
      * Realiza la ejecucion del filtro
+     * @param \Enola\Http\En_HttpRequest $request
+     * @param \Enola\Http\En_HttpResponse $response
      */
-    public function filter();
+    public function filter(En_HttpRequest $request, En_HttpResponse $response);
 }

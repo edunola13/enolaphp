@@ -1,5 +1,6 @@
 <?php
 use Enola\Http;
+use Enola\Http\En_HttpRequest,Enola\Http\En_HttpResponse;
 
 /**
  * Filtro que analiza la autorizacion de los usuarios
@@ -16,16 +17,16 @@ class Authorization extends Http\En_Filter{
     /**
      * Funcion que realiza el filtro correspondiente
      */
-    public function filter(){
+    public function filter(En_HttpRequest $request, En_HttpResponse $response){
         //Leo el archivo de configuracion de seguridad
         $json_segurirad= file_get_contents(PATHAPP . $this->context->getConfigurationFolder() . 'authorization.json');
         //Pasa el archivo json a un arreglo
         $seguridad= json_decode($json_segurirad, TRUE);
         //Tipo por defecto
         $user_logged= 'default';
-        if($this->request->session->exist('user_logged')){
+        if($request->session->exist('user_logged')){
             //Si existe le asigno el tipo correspondiente
-            $user_logged= $this->request->session->get('user_logged');
+            $user_logged= $request->session->get('user_logged');
         }
         //Compruebo que exista la configuracion para el tipo de usuario logueado
         if(isset($seguridad[$user_logged])){
@@ -55,13 +56,13 @@ class Authorization extends Http\En_Filter{
             }
             if(! $mapea){
                 //Si no tiene permiso es redireccionado
-                $this->request->redirect($config_seguridad['error']);
+                $response->redirect($config_seguridad['error']);
             }
         }
         else{
             //Si no existe la configuracion aviso del error
             echo "No existe definicion de seguridad para $user_logged";
-            $this->request->session->deleteSession();
+            $response->session->deleteSession();
             exit();
         }
     }

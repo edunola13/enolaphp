@@ -7,39 +7,57 @@ namespace Enola\Http;
  * @author Eduardo Sebastian Nola <edunola13@gmail.com>
  * @category Enola\Http
  */
-interface Controller {
-    /**
+interface Controller {    /**
      * Atiende la peticion HTTP de tipo GET
      */
-    public function doGet();    
+    /**
+     * Atiende la peticion HTTP de tipo GET
+     * @param \Enola\Http\En_HttpRequest $request
+     * @param \Enola\Http\En_HttpResponse $response
+     */
+    public function doGet(En_HttpRequest $request, En_HttpResponse $response);    
     /**
      * Atiende la peticion HTTP de tipo POST
+     * @param \Enola\Http\En_HttpRequest $request
+     * @param \Enola\Http\En_HttpResponse $response
      */
-    public function doPost();
+    public function doPost(En_HttpRequest $request, En_HttpResponse $response);
     /**
      * Atiende la peticion HTTP de tipo DELETE
+     * @param \Enola\Http\En_HttpRequest $request
+     * @param \Enola\Http\En_HttpResponse $response
      */
-    public function doDelete();
+    public function doDelete(En_HttpRequest $request, En_HttpResponse $response);
     /**
      * Atiende la peticion HTTP de tipo PUT
+     * @param \Enola\Http\En_HttpRequest $request
+     * @param \Enola\Http\En_HttpResponse $response
      */
-    public function doPut();
+    public function doPut(En_HttpRequest $request, En_HttpResponse $response);
     /**
      * Atiende la peticion HTTP de tipo HEAD
+     * @param \Enola\Http\En_HttpRequest $request
+     * @param \Enola\Http\En_HttpResponse $response
      */
-    public function doHead();
+    public function doHead(En_HttpRequest $request, En_HttpResponse $response);
     /**
      * Atiende la peticion HTTP de tipo TRACE
+     * @param \Enola\Http\En_HttpRequest $request
+     * @param \Enola\Http\En_HttpResponse $response
      */
-    public function doTrace();
+    public function doTrace(En_HttpRequest $request, En_HttpResponse $response);
     /**
      * Atiende la peticion HTTP de tipo OPTIONS
+     * @param \Enola\Http\En_HttpRequest $request
+     * @param \Enola\Http\En_HttpResponse $response
      */
-    public function doOptions();
+    public function doOptions(En_HttpRequest $request, En_HttpResponse $response);
     /**
      * Atiende la peticion HTTP de tipo CONNECT
+     * @param \Enola\Http\En_HttpRequest $request
+     * @param \Enola\Http\En_HttpResponse $response
      */
-    public function doConnect();
+    public function doConnect(En_HttpRequest $request, En_HttpResponse $response);
     /**
      * Setea los uri_params de la peticion actual
      * @param type $uri_params

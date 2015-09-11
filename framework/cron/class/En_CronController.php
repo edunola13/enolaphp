@@ -11,8 +11,7 @@ use Enola\Support;
  */
 class En_CronController extends Support\GenericLoader{
     use Support\GenericBehavior;
-    
-    protected $request;
+
     protected $viewFolder;
     //errores
     public $errors;    
@@ -21,7 +20,6 @@ class En_CronController extends Support\GenericLoader{
      */
     function __construct(){
         parent::__construct('cron');
-        $this->request= En_CronRequest::getInstance();
         $this->viewFolder= $this->context->getPathApp() . 'source/view/';
     }
     /**

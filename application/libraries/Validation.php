@@ -369,7 +369,7 @@ class Validation {
         }
     } 
     /**
-     * Regla username: analiza si un string cumple con un mínimo de 6 caracteres y un máximo de 20, y que se usen sólo letras, números y guión bajo
+     * Regla username: analiza si un string cumple con un mínimo de 5 caracteres y un máximo de 20, y que se usen sólo letras, números y guión bajo
      * @param string $nombre
      * @param string $dato
      * @return boolean
