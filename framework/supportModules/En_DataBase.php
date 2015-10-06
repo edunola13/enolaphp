@@ -41,7 +41,7 @@ class En_DataBase extends Support\GenericLoader{
      * Abre una conexion en base a la configuracion de la BD
      * @param string $nameDB
      * @return \PDO
-     * @throws \Exception
+     * @throws \PDOException
      */
     protected function getConnection($nameDB = NULL){
         $context= \EnolaContext::getInstance();
@@ -71,7 +71,7 @@ class En_DataBase extends Support\GenericLoader{
             $dsn= $cbd['driverbd'].':host='.$cbd['hostname'].';port='.$cbd['port'].';dbname='.$cbd['database'];
             //Abro la conexion                
             $gbd = new \PDO($dsn, $cbd['user'], $cbd['pass'], array(\PDO::ATTR_PERSISTENT => $cbd['persistent']));
-            $gbd->exec("set names " . $cbd['charset']);
+            $gbd->exec("SET NAMES '".$cbd['charset']."'");
             if($context->getEnvironment() == 'development'){
                 $gbd->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
             }else{
@@ -80,8 +80,8 @@ class En_DataBase extends Support\GenericLoader{
             //Retorno la conexion 
             return $gbd;
         } 
-        catch (\Exception $e) {
-            throw new \Exception($e->getMessage(), $e->getCode());
+        catch (\PDOException $e) {
+            throw new \PDOException($e->getMessage(), $e->getCode());
         }
     }
     /** Limpia las variables de instancia del ActiveRecord */
@@ -95,14 +95,22 @@ class En_DataBase extends Support\GenericLoader{
         $this->order= '';
         $this->limit= '';
     }    
-    /** Elimina elementos de $vars que tengan como clave el valor de un elemento de $excepts_vars */
+    /**
+     * Elimina elementos de $vars que tengan como clave el valor de un elemento de $excepts_vars
+     * @param array $vars
+     * @param array $excepts_vars
+     * @return array
+     */
     protected function deleteVars($vars, $excepts_vars){
         foreach ($excepts_vars as $value) {
             unset($vars[$value]);
         }
         return $vars;
     }
-    /** Almacena los errores */
+    /**
+     * Almacena los errores
+     * @param string $error
+     */
     protected function catchError($error){
         if($this->connection->inTransaction()){
             $this->errorTran[]= $error;
@@ -355,10 +363,11 @@ class En_DataBase extends Support\GenericLoader{
             }else{
                 $this->catchError($error);
             }
+            $this->cleanVars();
         } catch (\PDOException $e) {
+            $this->cleanVars();
             throw new \PDOException($e->getMessage(), $e->getCode());
-        }
-        $this->cleanVars();
+        }       
         return $res;
     }
     /**
@@ -397,7 +406,7 @@ class En_DataBase extends Support\GenericLoader{
                 if($offset != NULL)$sql.= ' OFFSET ' . $offset;
             }
             //Prepara la consulta, setea los parametros y ejecuta
-            $query= $this->connection->prepare($sql);        
+            $query= $this->connection->prepare($sql);      
             foreach ($where_values as $key => $value){
                 if($value === FALSE){
                     $query->bindValue($key, 0);
@@ -412,10 +421,11 @@ class En_DataBase extends Support\GenericLoader{
             }else{
                 $this->catchError($error);
             }
+            $this->cleanVars();
         } catch (\PDOException $e) {
+            $this->cleanVars();
             throw new \PDOException($e->getMessage(), $e->getCode());
         }
-        $this->cleanVars();
         return $res;
     }
     /**
@@ -509,10 +519,11 @@ class En_DataBase extends Support\GenericLoader{
                 $res= FALSE;
                 $this->catchError($error);
             }
+            $this->cleanVars();
         } catch (\PDOException $e) {
+            $this->cleanVars();
             throw new \PDOException($e->getMessage(), $e->getCode());
         }
-        $this->cleanVars();
         return $res;
     }
     /**
@@ -543,10 +554,11 @@ class En_DataBase extends Support\GenericLoader{
             }else{
                 $res= TRUE;
             }
+            $this->cleanVars();
         } catch (\PDOException $e) {
+            $this->cleanVars();
             throw new \PDOException($e->getMessage(), (int)$e->getCode());
         }
-        $this->cleanVars();
         return $res;
     }
     
@@ -557,17 +569,10 @@ class En_DataBase extends Support\GenericLoader{
      * @param string $class
      * @return array[object]
      */
-    public function resultsInObjects($PdoStatement, $class){
+    public function resultsInObjects($PdoStatement, $class = "stdClass"){
         $result= array();
-        while($reg= $PdoStatement->fetchObject()){
-            $instanciaClase= new $class();
-            foreach ($reg as $key => $value) {
-                if(property_exists($instanciaClase, $key)){
-                   $ref= new \ReflectionProperty($instanciaClase,$key);
-                   if($ref->isPublic())$instanciaClase->$key= $value;
-                }
-            }
-            $result[]= $instanciaClase;
+        while($obj= $PdoStatement->fetchObject($class)){
+            $result[]= $obj;
         }
         return $result;
     }
@@ -578,21 +583,9 @@ class En_DataBase extends Support\GenericLoader{
      * @param string $class
      * @return null|object
      */
-    public function firstResultInObject($PdoStatement, $class){
-        $tupla= $PdoStatement->fetchObject();
-        if($tupla == NULL){
-            return NULL;
-        }
-        else{
-            $instanciaClase= new $class();
-            foreach ($tupla as $key => $value) {
-                if(property_exists($instanciaClase, $key)){
-                    $ref= new \ReflectionProperty($instanciaClase,$key);
-                    if($ref->isPublic())$instanciaClase->$key= $value;
-                }
-            }
-            return $instanciaClase;
-        }
+    public function firstResultInObject($PdoStatement, $class = "stdClass"){
+        $objetct= $PdoStatement->fetchObject($class);
+        return $objetct;
     }
     /**
      * En base a una tabla especificada y un objeto agrega el objeto en la tabla. 

@@ -98,7 +98,7 @@ class EnolaContext {
                 break;
             default:
                 //No realiza el llamado a funcion de error porque todavia no se cargo el modulo de errores
-                $head= 'Configuration Erron';
+                $head= 'Configuration Error';
                 $message= 'The environment is not defined in configuration.json';
                 require $path_application . 'errors/general_error.php';
                 exit;
