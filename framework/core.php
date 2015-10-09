@@ -139,7 +139,7 @@ class Application{
         //Carga Clase Base Response
         require $this->context->getPathFra() . 'supportModules/genericClass/Response.php'; 
         //Carga Clase En_DataBase - Si se definio configuracion para la misma
-        if($this->context->isDatabaseDefined()){require $this->context->getPathFra() . 'supportModules/En_DataBase.php';}
+        if($this->context->isDatabaseDefined()){require $this->context->getPathFra() . 'supportModules/DataBaseAR.php';}
     }      
     /*
      * Carga todas las librerias particulares de la aplicacion que se cargaran automaticamente indicadas en el archivo de configuracion

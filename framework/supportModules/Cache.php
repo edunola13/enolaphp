@@ -1,6 +1,6 @@
 <?php
 namespace Enola\Cache;
-use Enola\DB\En_DataBase;
+use Enola\DB\DataBaseAR;
 
 /*
  * En este modulo se encuentra definido todo el sistema de Cache.
@@ -239,7 +239,7 @@ class CacheDataBase implements CacheInterface{
     public function __construct($nameDB, $table) {
         $this->nameDB= $nameDB;
         $this->table= $table;
-        $this->connection= new En_DataBase(TRUE, $nameDB);
+        $this->connection= new DataBaseAR(TRUE, $nameDB);
     }
     /**
      * Setea la conexion a la base de datos en base a la definicion seleccionada y la tabla indicada

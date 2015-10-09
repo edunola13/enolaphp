@@ -1,0 +1,21 @@
+[2015-10-08 03:37:32.000000 ::1  - Error Fatal - Parse - Strict ] Uncaught exception 'PDOException' with message 'SQLSTATE[HY000] [1045] Access denied for user 'ana'@'localhost' (using password: YES)' in C:\xampp-php5.6\htdocs\enolaphp\framework\supportModules\En_DataBase.php:84
+Stack trace:
+#0 C:\xampp-php5.6\htdocs\enolaphp\framework\supportModules\En_DataBase.php(38): Enola\DB\En_DataBase->getConnection('Local')
+#1 C:\xampp-php5.6\htdocs\enolaphp\framework\supportModules\Cache.php(242): Enola\DB\En_DataBase->__construct(true, 'Local')
+#2 C:\xampp-php5.6\htdocs\enolaphp\framework\supportModules\Cache.php(77): Enola\Cache\CacheDataBase->__construct('Local', 'cache')
+#3 C:\xampp-php5.6\htdocs\enolaphp\framework\supportModules\Cache.php(61): Enola\Cache\Cache->setCacheStore('Default')
+#4 C:\xampp-php5.6\htdocs\enolaphp\framework\core.php(168): Enola\Cache\Cache->__construct()
+#5 C:\xampp-php5.6\htdocs\enolaphp\framework\core.php(119): Enola\Application->loadCache()
+#6 C:\xampp-php5.6\htdocs\enolaphp\framework\core.php(67): Enola\Application->init()
+#7 C:\xampp-php5.6\htdocs\
+----------\n[2015-10-09 16:08:16.000000 ::1  - Error Fatal - Parse - Strict ] Uncaught exception 'PDOException' with message 'SQLSTATE[HY000] [1045] Access denied for user 'ana'@'localhost' (using password: YES)' in C:\xampp-php5.6\htdocs\enolaphp\framework\supportModules\En_DataBase.php:84
+Stack trace:
+#0 C:\xampp-php5.6\htdocs\enolaphp\framework\supportModules\En_DataBase.php(38): Enola\DB\En_DataBase->getConnection('Local')
+#1 C:\xampp-php5.6\htdocs\enolaphp\framework\supportModules\Cache.php(242): Enola\DB\En_DataBase->__construct(true, 'Local')
+#2 C:\xampp-php5.6\htdocs\enolaphp\framework\supportModules\Cache.php(77): Enola\Cache\CacheDataBase->__construct('Local', 'cache')
+#3 C:\xampp-php5.6\htdocs\enolaphp\framework\supportModules\Cache.php(61): Enola\Cache\Cache->setCacheStore('Default')
+#4 C:\xampp-php5.6\htdocs\enolaphp\framework\core.php(168): Enola\Cache\Cache->__construct()
+#5 C:\xampp-php5.6\htdocs\enolaphp\framework\core.php(119): Enola\Application->loadCache()
+#6 C:\xampp-php5.6\htdocs\enolaphp\framework\core.php(67): Enola\Application->init()
+#7 C:\xampp-php5.6\htdocs\
+----------\n
