@@ -10,7 +10,7 @@ use Enola\Support;
  * @author Eduardo Sebastian Nola <edunola13@gmail.com>
  * @category Enola\DataBase
  */
-class En_DataBase extends Support\GenericLoader{
+class DataBaseAR extends Support\GenericLoader{
     protected static $config_db;
     public $connection;
     protected $currentDB;
@@ -79,7 +79,7 @@ class En_DataBase extends Support\GenericLoader{
             }
             //Retorno la conexion 
             return $gbd;
-        } 
+        }
         catch (\PDOException $e) {
             throw new \PDOException($e->getMessage(), $e->getCode());
         }
