@@ -36,8 +36,19 @@
     },
     
     "dependency_injection":{
-        "cache":{"class": "Cache", "namespace":"Enola\\Cache"},
-        "validation":{"class": "Validation", "namespace": "Enola\\Lib"}
+        "cache":{"class": "Cache", "namespace":"Enola\\Cache",
+            "constructor":{
+                "store":{"value": "File", "type": "string"}
+            },
+            "properties":{
+                "prefix":{"ref": "validation"}
+            }
+        },
+        "validation":{"class": "Validation", "namespace": "Enola\\Lib",
+            "properties":{
+                "locale":{"ref": "cache"}
+            }
+        }
     },
     
     "database": {

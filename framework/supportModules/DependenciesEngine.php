@@ -20,7 +20,7 @@ class DependenciesEngine {
      * @param type $object
      * @return NULL / Type
      */
-    protected function loadDependency($name, $dependency, $object = NULL){
+    protected function loadDependency($name, $dependency, $object = NULL, &$loadedDependencies = array()){
         $newInstance= NULL;
         if(isset($this->singletons[$name])){
             $newInstance= $this->singletons[$name];
@@ -32,14 +32,56 @@ class DependenciesEngine {
             if($namespace != ''){ $class= "\\" . $namespace . "\\" . $class;}
             //Consigo los parametros del constructor
             $params= array();
-            if(isset($dependency['params'])){
-                $params= $this->buildParams($dependency['params']);
+            if(isset($dependency['constructor'])){
+                $params= $this->buildParams($dependency['constructor']);
             }
             //Creo una instancia y la agrego a la lista de singleton si es necesario
             $reflection= new \ReflectionClass($class);
             $newInstance= $reflection->newInstanceArgs($params);
+            //La agrego a loadedDependencies
+            $loadedDependencies[$name]= $newInstance;
+            
+            //Si es un singleton la guardo como tal
             if(isset($dependency['singleton']) && ($dependency['singleton'] == "TRUE" || $dependency['singleton'] == "true")){
                 $this->singletons[$name]= $newInstance;
+            }
+            
+            //Injecto las dependencias a las propiedades
+            //Primero veo si hay Referencia a otras dependencias y cargo las mismas
+            if(isset($dependency['properties'])){
+                $properties= array();
+                foreach ($dependency['properties'] as $key => $definition) {
+                    $property= NULL;
+                    if(isset($definition['ref'])){
+                        //Conseguimos la dependencia
+                        $ref= $definition['ref'];
+                        $dependencies= $this->context->getDependencies();
+                        if(isset($dependencies[$ref])){
+                            if(isset($loadedDependencies[$ref])){
+                                $property= $loadedDependencies[$ref];                                
+                            }else{
+                                $property= $this->loadDependency($definition['ref'], $dependencies[$definition['ref']], NULL, $loadedDependencies);
+                            }
+                        }
+                    }else{
+                        $property= $definition['value'];
+                        settype($param, $definition['type']);
+                    }
+                    $properties[$key]= $property;
+                }
+                
+                foreach ($properties as $key => $value) {
+                    //Busco por set
+                    $setMethod= 'set' . strtoupper($key[0]) . substr($key, 1);                     
+                    if(method_exists($newInstance, $setMethod)){
+                        $newInstance->$setMethod($value);
+                    }else{
+                        $reflectionProperty= new \ReflectionProperty($newInstance,$key);
+                        if($reflectionProperty->isPublic()){
+                            $newInstance->$key= $value;
+                        }
+                    }
+                }
             }
         }
         if($object != NULL){        
@@ -56,16 +98,17 @@ class DependenciesEngine {
      */
     protected function buildParams($params){
         $buildParams= array();
-        foreach ($params as $value) {
-            $param= $value;
-            $paramLower= strtolower($value);
-            if($paramLower == 'true' || $paramLower == 'false'){
-                //Parseamos a Boolean
-                $param= $paramLower === 'true'? true: false;
-            }else if($param[0] == "&"){
+        foreach ($params as $definition) {
+            $param= NULL;
+            if(isset($definition['ref'])){
                 //Parseamos a objeto                
                 $dependencies= $this->context->getDependencies();
-                $param= $this->loadDependency($value, $dependencies[substr($value, 1)]);
+                if(isset($dependencies[$definition['ref']])){
+                    $param= $this->loadDependency($definition['ref'], $dependencies[$definition['ref']]);
+                }
+            }else{
+                $param= $definition['value'];
+                settype($param, $definition['type']);
             }
             $buildParams[]= $param;
         }
