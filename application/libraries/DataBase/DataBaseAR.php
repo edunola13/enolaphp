@@ -5,13 +5,13 @@ use Enola\Support;
 /**
  * Esta clase provee una abstraccion a la Base de Datos mediante PDO y su armador de consultas al estilo Active Record. 
  * Permite hacer la conexion a la Base de datos de una manera rapida y transparente.
- * Permite realizar consultas al estilo Active Record de una manera sencilla sin tener que escribir codigo SQL. Ademas,
- * permite mapear los resultados de la base en objetos.
+ * Permite realizar consultas al estilo Active Record de una manera sencilla sin tener que escribir codigo SQL.
  * @author Eduardo Sebastian Nola <edunola13@gmail.com>
  * @category Enola\DataBase
  */
 class DataBaseAR extends Support\GenericLoader{
     protected static $config_db;
+    /** @var \PDO */
     public $connection;
     protected $currentDB;
     protected $currentConfiguration;
@@ -35,7 +35,7 @@ class DataBaseAR extends Support\GenericLoader{
      */
     function __construct($conect = TRUE, $nameDB = NULL) {
         parent::__construct('db');
-        if($conect){$this->connection= $this->getConnection($nameDB);}
+	if($conect)$this->connection= $this->getConnection($nameDB);
     }
     /**
      * Abre una conexion en base a la configuracion de la BD
@@ -68,7 +68,17 @@ class DataBaseAR extends Support\GenericLoader{
             // Versiones anteriores usaba $cbd['driverbd'].':host='.$cbd['hostname'].';dbname='.$cbd['database'].';charset=utf8';
             
             //Creo el dsn
-            $dsn= $cbd['driverbd'].':host='.$cbd['hostname'].';port='.$cbd['port'].';dbname='.$cbd['database'];
+            $dsn= $cbd['driverbd'].':';
+            //Para SQLite y el resto
+            if($cbd['driverbd'] == "sqlite"){
+                $dsn .= $cbd['database'];
+            }else{
+                $dsn .= 'host='.$cbd['hostname'].';port='.$cbd['port'].';dbname='.$cbd['database'];
+            }
+            if($cbd['user'] == ""){
+                $cbd['user']= NULL;
+                $cbd['pass']= NULL;
+            }
             //Abro la conexion                
             $gbd = new \PDO($dsn, $cbd['user'], $cbd['pass'], array(\PDO::ATTR_PERSISTENT => $cbd['persistent']));
             $gbd->exec("SET NAMES '".$cbd['charset']."'");
@@ -79,33 +89,10 @@ class DataBaseAR extends Support\GenericLoader{
             }
             //Retorno la conexion 
             return $gbd;
-        }
+        } 
         catch (\PDOException $e) {
-            throw new \PDOException($e->getMessage(), $e->getCode());
+            throw $e;
         }
-    }
-    /** Limpia las variables de instancia del ActiveRecord */
-    protected function cleanVars(){
-        $this->select= "*";
-        $this->from= '';
-        $this->where= '';
-        $this->where_values= array();
-        $this->group= '';
-        $this->having= '';
-        $this->order= '';
-        $this->limit= '';
-    }    
-    /**
-     * Elimina elementos de $vars que tengan como clave el valor de un elemento de $excepts_vars
-     * @param array $vars
-     * @param array $excepts_vars
-     * @return array
-     */
-    protected function deleteVars($vars, $excepts_vars){
-        foreach ($excepts_vars as $value) {
-            unset($vars[$value]);
-        }
-        return $vars;
     }
     /**
      * Almacena los errores
@@ -125,11 +112,15 @@ class DataBaseAR extends Support\GenericLoader{
         $this->connection= NULL;
     }
     /**
-     * Cambia la conexion actual
+     * Realiza la conexion a la base indicada o por defecto
      * @param string $nameDB
      */
-    public function changeConnection($nameDB = NULL){
+    public function connect($nameDB = NULL){
         $this->connection= $this->getConnection($nameDB);
+    }
+    /** Re conecta a la base actual */
+    public function reconnect(){
+        $this->connection= $this->getConnection($this->currentDB);
     }
     /** Comienza una Transaccion */
     public function beginTransaction(){
@@ -147,7 +138,7 @@ class DataBaseAR extends Support\GenericLoader{
     }
     
     /*
-     * ACTIVE RECORD and MORE
+     * ACTIVE RECORD
      */
     /** 
      * Arma el Select de la consulta
@@ -184,7 +175,7 @@ class DataBaseAR extends Support\GenericLoader{
      * @param array $values
      */
     public function where($conditions, array $values){
-        if($this->where != '')$this->where.='AND ';
+        if($this->where != ''){$this->where.='AND ';}
         $this->where.= $conditions . ' ';
         $this->where_values = array_merge($this->where_values, $values);
     }
@@ -194,42 +185,42 @@ class DataBaseAR extends Support\GenericLoader{
      * @param array $values
      */
     public function or_where($conditions, array $values){
-        if($this->where != '')$this->where.='OR ';
+        if($this->where != ''){$this->where.='OR ';}
         $this->where.= $conditions . ' ';
         $this->where_values = array_merge($this->where_values, $values);
     }
     /**
      * Arma el where like de la consutla
      * @param string $field
-     * @param type $match
+     * @param string $match
      * @param string $joker
      * @param bool $not
      */
     public function where_like($field, $match, $joker='both', $not=FALSE){
-        if($this->where != '')$this->where.='AND ';
+        if($this->where != ''){$this->where.='AND ';}
         $this->like($field, $match, $joker, $not);
     }
     /**
      * Arma el where like con or de la consutla
      * @param string $field
-     * @param type $match
+     * @param string $match
      * @param string $joker
      * @param bool $not
      */
     public function or_where_like($field, $match, $joker='both', $not=FALSE){
-        if($this->where != '')$this->where.='OR ';
+        if($this->where != ''){$this->where.='OR ';}
         $this->like($field, $match, $joker, $not);
     }
     /**
      * Arma el Like para el where and o or
      * @param string $field
-     * @param type $match
+     * @param string $match
      * @param string $joker
      * @param bool $not
      */
     protected function like($field, $match, $joker='both', $not=FALSE){
         $this->where.= $field . ' ';
-        if($not)$this->where.= 'NOT ';
+        if($not){$this->where.= 'NOT ';}
         $this->where.= 'LIKE ';
         switch ($joker){
             case 'both':
@@ -250,7 +241,7 @@ class DataBaseAR extends Support\GenericLoader{
      * @param bool $not
      */
     public function where_in($field, array $values, $not=FALSE){
-        if($this->where != '')$this->where.='AND ';
+        if($this->where != ''){$this->where.='AND ';}
         $this->in($field, $values, $not);       
     }
     /**
@@ -260,7 +251,7 @@ class DataBaseAR extends Support\GenericLoader{
      * @param bool $not
      */
     public function or_where_in($field, array $values, $not=FALSE){
-        if($this->where != '')$this->where.='OR ';
+        if($this->where != ''){$this->where.='OR ';}
         $this->in($field, $values, $not);
     }
     /**
@@ -271,7 +262,7 @@ class DataBaseAR extends Support\GenericLoader{
      */
     protected function in($field, array $values, $not=FALSE){
         $this->where.= $field . ' ';
-        if($not)$this->where.= 'NOT ';
+        if($not){$this->where.= 'NOT ';}
         $this->where.= 'IN (';
         foreach ($values as $value) {
             $this->where.= "'$value',";
@@ -301,7 +292,7 @@ class DataBaseAR extends Support\GenericLoader{
      * @param array $values
      */
     public function having($conditions, array $values){
-        if($this->having != '')$this->having.='AND ';
+        if($this->having != ''){$this->having.='AND ';}
         $this->having.= $conditions . ' ';
         $this->where_values = array_merge($this->where_values, $values);
     } 
@@ -311,7 +302,7 @@ class DataBaseAR extends Support\GenericLoader{
      * @param array $values
      */
     public function or_having($conditions, array $values){
-        if($this->having != '')$this->having.='OR ';
+        if($this->having != ''){$this->having.='OR ';}
         $this->having.= $conditions . ' ';
         $this->where_values = array_merge($this->where_values, $values);
     }
@@ -329,59 +320,32 @@ class DataBaseAR extends Support\GenericLoader{
      */
     public function limit($limit, $offset = NULL){
         $this->limit= 'LIMIT ' . $limit;
-        if($offset != NULL)$this->limit.= ' OFFSET ' . $offset.' ';
+        if($offset != NULL){$this->limit.= ' OFFSET ' . $offset.' ';}
     }
     /**
      * Devuelve el resultado de la consulta armada de forma ActiveRecord
-     * @return PDOStatement
-     * @throws PDOException
+     * @return \PDOStatement o FALSE
+     * @throws \PDOException
      */
     public function get(){
         $res= FALSE;
         try{
-            $sql= "";           
-            $sql.= "SELECT " . $this->select;
-            $sql.= " FROM " . $this->from;
-            if($this->where != '')$sql.= "WHERE " . $this->where;                
-            $sql.= $this->group;
-            if($this->having != '')$sql.= "HAVING " . $this->having;
-            $sql.= $this->order;
-            $sql.= $this->limit;
-            //Prepara la consulta, setea los parametros y ejecuta
-            $query= $this->connection->prepare($sql);        
-            foreach ($this->where_values as $key => $value){
-                if($value === FALSE){
-                    $query->bindValue($key, 0);
-                }else{
-                    $query->bindValue($key, $value);
-                }
-            }
-            $query->execute();
-            $error= $query->errorInfo();
-            if($error[0] == '00000'){
+            //Armo y preparo la consulta
+            $query= $this->prepareSelect($this->select, $this->from, $this->where, $this->group, $this->having, $this->order, $this->limit);
+            //Ejecuto la consulta
+            $query->execute($this->where_values);
+            //Controlo que este todo bien
+            if($this->isOk($query)){
                 $res= $query;
-            }else{
-                $this->catchError($error);
             }
+            //Limpio las variables del AR
             $this->cleanVars();
         } catch (\PDOException $e) {
             $this->cleanVars();
-            throw new \PDOException($e->getMessage(), $e->getCode());
-        }       
-        return $res;
-    }
-    /**
-     * Devuelve un conjunto de objetos de la clase especificada en base a la consulta armada de la forma ActiveRecord
-     * @param string $class
-     * @return array[object]
-     */
-    public function getInObjects($class){
-        $res= $this->get();
-        if($res !== FALSE){
-            return $this->resultsInObjects($res, $class);
+            throw $e;
         }
         return $res;
-    }
+    }    
     /**
      * Devuelve el resultado de la consulta armada en base a los parametros
      * @param string $from
@@ -390,60 +354,31 @@ class DataBaseAR extends Support\GenericLoader{
      * @param string $order
      * @param type $limit
      * @param type $offset
-     * @return PDOStatement
-     * @throws PDOStatement
+     * @return \PDOStatement o FALSE
+     * @throws \PDOStatement
      */
     public function getFromWhere($from, $where=NULL, $where_values=array(), $order=NULL, $limit=NULL, $offset=NULL){
         $res= FALSE;
         try{
-            $sql= "";           
-            $sql.= "SELECT " . $this->select;
-            $sql.= " FROM " . $from;
-            if($where != NULL)$sql.= " WHERE " . $where;
-            if($order != NULL)$sql.= " ORDER BY " . $order;
+            //Armo partes de la consulta
+            if($order != NULL){$order= " ORDER BY " . $order;}
             if($limit != NULL){
-                $sql.= " LIMIT " . $limit;
-                if($offset != NULL)$sql.= ' OFFSET ' . $offset;
+                $limit= " LIMIT " . $limit;
+                if($offset != NULL){$limit.= ' OFFSET ' . $offset;}
             }
-            //Prepara la consulta, setea los parametros y ejecuta
-            $query= $this->connection->prepare($sql);      
-            foreach ($where_values as $key => $value){
-                if($value === FALSE){
-                    $query->bindValue($key, 0);
-                }else{
-                    $query->bindValue($key, $value);
-                }
-            }
-            $query->execute();
-            $error= $query->errorInfo();
-            if($error[0] == '00000'){
+            //Armo y preparo la consulta
+            $query= $this->prepareSelect($this->select, $from, $where, '', '', $order, $limit);
+            //Ejecuto la consulta
+            $query->execute($where_values);
+            //Controlo que este todo bien
+            if($this->isOk($query)){
                 $res= $query;
-            }else{
-                $this->catchError($error);
             }
+            //Limpio las variables del AR
             $this->cleanVars();
         } catch (\PDOException $e) {
             $this->cleanVars();
-            throw new \PDOException($e->getMessage(), $e->getCode());
-        }
-        return $res;
-    }
-    /**
-     * Devuelve un conjunto de objetos de la clase especificada en base a la consulta armada en base a los parametros
-     * @param string $class
-     * @param string $from
-     * @param string $where
-     * @param array $where_values
-     * @param string $order
-     * @param type $limit
-     * @param type $offset
-     * @return array[object]
-     * @throws PDOStatement
-     */
-    public function getFromWhereInObjects($class, $from, $where=NULL, $where_values=array(), $order=NULL, $limit=NULL, $offset=NULL){
-        $res= $this->getFromWhere($from,$where,$where_values,$order,$limit,$offset);
-        if($res !== FALSE){
-            return $this->resultsInObjects($res, $class);
+            throw $e;
         }
         return $res;
     }
@@ -452,37 +387,19 @@ class DataBaseAR extends Support\GenericLoader{
      * @param string $table
      * @param array $values
      * @return boolean
-     * @throws PDOException
+     * @throws \PDOException
      */
     public function insert($table, array $values){
         try{
-            $sql= 'INSERT INTO ' . $table . ' (';
-            $value= 'values(';
-            foreach ($values as $key => $val) {
-                $sql.= $key . ',';
-                $value.= ':' . $key . ',';
-            }
-            $sql = trim($sql, ',');
-            $value = trim($value, ',');
-            $sql .= ') ' . $value . ')';
-            $query= $this->connection->prepare($sql);
-            foreach ($values as $key => $value) {
-                if($value === FALSE){
-                    $query->bindValue($key, 0);
-                }else{
-                    $query->bindValue($key, $value);
-                }
-            }
-            $query->execute();
+            //Armo y preparo la consulta
+            $query= $this->prepareInsert($table, $values);
+            //Ejecuto la consulta
+            $query->execute($values);
             $error= $query->errorInfo();
-            if($error[0] != '00000'){
-                $this->catchError($error);
-                return FALSE;
-            }else{
-                return TRUE;
-            }
+            //Retorno si salio todo bien o no
+            return $this->isOk($query);
         } catch (\PDOException $e) {
-            throw new \PDOException($e->getMessage(), $e->getCode());
+            throw $e;
         }
     }
     /**
@@ -490,191 +407,156 @@ class DataBaseAR extends Support\GenericLoader{
      * @param string $table
      * @param array $values
      * @return boolean
-     * @throws PDOException
+     * @throws \PDOException
      */
     public function update($table, array $values){
         $res= FALSE;
         try{
-            $sql= 'UPDATE ' . $table . ' SET ';
-            foreach ($values as $key => $value) {
-                $sql .= $key . '=:' . $key . ',';
-            }
-            $sql = trim($sql, ',');
-            if($this->where != '')$sql.= " WHERE " . $this->where; 
-
-            $query= $this->connection->prepare($sql);
+            $query= $this->prepareUpdate($table, $values, $this->where);
+            //Uno los values pasados y los del where
             $values= array_merge($values, $this->where_values);
-            foreach ($values as $key => $value){
-                if($value === FALSE){
-                    $query->bindValue($key, 0);
-                }else{
-                    $query->bindValue($key, $value);
-                }
-            }
-            $query->execute();
-            $error= $query->errorInfo();
-            if($error[0] == '00000'){
-                $res= TRUE;
-            }else{
-                $res= FALSE;
-                $this->catchError($error);
-            }
+            //Ejecuto la consulta
+            $query->execute($values);
+            //Veo si salio todo bien
+            $res= $this->isOk($query);
+            //Limpio las variables del AR
             $this->cleanVars();
         } catch (\PDOException $e) {
             $this->cleanVars();
-            throw new \PDOException($e->getMessage(), $e->getCode());
+            throw $e;
         }
         return $res;
-    }
+    }    
     /**
      * Elimina tuplas de una tabla en base a la consulta armada de la forma Active Record
      * @param string $table
      * @return boolean
-     * @throws PDOException
+     * @throws \PDOException
      */
     public function delete($table){        
         $res= FALSE;
         try{
-            $sql= 'DELETE FROM ' . $table . ' ';            
-            if($this->where != '')$sql.= " WHERE " . $this->where; 
-
-            $query= $this->connection->prepare($sql);
-            foreach ($this->where_values as $key => $value){
-                if($value === FALSE){
-                    $query->bindValue($key, 0);
-                }else{
-                    $query->bindValue($key, $value);
-                }
-            }
-            $query->execute();            
-            $error= $query->errorInfo();
-            if($error[0] != '00000'){
-                $res= FALSE;
-                $this->catch_error($error);                
-            }else{
-                $res= TRUE;
-            }
+            //Armo y preparo la consulta
+            $query= $this->prepareDelete($table, $this->where);
+            //Ejecuto la consulta
+            $query->execute($this->where_values);            
+            //Veo si salio todo bien
+            $res= $this->isOk($query);
+            //Limpio las variables del AR
             $this->cleanVars();
         } catch (\PDOException $e) {
             $this->cleanVars();
-            throw new \PDOException($e->getMessage(), (int)$e->getCode());
+            throw $e;
         }
         return $res;
-    }
-    
-    /**
-     * En base a la ejecucion de una consulta y una clase devuelve un arreglo con instancias de la clase pasada
-     * con los respectivos valores que trajo la consulta
-     * @param PdoStatement $PdoStatement
-     * @param string $class
-     * @return array[object]
+    }    
+    /*
+     * ACTIVE RECORD - INTERNAS
      */
-    public function resultsInObjects($PdoStatement, $class = "stdClass"){
-        $result= array();
-        while($obj= $PdoStatement->fetchObject($class)){
-            $result[]= $obj;
-        }
-        return $result;
-    }
     /**
-     * En base a la ejecucion de una consulta y una clase devuelve una instancia de la clase pasada
-     * con los respectivos valores que trajo la consulta
-     * @param PdoStatement $PdoStatement
-     * @param string $class
-     * @return null|object
-     */
-    public function firstResultInObject($PdoStatement, $class = "stdClass"){
-        $objetct= $PdoStatement->fetchObject($class);
-        return $objetct;
-    }
-    /**
-     * En base a una tabla especificada y un objeto agrega el objeto en la tabla. 
-     * Usa todos los atributos publicos del objeto
-     * @param string $table
-     * @param type $object
-     * @param array $excepts_vars
+     * Retorna si la consulta se realizao con exito, si no ocurrio ningun error.
+     * @param \PDOStatement $query
      * @return boolean
      */
-    public function insertObject($table, $object, $excepts_vars = array()){
-        try{
-            //Consigo las variables publicas del objeto
-            $vars= get_object_vars($object);
-            $vars= $this->deleteVars($vars, $excepts_vars);
-            $sql= 'INSERT INTO ' . $table . ' (';
-            $values= 'values(';
-            foreach ($vars as $key => $value) {
-                $sql.= $key . ',';
-                $values.= ':' . $key . ',';
-            }
-            $sql = trim($sql, ',');
-            $values = trim($values, ',');
-            $sql .= ') ' . $values . ')';
-            $query= $this->connection->prepare($sql);
-            foreach ($vars as $key => $value) {
-                if($value === FALSE){
-                    $query->bindValue($key, 0);
-                }else{
-                    $query->bindValue($key, $value);
-                }
-            }
-            $query->execute();
-            $error= $query->errorInfo();
-            if($error[0] != '00000'){
-                $this->catchError($error);
-                return FALSE;
-            }else{
-                return TRUE;
-            }
-        } catch (\PDOException $e) {
-            throw new \PDOException($e->getMessage(), $e->getCode());
+    protected function isOk(\PDOStatement $query){
+        $error= $query->errorInfo();
+        if($error[0] == '00000'){
+            return TRUE;
+        }else{
+            $this->catchError($error);
+            return FALSE;
         }
     }
+    /** Limpia las variables de instancia del ActiveRecord */
+    protected function cleanVars(){
+        $this->select= "*";
+        $this->from= '';
+        $this->where= '';
+        $this->where_values= array();
+        $this->group= '';
+        $this->having= '';
+        $this->order= '';
+        $this->limit= '';
+    }    
     /**
-     * En base a una tabla especificada y un objeto modifica el objeto en la tabla. 
-     * Usa todos los atributos publicos del objeto
+     * Elimina elementos de $vars que tengan como clave el valor de un elemento de $excepts_vars
+     * @param array $vars
+     * @param array $excepts_vars
+     * @return array
      */
+    protected function deleteVars($vars, $excepts_vars){
+        foreach ($excepts_vars as $value) {
+            unset($vars[$value]);
+        }
+        return $vars;
+    }
     /**
-     * 
-     * @param string $table
-     * @param type $object
+     * Retorna un PDOStatement SELECT armado en base a los parametros pasados
+     * @param string $select
+     * @param string $from
      * @param string $where
-     * @param array $where_values
-     * @param array $excepts_vars
-     * @return boolean
-     * @throws \PDOException
+     * @param string $group
+     * @param string $having
+     * @param string $order
+     * @param string $limit
+     * return PDOStatement
      */
-    public function updateObject($table, $object, $where = '', $where_values = array(), $excepts_vars = array()){
-        try{
-            $vars= get_object_vars($object);
-            //Consigo las variables publicas del objeto
-            $vars= $this->deleteVars($vars, $excepts_vars);
-            $sql= 'UPDATE ' . $table . ' SET ';
-            foreach ($vars as $key => $value) {
-                $sql .= $key . '=:' . $key . ',';
-            }
-            $sql = trim($sql, ',');
-            if($where != ''){
-                $sql .= ' WHERE ' . $where;
-            }
-            $query= $this->connection->prepare($sql);
-            $vars = array_merge($vars, $where_values);
-            foreach ($vars as $key => $value){
-                if($value === FALSE){
-                    $query->bindValue($key, 0);
-                }else{
-                    $query->bindValue($key, $value);
-                }
-            }
-            $query->execute();
-            $error= $query->errorInfo();
-            if($error[0] != '00000'){
-                $this->catchError($error);
-                return FALSE;
-            }else{
-                return TRUE;
-            }
-        } catch (\PDOException $e) {
-            throw new \PDOException($e->getMessage(), $e->getCode());
+    protected function prepareSelect($select, $from, $where='', $group='', $having='', $order='', $limit=''){     
+        $sql= "SELECT " . $select;
+        $sql.= " FROM " . $from;
+        if($where != '' && $where != NULL){$sql.= "WHERE " . $where;}        
+        $sql.= $group;
+        if($having != '' && $having != NULL){$sql.= "HAVING " . $having;}
+        $sql.= $order;
+        $sql.= $limit;
+        echo $sql;
+        //Preparo la consulta y la retorno
+        return $this->connection->prepare($sql);
+    }
+    /**
+     * Retorna un PDOStatement INSERT armado en base a los parametros pasados
+     * @param string $table
+     * @param array $values
+     * @return PDOStatement
+     */
+    protected function prepareInsert($table, $values){
+        $sql= 'INSERT INTO ' . $table . ' (';
+        $value= 'values(';
+        foreach ($values as $key => $val) {
+            $sql.= $key . ',';
+            $value.= ':' . $key . ',';
         }
+        $sql = trim($sql, ',');
+        $value = trim($value, ',');
+        $sql .= ') ' . $value . ')';
+        //Preparo la consulta y la retorno
+        return $this->connection->prepare($sql);
+    }
+    /**
+     * Retorna un PDOStatement UPDATE armado en base a los parametros pasados
+     * @param string $table
+     * @param array $values
+     * @param string $where
+     * @return PDOStatement
+     */
+    protected function prepareUpdate($table, $values, $where){
+        $sql= 'UPDATE ' . $table . ' SET ';
+        foreach ($values as $key => $value) {
+            $sql .= $key . '=:' . $key . ',';
+        }
+        $sql = trim($sql, ',');
+        if($where != ''){$sql.= " WHERE " . $where;}
+        //Preparo la consulta y la retorno
+        return  $this->connection->prepare($sql);
+    }
+    /**
+     * Retorna un PDOStatement DELETE armado en base a los parametros pasados
+     * @param string $table
+     * @param string $where
+     * @return PDOStatement
+     */
+    protected function prepareDelete($table, $where){
+        $sql= 'DELETE FROM ' . $table . ' ';            
+        if($where != ''){$sql.= " WHERE " . $where;}
     }
 }
