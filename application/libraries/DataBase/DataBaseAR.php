@@ -35,7 +35,7 @@ class DataBaseAR extends Support\GenericLoader{
      */
     function __construct($conect = TRUE, $nameDB = NULL) {
         parent::__construct('db');
-	if($conect)$this->connection= $this->getConnection($nameDB);
+        if($conect){$this->connection= $this->getConnection($nameDB);}
     }
     /**
      * Abre una conexion en base a la configuracion de la BD
