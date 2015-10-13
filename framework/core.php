@@ -55,6 +55,8 @@ class Application{
     public $cronCore;
     //Controller
     public $actualController;
+    //Dependency Injection
+    public $dependenciesEngine;
     //Performance
     public $performance;
     /**
@@ -137,9 +139,10 @@ class Application{
         //Carga Clase Base Requerimiento
         require $this->context->getPathFra() . 'supportModules/genericClass/Request.php';
         //Carga Clase Base Response
-        require $this->context->getPathFra() . 'supportModules/genericClass/Response.php'; 
-        //Carga Clase En_DataBase - Si se definio configuracion para la misma
-        if($this->context->isDatabaseDefined()){require $this->context->getPathFra() . 'supportModules/DataBaseAR.php';}
+        require $this->context->getPathFra() . 'supportModules/genericClass/Response.php';
+        //Carga el motor de Dependencias y creo una instancia del mismo
+        require $this->context->getPathFra() . 'supportModules/DependenciesEngine.php';  
+        $this->dependenciesEngine= new Support\DependenciesEngine();
     }      
     /*
      * Carga todas las librerias particulares de la aplicacion que se cargaran automaticamente indicadas en el archivo de configuracion
@@ -149,23 +152,18 @@ class Application{
         if($this->context->isAutoloadDefined()){
             require_once $this->context->getPathRoot() . 'vendor/' . $this->context->getComposerAutoload();
         }        
-        //Recorro de a una las librerias, las importo y guardo las que son auto instanciables
-        $load_libraries= array();
+        //Recorro de a una las librerias, las importo
         foreach ($this->context->getLibrariesDefinition() as $name => $libreria) {
             //$libreria['class'] tiene la direccion completa desde LIBRARIE, no solo el nombre
-            $dir= $libreria['class'];
-            if(isset($libreria['load_in'])){$load_libraries[$name]= $libreria;}
+            $dir= $libreria['path'];
             import_librarie($dir);
         }
-        //Seteo las librerias que son auto instanciables
-        $this->context->setLoadLibraries($load_libraries);
     }    
     /**
      * Carga el modulo cache y creo una instancia de la cache correspondiente en base a la configuracion
      */
-    private function loadCache(){
-        require $this->context->getPathFra() . 'supportModules/Cache.php';
-        $this->cache= new Cache\Cache();
+    protected function loadCache(){
+        $this->cache= $this->dependenciesEngine->injectDependency($this, "cache");
     }
     /**
      * Carga e inicializa el modulo HTTP

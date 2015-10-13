@@ -25,15 +25,22 @@
     "url-components": "enola-components",
     "components":{
     },
-            
-    "database": {
-        "configuration": "database.json"
-    },
                 
     "libraries": {
-        "validation": {"class": "Validation"}
+        "cache":{"path": "Cache"},
+        "database":{"path": "DataBase/DataBaseAR"},
+        "validation": {"path": "Validation"}
     },
     
     "composer": {
+    },
+    
+    "dependency_injection":{
+        "cache":{"class": "Cache", "namespace":"Enola\\Cache"},
+        "validation":{"class": "Validation", "namespace": "Enola\\Lib"}
+    },
+    
+    "database": {
+        "configuration": "database.json"
     }
 }

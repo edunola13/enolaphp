@@ -74,17 +74,6 @@ trait GenericBehavior {
         }
     }
     /**
-     * Carga la instancia de una clase pasada como parametro en una variable del objeto actual con el nombre indicado
-     * @param type $class
-     * @param type $name
-     */
-    protected function add_instance($class, $name = ""){
-        if($name == ""){
-            $name= $class;
-        }
-        $this->$name= new $class();
-    }
-    /**
      * Realiza un llamado al componente indicado con las configuracion especificada
      * @param string $name
      * @param array $params
@@ -103,5 +92,40 @@ trait GenericBehavior {
             ob_end_clean();
             return $output;
         }  
+    }
+    /**
+     * Carga la instancia de una clase pasada como parametro en una variable del objeto actual con el nombre indicado
+     * @param type $class
+     * @param type $name
+     */
+    protected function addInstance($class, $name = ""){
+        if($name == ""){
+            $name= $class;
+        }
+        $this->$name= new $class();
+    }
+    /**
+     * 
+     * @param \Enola\Application $app
+     * @param string $type
+     */
+    protected function injectDependencyOfType(\Enola\Application $app, $type){
+        $app->dependenciesEngine->injectDependencyOfType($this,$type);
+    }
+    /**
+     * Carga las dependencias indicadas en la instancia actual
+     * @param \Enola\Application $app
+     * @param array $dependenciesName
+     */
+    protected function injectDependencies(\Enola\Application $app, $dependenciesName){
+        $app->dependenciesEngine->injectDependencies($this,$dependenciesName);
+    }
+    /**
+     * Carga la dependencias indicada en la instancia actual
+     * @param \Enola\Application $app
+     * @param string $dependencyName
+     */
+    protected function injectDependency(\Enola\Application $app, $dependencyName){
+        $app->dependenciesEngine->injectDependency($this,$dependencyName);
     }
 }

@@ -2,29 +2,21 @@
 namespace Enola\Support;
 
 /**
- * Esta clase abstracta se encarga de realizar la inyeccion de dependencia de las clases que usted decidad.
- * Solo es nbecesario extender esta y llamar a su contructor. Esta cargara las librerias correspondientes a su tipo y
+ * Esta clase abstracta se encarga de realizar la inyeccion de dependencia en base al tipo.
+ * Solo es nbecesario extender esta y llamar a su contructor. Esta cargara las dependencias correspondientes a su tipo y
  * asignara el contexto de la aplicacion.
  * @author Eduardo Sebastian Nola <edunola13@gmail.com>
  * @category Enola\Support
  */
 abstract class GenericLoader {
-    protected $type;
     protected $context;
     /**
      * Constructor que realiza la carga inicial
-     * @param type $type
+     * @param string $type
      */
     public function __construct($type) {
-        $this->type= $type;
-        $this->loadLibraries();
         $this->context= \EnolaContext::getInstance();
-    }   
-    /**
-     * Inyecta las librerias que corresponde
-     */
-    protected function loadLibraries(){
-        //Realiza el llamado a la funcion que se encarga de esto
-        load_libraries_in_class($this, $this->type);
+        //Inyecta las dependencias por tipo
+        \EnolaContext::getInstance()->app->dependenciesEngine->injectDependencyOfType($this, $type);        
     }
 }

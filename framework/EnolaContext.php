@@ -28,7 +28,8 @@ class EnolaContext {
     private $composerAutoload;
     //Definiciones de diferentes aspectos/partes
     private $librariesDefinition;
-    private $loadLibraries;
+    private $dependencies;
+    private $loadDependencies;
     private $controllersDefinition;
     private $filtersBeforeDefinition;
     private $filtersAfterDefinition;
@@ -150,6 +151,13 @@ class EnolaContext {
         
         //Diferentes definiciones
         $this->librariesDefinition= $config['libraries'];
+        $this->dependencies= $config['dependency_injection'];
+        $this->loadDependencies= array();
+        foreach ($this->dependencies as $key => $value) {
+            if(isset($value['load_in'])){
+                $this->loadDependencies[$key]= $value;
+            }
+        }
         $this->controllersDefinition= $config['controllers'];
         $this->filtersBeforeDefinition= $config['filters'];
         $this->filtersAfterDefinition= $config['filters_after_processing'];
@@ -202,8 +210,11 @@ class EnolaContext {
     public function getLibrariesDefinition(){
         return $this->librariesDefinition;
     }
-    public function getLoadLibraries(){
-        return $this->loadLibraries;
+    public function getDependencies(){
+        return $this->dependencies;
+    }
+    public function getLoadDependencies(){
+        return $this->loadDependencies;
     }
     public function getControllersDefinition(){
         return $this->controllersDefinition;
@@ -263,12 +274,5 @@ class EnolaContext {
             return TRUE;
         }
         return FALSE;
-    }
-    /**
-     * Setea las librerias que se definieron para que se carguen automaticamente en diferentes componentes
-     * @param type $libraries
-     */
-    public function setLoadLibraries($libraries){
-        $this->loadLibraries= $libraries;
     }
 }

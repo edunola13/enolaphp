@@ -73,28 +73,6 @@
         return parse_ini_file($dir);
     }
     /**
-     * Recorre las librerias y analiza si carga o no la libreria en la determinada clase.
-     * Es llamado por el Loader en su construccion para inyectar las librerias correspondientes.
-     * Esta funcion supone que la libreria ya se encuentra importada.
-     * @param type $object
-     * @param type $type
-     */
-    function load_libraries_in_class($object, $type){
-        //Analiza las librerias que tienen seteado "load_in"
-        foreach (EnolaContext::getInstance()->getLoadLibraries() as $name => $librarie) {
-            $types= explode(",", $librarie['load_in']);
-            //Si la libreria contiene el tipo se carga
-            if(in_array($type, $types)){
-                //Veo si tiene namespace y si tiene le agrego el mismo
-                $namespace= (isset($librarie['namespace']) ? $librarie['namespace'] : ''); 
-                $dir= explode("/", $librarie['class']);
-                $class= $dir[count($dir) - 1];
-                if($namespace != '') $class= "\\" . $namespace . "\\" . $class;
-                add_instance($class, $object, $name);
-            }
-        }
-    }
-    /**
      * Carga la instancia de una clase pasada como parametro en una variable del objeto pasado como parametro.
      * Supone que la clase ya se encuentra importada. 
      * @param type $class

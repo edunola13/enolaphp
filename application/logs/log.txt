@@ -1,21 +1,171 @@
-[2015-10-08 03:37:32.000000 ::1  - Error Fatal - Parse - Strict ] Uncaught exception 'PDOException' with message 'SQLSTATE[HY000] [1045] Access denied for user 'ana'@'localhost' (using password: YES)' in C:\xampp-php5.6\htdocs\enolaphp\framework\supportModules\En_DataBase.php:84
+[2015-10-13 03:48:45.000000 ::1  - Error Fatal - Parse - Strict ] Maximum execution time of 30 seconds exceeded
+----------\n[2015-10-13 04:17:34.000000 ::1  - Unknown ] Illegal string offset 'class'
+----------\n[2015-10-13 04:17:35.000000 ::1  - Error Fatal - Parse - Strict ] Uncaught exception 'ReflectionException' with message 'Class c does not exist' in C:\xampp-php5.6\htdocs\enolaphp\framework\supportModules\DependenciesEngine.php:39
 Stack trace:
-#0 C:\xampp-php5.6\htdocs\enolaphp\framework\supportModules\En_DataBase.php(38): Enola\DB\En_DataBase->getConnection('Local')
-#1 C:\xampp-php5.6\htdocs\enolaphp\framework\supportModules\Cache.php(242): Enola\DB\En_DataBase->__construct(true, 'Local')
-#2 C:\xampp-php5.6\htdocs\enolaphp\framework\supportModules\Cache.php(77): Enola\Cache\CacheDataBase->__construct('Local', 'cache')
-#3 C:\xampp-php5.6\htdocs\enolaphp\framework\supportModules\Cache.php(61): Enola\Cache\Cache->setCacheStore('Default')
-#4 C:\xampp-php5.6\htdocs\enolaphp\framework\core.php(168): Enola\Cache\Cache->__construct()
-#5 C:\xampp-php5.6\htdocs\enolaphp\framework\core.php(119): Enola\Application->loadCache()
-#6 C:\xampp-php5.6\htdocs\enolaphp\framework\core.php(67): Enola\Application->init()
-#7 C:\xampp-php5.6\htdocs\
-----------\n[2015-10-09 16:08:16.000000 ::1  - Error Fatal - Parse - Strict ] Uncaught exception 'PDOException' with message 'SQLSTATE[HY000] [1045] Access denied for user 'ana'@'localhost' (using password: YES)' in C:\xampp-php5.6\htdocs\enolaphp\framework\supportModules\En_DataBase.php:84
+#0 C:\xampp-php5.6\htdocs\enolaphp\framework\supportModules\DependenciesEngine.php(39): ReflectionClass->__construct('c')
+#1 C:\xampp-php5.6\htdocs\enolaphp\framework\supportModules\DependenciesEngine.php(101): Enola\Support\DependenciesEngine->loadDependency(Object(Enola\Application), 'cache', Array)
+#2 C:\xampp-php5.6\htdocs\enolaphp\framework\supportModules\DependenciesEngine.php(112): Enola\Support\DependenciesEngine->injectDependencies(Object(Enola\Application), Array)
+#3 C:\xampp-php5.6\htdocs\enolaphp\framework\core.php(168): Enola\Support\DependenciesEngine->injectDependency(Object(Enola\Application), 'cache')
+#4 C:\xampp-php5.6\htdocs\enolaphp\framework\core.php(121): Enola\Application->loadCache()
+#5 C:\xampp-php5.6\htdocs\enolaphp\framework\core.php(69): Enola\Application->init()
+#6 C:\xampp-php5.6\htdocs\enolaphp\framework
+----------\n[2015-10-13 04:18:01.000000 ::1  - Unknown ] Illegal string offset 'class'
+----------\n[2015-10-13 04:18:01.000000 ::1  - Error Fatal - Parse - Strict ] Uncaught exception 'ReflectionException' with message 'Class c does not exist' in C:\xampp-php5.6\htdocs\enolaphp\framework\supportModules\DependenciesEngine.php:39
 Stack trace:
-#0 C:\xampp-php5.6\htdocs\enolaphp\framework\supportModules\En_DataBase.php(38): Enola\DB\En_DataBase->getConnection('Local')
-#1 C:\xampp-php5.6\htdocs\enolaphp\framework\supportModules\Cache.php(242): Enola\DB\En_DataBase->__construct(true, 'Local')
-#2 C:\xampp-php5.6\htdocs\enolaphp\framework\supportModules\Cache.php(77): Enola\Cache\CacheDataBase->__construct('Local', 'cache')
-#3 C:\xampp-php5.6\htdocs\enolaphp\framework\supportModules\Cache.php(61): Enola\Cache\Cache->setCacheStore('Default')
-#4 C:\xampp-php5.6\htdocs\enolaphp\framework\core.php(168): Enola\Cache\Cache->__construct()
-#5 C:\xampp-php5.6\htdocs\enolaphp\framework\core.php(119): Enola\Application->loadCache()
-#6 C:\xampp-php5.6\htdocs\enolaphp\framework\core.php(67): Enola\Application->init()
-#7 C:\xampp-php5.6\htdocs\
+#0 C:\xampp-php5.6\htdocs\enolaphp\framework\supportModules\DependenciesEngine.php(39): ReflectionClass->__construct('c')
+#1 C:\xampp-php5.6\htdocs\enolaphp\framework\supportModules\DependenciesEngine.php(102): Enola\Support\DependenciesEngine->loadDependency(Object(Enola\Application), 'cache', Array)
+#2 C:\xampp-php5.6\htdocs\enolaphp\framework\supportModules\DependenciesEngine.php(113): Enola\Support\DependenciesEngine->injectDependencies(Object(Enola\Application), Array)
+#3 C:\xampp-php5.6\htdocs\enolaphp\framework\core.php(168): Enola\Support\DependenciesEngine->injectDependency(Object(Enola\Application), 'cache')
+#4 C:\xampp-php5.6\htdocs\enolaphp\framework\core.php(121): Enola\Application->loadCache()
+#5 C:\xampp-php5.6\htdocs\enolaphp\framework\core.php(69): Enola\Application->init()
+#6 C:\xampp-php5.6\htdocs\enolaphp\framework
+----------\n[2015-10-13 04:18:01.000000 ::1  - Unknown ] Illegal string offset 'class'
+----------\n[2015-10-13 04:18:01.000000 ::1  - Error Fatal - Parse - Strict ] Uncaught exception 'ReflectionException' with message 'Class c does not exist' in C:\xampp-php5.6\htdocs\enolaphp\framework\supportModules\DependenciesEngine.php:39
+Stack trace:
+#0 C:\xampp-php5.6\htdocs\enolaphp\framework\supportModules\DependenciesEngine.php(39): ReflectionClass->__construct('c')
+#1 C:\xampp-php5.6\htdocs\enolaphp\framework\supportModules\DependenciesEngine.php(102): Enola\Support\DependenciesEngine->loadDependency(Object(Enola\Application), 'cache', Array)
+#2 C:\xampp-php5.6\htdocs\enolaphp\framework\supportModules\DependenciesEngine.php(113): Enola\Support\DependenciesEngine->injectDependencies(Object(Enola\Application), Array)
+#3 C:\xampp-php5.6\htdocs\enolaphp\framework\core.php(168): Enola\Support\DependenciesEngine->injectDependency(Object(Enola\Application), 'cache')
+#4 C:\xampp-php5.6\htdocs\enolaphp\framework\core.php(121): Enola\Application->loadCache()
+#5 C:\xampp-php5.6\htdocs\enolaphp\framework\core.php(69): Enola\Application->init()
+#6 C:\xampp-php5.6\htdocs\enolaphp\framework
+----------\n[2015-10-13 04:18:24.000000 ::1  - Unknown ] Illegal string offset 'class'
+----------\n[2015-10-13 04:18:24.000000 ::1  - Error Fatal - Parse - Strict ] Uncaught exception 'ReflectionException' with message 'Class c does not exist' in C:\xampp-php5.6\htdocs\enolaphp\framework\supportModules\DependenciesEngine.php:39
+Stack trace:
+#0 C:\xampp-php5.6\htdocs\enolaphp\framework\supportModules\DependenciesEngine.php(39): ReflectionClass->__construct('c')
+#1 C:\xampp-php5.6\htdocs\enolaphp\framework\supportModules\DependenciesEngine.php(102): Enola\Support\DependenciesEngine->loadDependency(Object(Enola\Application), 'cache', Array)
+#2 C:\xampp-php5.6\htdocs\enolaphp\framework\supportModules\DependenciesEngine.php(113): Enola\Support\DependenciesEngine->injectDependencies(Object(Enola\Application), Array)
+#3 C:\xampp-php5.6\htdocs\enolaphp\framework\core.php(168): Enola\Support\DependenciesEngine->injectDependency(Object(Enola\Application), 'cache')
+#4 C:\xampp-php5.6\htdocs\enolaphp\framework\core.php(121): Enola\Application->loadCache()
+#5 C:\xampp-php5.6\htdocs\enolaphp\framework\core.php(69): Enola\Application->init()
+#6 C:\xampp-php5.6\htdocs\enolaphp\framework
+----------\n[2015-10-13 04:18:25.000000 ::1  - Unknown ] Illegal string offset 'class'
+----------\n[2015-10-13 04:18:25.000000 ::1  - Error Fatal - Parse - Strict ] Uncaught exception 'ReflectionException' with message 'Class c does not exist' in C:\xampp-php5.6\htdocs\enolaphp\framework\supportModules\DependenciesEngine.php:39
+Stack trace:
+#0 C:\xampp-php5.6\htdocs\enolaphp\framework\supportModules\DependenciesEngine.php(39): ReflectionClass->__construct('c')
+#1 C:\xampp-php5.6\htdocs\enolaphp\framework\supportModules\DependenciesEngine.php(102): Enola\Support\DependenciesEngine->loadDependency(Object(Enola\Application), 'cache', Array)
+#2 C:\xampp-php5.6\htdocs\enolaphp\framework\supportModules\DependenciesEngine.php(113): Enola\Support\DependenciesEngine->injectDependencies(Object(Enola\Application), Array)
+#3 C:\xampp-php5.6\htdocs\enolaphp\framework\core.php(168): Enola\Support\DependenciesEngine->injectDependency(Object(Enola\Application), 'cache')
+#4 C:\xampp-php5.6\htdocs\enolaphp\framework\core.php(121): Enola\Application->loadCache()
+#5 C:\xampp-php5.6\htdocs\enolaphp\framework\core.php(69): Enola\Application->init()
+#6 C:\xampp-php5.6\htdocs\enolaphp\framework
+----------\n[2015-10-13 04:18:25.000000 ::1  - Unknown ] Illegal string offset 'class'
+----------\n[2015-10-13 04:18:25.000000 ::1  - Error Fatal - Parse - Strict ] Uncaught exception 'ReflectionException' with message 'Class c does not exist' in C:\xampp-php5.6\htdocs\enolaphp\framework\supportModules\DependenciesEngine.php:39
+Stack trace:
+#0 C:\xampp-php5.6\htdocs\enolaphp\framework\supportModules\DependenciesEngine.php(39): ReflectionClass->__construct('c')
+#1 C:\xampp-php5.6\htdocs\enolaphp\framework\supportModules\DependenciesEngine.php(102): Enola\Support\DependenciesEngine->loadDependency(Object(Enola\Application), 'cache', Array)
+#2 C:\xampp-php5.6\htdocs\enolaphp\framework\supportModules\DependenciesEngine.php(113): Enola\Support\DependenciesEngine->injectDependencies(Object(Enola\Application), Array)
+#3 C:\xampp-php5.6\htdocs\enolaphp\framework\core.php(168): Enola\Support\DependenciesEngine->injectDependency(Object(Enola\Application), 'cache')
+#4 C:\xampp-php5.6\htdocs\enolaphp\framework\core.php(121): Enola\Application->loadCache()
+#5 C:\xampp-php5.6\htdocs\enolaphp\framework\core.php(69): Enola\Application->init()
+#6 C:\xampp-php5.6\htdocs\enolaphp\framework
+----------\n[2015-10-13 04:18:26.000000 ::1  - Unknown ] Illegal string offset 'class'
+----------\n[2015-10-13 04:18:26.000000 ::1  - Error Fatal - Parse - Strict ] Uncaught exception 'ReflectionException' with message 'Class c does not exist' in C:\xampp-php5.6\htdocs\enolaphp\framework\supportModules\DependenciesEngine.php:39
+Stack trace:
+#0 C:\xampp-php5.6\htdocs\enolaphp\framework\supportModules\DependenciesEngine.php(39): ReflectionClass->__construct('c')
+#1 C:\xampp-php5.6\htdocs\enolaphp\framework\supportModules\DependenciesEngine.php(102): Enola\Support\DependenciesEngine->loadDependency(Object(Enola\Application), 'cache', Array)
+#2 C:\xampp-php5.6\htdocs\enolaphp\framework\supportModules\DependenciesEngine.php(113): Enola\Support\DependenciesEngine->injectDependencies(Object(Enola\Application), Array)
+#3 C:\xampp-php5.6\htdocs\enolaphp\framework\core.php(168): Enola\Support\DependenciesEngine->injectDependency(Object(Enola\Application), 'cache')
+#4 C:\xampp-php5.6\htdocs\enolaphp\framework\core.php(121): Enola\Application->loadCache()
+#5 C:\xampp-php5.6\htdocs\enolaphp\framework\core.php(69): Enola\Application->init()
+#6 C:\xampp-php5.6\htdocs\enolaphp\framework
+----------\n[2015-10-13 04:18:26.000000 ::1  - Unknown ] Illegal string offset 'class'
+----------\n[2015-10-13 04:18:26.000000 ::1  - Error Fatal - Parse - Strict ] Uncaught exception 'ReflectionException' with message 'Class c does not exist' in C:\xampp-php5.6\htdocs\enolaphp\framework\supportModules\DependenciesEngine.php:39
+Stack trace:
+#0 C:\xampp-php5.6\htdocs\enolaphp\framework\supportModules\DependenciesEngine.php(39): ReflectionClass->__construct('c')
+#1 C:\xampp-php5.6\htdocs\enolaphp\framework\supportModules\DependenciesEngine.php(102): Enola\Support\DependenciesEngine->loadDependency(Object(Enola\Application), 'cache', Array)
+#2 C:\xampp-php5.6\htdocs\enolaphp\framework\supportModules\DependenciesEngine.php(113): Enola\Support\DependenciesEngine->injectDependencies(Object(Enola\Application), Array)
+#3 C:\xampp-php5.6\htdocs\enolaphp\framework\core.php(168): Enola\Support\DependenciesEngine->injectDependency(Object(Enola\Application), 'cache')
+#4 C:\xampp-php5.6\htdocs\enolaphp\framework\core.php(121): Enola\Application->loadCache()
+#5 C:\xampp-php5.6\htdocs\enolaphp\framework\core.php(69): Enola\Application->init()
+#6 C:\xampp-php5.6\htdocs\enolaphp\framework
+----------\n[2015-10-13 04:19:05.000000 ::1  - Unknown ] Undefined index: &validation
+----------\n[2015-10-13 04:19:06.000000 ::1  - Error Fatal - Parse - Strict ] Uncaught exception 'ReflectionException' with message 'Class  does not exist' in C:\xampp-php5.6\htdocs\enolaphp\framework\supportModules\DependenciesEngine.php:39
+Stack trace:
+#0 C:\xampp-php5.6\htdocs\enolaphp\framework\supportModules\DependenciesEngine.php(39): ReflectionClass->__construct('')
+#1 C:\xampp-php5.6\htdocs\enolaphp\framework\supportModules\DependenciesEngine.php(68): Enola\Support\DependenciesEngine->loadDependency('&validation', NULL)
+#2 C:\xampp-php5.6\htdocs\enolaphp\framework\supportModules\DependenciesEngine.php(36): Enola\Support\DependenciesEngine->buildParams(Array)
+#3 C:\xampp-php5.6\htdocs\enolaphp\framework\supportModules\DependenciesEngine.php(102): Enola\Support\DependenciesEngine->loadDependency('cache', Array, Object(Enola\Application))
+#4 C:\xampp-php5.6\htdocs\enolaphp\framework\supportModules\DependenciesEngine.php(113): Enola\Support\DependenciesEngine->injectDependencies(Object(Enola\Application), Array)
+#5 C:\xampp-php5.6\htdocs\enolaphp\framework\core.php(168): Enola\Supp
+----------\n[2015-10-13 04:19:07.000000 ::1  - Unknown ] Undefined index: &validation
+----------\n[2015-10-13 04:19:07.000000 ::1  - Error Fatal - Parse - Strict ] Uncaught exception 'ReflectionException' with message 'Class  does not exist' in C:\xampp-php5.6\htdocs\enolaphp\framework\supportModules\DependenciesEngine.php:39
+Stack trace:
+#0 C:\xampp-php5.6\htdocs\enolaphp\framework\supportModules\DependenciesEngine.php(39): ReflectionClass->__construct('')
+#1 C:\xampp-php5.6\htdocs\enolaphp\framework\supportModules\DependenciesEngine.php(68): Enola\Support\DependenciesEngine->loadDependency('&validation', NULL)
+#2 C:\xampp-php5.6\htdocs\enolaphp\framework\supportModules\DependenciesEngine.php(36): Enola\Support\DependenciesEngine->buildParams(Array)
+#3 C:\xampp-php5.6\htdocs\enolaphp\framework\supportModules\DependenciesEngine.php(102): Enola\Support\DependenciesEngine->loadDependency('cache', Array, Object(Enola\Application))
+#4 C:\xampp-php5.6\htdocs\enolaphp\framework\supportModules\DependenciesEngine.php(113): Enola\Support\DependenciesEngine->injectDependencies(Object(Enola\Application), Array)
+#5 C:\xampp-php5.6\htdocs\enolaphp\framework\core.php(168): Enola\Supp
+----------\n[2015-10-13 04:19:49.000000 ::1  - Unknown ] Argument 1 passed to ReflectionClass::newInstanceArgs() must be of the type array, null given, called in C:\xampp-php5.6\htdocs\enolaphp\framework\supportModules\DependenciesEngine.php on line 67 and defined
+----------\n[2015-10-13 04:19:49.000000 ::1  - Unknown ] ReflectionClass::newInstanceArgs() expects parameter 1 to be array, null given
+----------\n[2015-10-13 04:19:49.000000 ::1  - Unknown ] Undefined index: 
+----------\n[2015-10-13 04:19:49.000000 ::1  - General Error ] Driver specified unsupported
+----------\n[2015-10-13 04:19:49.000000 ::1  - Error Fatal - Parse - Strict ] Class 'Enola\Http\UrlUri' not found
+----------\n[2015-10-13 04:20:28.000000 ::1  - Unknown ] Undefined index: 
+----------\n[2015-10-13 04:20:28.000000 ::1  - General Error ] Driver specified unsupported
+----------\n[2015-10-13 04:20:28.000000 ::1  - Error Fatal - Parse - Strict ] Class 'Enola\Http\UrlUri' not found
+----------\n[2015-10-13 04:21:03.000000 ::1  - Unknown ] Trying to get property of non-object
+----------\n[2015-10-13 04:21:03.000000 ::1  - Unknown ] Undefined index: 
+----------\n[2015-10-13 04:21:03.000000 ::1  - General Error ] Driver specified unsupported
+----------\n[2015-10-13 04:21:03.000000 ::1  - Error Fatal - Parse - Strict ] Class 'Enola\Http\UrlUri' not found
+----------\n[2015-10-13 04:21:04.000000 ::1  - Unknown ] Trying to get property of non-object
+----------\n[2015-10-13 04:21:04.000000 ::1  - Unknown ] Undefined index: 
+----------\n[2015-10-13 04:21:04.000000 ::1  - General Error ] Driver specified unsupported
+----------\n[2015-10-13 04:21:04.000000 ::1  - Error Fatal - Parse - Strict ] Class 'Enola\Http\UrlUri' not found
+----------\n[2015-10-13 04:21:24.000000 ::1  - Unknown ] Undefined index: 
+----------\n[2015-10-13 04:21:24.000000 ::1  - General Error ] Driver specified unsupported
+----------\n[2015-10-13 04:21:24.000000 ::1  - Error Fatal - Parse - Strict ] Class 'Enola\Http\UrlUri' not found
+----------\n[2015-10-13 04:21:25.000000 ::1  - Unknown ] Undefined index: 
+----------\n[2015-10-13 04:21:25.000000 ::1  - General Error ] Driver specified unsupported
+----------\n[2015-10-13 04:21:25.000000 ::1  - Error Fatal - Parse - Strict ] Class 'Enola\Http\UrlUri' not found
+----------\n[2015-10-13 04:21:37.000000 ::1  - Unknown ] Undefined index: 
+----------\n[2015-10-13 04:21:37.000000 ::1  - General Error ] Driver specified unsupported
+----------\n[2015-10-13 04:21:37.000000 ::1  - Error Fatal - Parse - Strict ] Class 'Enola\Http\UrlUri' not found
+----------\n[2015-10-13 04:21:38.000000 ::1  - Unknown ] Undefined index: 
+----------\n[2015-10-13 04:21:38.000000 ::1  - General Error ] Driver specified unsupported
+----------\n[2015-10-13 04:21:38.000000 ::1  - Error Fatal - Parse - Strict ] Class 'Enola\Http\UrlUri' not found
+----------\n[2015-10-13 04:22:01.000000 ::1  - Unknown ] Illegal offset type
+----------\n[2015-10-13 04:22:01.000000 ::1  - General Error ] Driver specified unsupported
+----------\n[2015-10-13 04:22:01.000000 ::1  - Error Fatal - Parse - Strict ] Class 'Enola\Http\UrlUri' not found
+----------\n[2015-10-13 04:23:28.000000 ::1  - Unknown ] Undefined index: validatio
+----------\n[2015-10-13 04:23:28.000000 ::1  - Error Fatal - Parse - Strict ] Uncaught exception 'ReflectionException' with message 'Class  does not exist' in C:\xampp-php5.6\htdocs\enolaphp\framework\supportModules\DependenciesEngine.php:39
+Stack trace:
+#0 C:\xampp-php5.6\htdocs\enolaphp\framework\supportModules\DependenciesEngine.php(39): ReflectionClass->__construct('')
+#1 C:\xampp-php5.6\htdocs\enolaphp\framework\supportModules\DependenciesEngine.php(67): Enola\Support\DependenciesEngine->loadDependency('&validatio', NULL)
+#2 C:\xampp-php5.6\htdocs\enolaphp\framework\supportModules\DependenciesEngine.php(36): Enola\Support\DependenciesEngine->buildParams(Array)
+#3 C:\xampp-php5.6\htdocs\enolaphp\framework\supportModules\DependenciesEngine.php(101): Enola\Support\DependenciesEngine->loadDependency('cache', Array, Object(Enola\Application))
+#4 C:\xampp-php5.6\htdocs\enolaphp\framework\supportModules\DependenciesEngine.php(112): Enola\Support\DependenciesEngine->injectDependencies(Object(Enola\Application), Array)
+#5 C:\xampp-php5.6\htdocs\enolaphp\framework\core.php(168): Enola\Suppo
+----------\n[2015-10-13 04:23:30.000000 ::1  - Unknown ] Undefined index: validatio
+----------\n[2015-10-13 04:23:30.000000 ::1  - Error Fatal - Parse - Strict ] Uncaught exception 'ReflectionException' with message 'Class  does not exist' in C:\xampp-php5.6\htdocs\enolaphp\framework\supportModules\DependenciesEngine.php:39
+Stack trace:
+#0 C:\xampp-php5.6\htdocs\enolaphp\framework\supportModules\DependenciesEngine.php(39): ReflectionClass->__construct('')
+#1 C:\xampp-php5.6\htdocs\enolaphp\framework\supportModules\DependenciesEngine.php(67): Enola\Support\DependenciesEngine->loadDependency('&validatio', NULL)
+#2 C:\xampp-php5.6\htdocs\enolaphp\framework\supportModules\DependenciesEngine.php(36): Enola\Support\DependenciesEngine->buildParams(Array)
+#3 C:\xampp-php5.6\htdocs\enolaphp\framework\supportModules\DependenciesEngine.php(101): Enola\Support\DependenciesEngine->loadDependency('cache', Array, Object(Enola\Application))
+#4 C:\xampp-php5.6\htdocs\enolaphp\framework\supportModules\DependenciesEngine.php(112): Enola\Support\DependenciesEngine->injectDependencies(Object(Enola\Application), Array)
+#5 C:\xampp-php5.6\htdocs\enolaphp\framework\core.php(168): Enola\Suppo
+----------\n[2015-10-13 04:24:39.000000 ::1  - Unknown ] Illegal offset type
+----------\n[2015-10-13 04:24:39.000000 ::1  - General Error ] Driver specified unsupported
+----------\n[2015-10-13 04:24:39.000000 ::1  - Error Fatal - Parse - Strict ] Class 'Enola\Http\UrlUri' not found
+----------\n[2015-10-13 04:24:40.000000 ::1  - Unknown ] Illegal offset type
+----------\n[2015-10-13 04:24:40.000000 ::1  - General Error ] Driver specified unsupported
+----------\n[2015-10-13 04:24:40.000000 ::1  - Error Fatal - Parse - Strict ] Class 'Enola\Http\UrlUri' not found
+----------\n[2015-10-13 04:24:41.000000 ::1  - Unknown ] Illegal offset type
+----------\n[2015-10-13 04:24:41.000000 ::1  - General Error ] Driver specified unsupported
+----------\n[2015-10-13 04:24:41.000000 ::1  - Error Fatal - Parse - Strict ] Class 'Enola\Http\UrlUri' not found
+----------\n[2015-10-13 04:39:48.000000 ::1  - Error Fatal - Parse - Strict ] Class 'Enola\DB\DataBaseAR' not found
+----------\n[2015-10-13 04:40:22.000000 ::1  - Error Fatal - Parse - Strict ] Uncaught exception 'PDOException' with message 'SQLSTATE[HY000] [1045] Access denied for user 'ana'@'localhost' (using password: YES)' in C:\xampp-php5.6\htdocs\enolaphp\application\libraries\DataBase\DataBaseAR.php:84
+Stack trace:
+#0 C:\xampp-php5.6\htdocs\enolaphp\application\libraries\DataBase\DataBaseAR.php(38): Enola\DB\DataBaseAR->getConnection(NULL)
+#1 C:\xampp-php5.6\htdocs\enolaphp\application\source\controllers\Index.php(11): Enola\DB\DataBaseAR->__construct()
+#2 C:\xampp-php5.6\htdocs\enolaphp\framework\http\http.php(168): Index->doGet(Object(Enola\Http\En_HttpRequest), Object(Enola\Http\En_HttpResponse))
+#3 C:\xampp-php5.6\htdocs\enolaphp\framework\http\http.php(88): Enola\Http\HttpCore->executeController(Array, NULL)
+#4 C:\xampp-php5.6\htdocs\enolaphp\framework\core.php(102): Enola\Http\HttpCore->executeHttpRequest(NULL)
+#5 C:\xampp-php5.6\htdocs\enolaphp\framework\core.php(34): Enola\Application->request()
+#6 C:\xampp-php5.6\htdocs\enolaphp\index.php(38): require('C:\\xampp-php5.6...')
+#7 {main}
+----------\n[2015-10-13 04:43:49.000000 ::1  - Unknown ] Undefined property: Index::$validation
+----------\n[2015-10-13 04:43:51.000000 ::1  - Unknown ] Undefined property: Index::$validation
 ----------\n
