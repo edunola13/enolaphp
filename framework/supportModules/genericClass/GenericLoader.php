@@ -17,6 +17,6 @@ abstract class GenericLoader {
     public function __construct($type) {
         $this->context= \EnolaContext::getInstance();
         //Inyecta las dependencias por tipo
-        \EnolaContext::getInstance()->app->dependenciesEngine->injectDependencyOfType($this, $type);        
+        \EnolaContext::getInstance()->app->dependenciesEngine->injectDependenciesOfType($this, $type);        
     }
 }

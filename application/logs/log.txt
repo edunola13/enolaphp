@@ -262,4 +262,28 @@ Stack trace:
 ----------\n[2015-10-14 00:52:29.000000 ::1  - Unknown ] Undefined index: valor
 ----------\n[2015-10-14 00:52:29.000000 ::1  - General Error ] Driver specified unsupported
 ----------\n[2015-10-14 00:52:29.000000 ::1  - Error Fatal - Parse - Strict ] Class 'Enola\Http\UrlUri' not found
+----------\n[2015-10-14 21:32:38.000000 ::1  - Error Fatal - Parse - Strict ] Uncaught exception 'ReflectionException' with message 'Property Enola\Cache\Cache::$prefixs does not exist' in D:\xampp\htdocs\enolaphp\framework\supportModules\DependenciesEngine.php:117
+Stack trace:
+#0 D:\xampp\htdocs\enolaphp\framework\supportModules\DependenciesEngine.php(117): ReflectionProperty->__construct(Object(Enola\Cache\Cache), 'prefixs')
+#1 D:\xampp\htdocs\enolaphp\framework\supportModules\DependenciesEngine.php(95): Enola\Support\DependenciesEngine->setPropertiesToObject(Object(Enola\Cache\Cache), Array)
+#2 D:\xampp\htdocs\enolaphp\framework\supportModules\DependenciesEngine.php(43): Enola\Support\DependenciesEngine->loadDependency('cache', Array, Object(Enola\Application))
+#3 D:\xampp\htdocs\enolaphp\framework\supportModules\DependenciesEngine.php(54): Enola\Support\DependenciesEngine->injectDependencies(Object(Enola\Application), Array)
+#4 D:\xampp\htdocs\enolaphp\framework\core.php(166): Enola\Support\DependenciesEngine->injectDependency(Object(Enola\Application), 'cache')
+#5 D:\xampp\htdocs\
+----------\n[2015-10-14 21:36:18.000000 ::1  - Error Fatal - Parse - Strict ] Uncaught exception 'ReflectionException' with message 'Property setLocale does not exist' in D:\xampp\htdocs\enolaphp\framework\supportModules\DependenciesEngine.php:118
+Stack trace:
+#0 D:\xampp\htdocs\enolaphp\framework\supportModules\DependenciesEngine.php(118): ReflectionClass->getProperty('setLocale')
+#1 D:\xampp\htdocs\enolaphp\framework\supportModules\DependenciesEngine.php(95): Enola\Support\DependenciesEngine->setPropertiesToObject(Object(Enola\Lib\Validation), Array)
+#2 D:\xampp\htdocs\enolaphp\framework\supportModules\DependenciesEngine.php(141): Enola\Support\DependenciesEngine->loadDependency('validation', Array, NULL, Array)
+#3 D:\xampp\htdocs\enolaphp\framework\supportModules\DependenciesEngine.php(157): Enola\Support\DependenciesEngine->getDependency('validation', Array)
+#4 D:\xampp\htdocs\enolaphp\framework\supportModules\DependenciesEngine.php(93): Enola\Support\DependenciesEngine->parseProperties(Array, Array)
+#5 D:\xampp\htdocs\enolaphp\framework\supportModules\DependenciesEngine.php(43): E
+----------\n[2015-10-14 21:36:36.000000 ::1  - Error Fatal - Parse - Strict ] Uncaught exception 'ReflectionException' with message 'Property prefixs does not exist' in D:\xampp\htdocs\enolaphp\framework\supportModules\DependenciesEngine.php:118
+Stack trace:
+#0 D:\xampp\htdocs\enolaphp\framework\supportModules\DependenciesEngine.php(118): ReflectionClass->getProperty('prefixs')
+#1 D:\xampp\htdocs\enolaphp\framework\supportModules\DependenciesEngine.php(95): Enola\Support\DependenciesEngine->setPropertiesToObject(Object(Enola\Cache\Cache), Array)
+#2 D:\xampp\htdocs\enolaphp\framework\supportModules\DependenciesEngine.php(43): Enola\Support\DependenciesEngine->loadDependency('cache', Array, Object(Enola\Application))
+#3 D:\xampp\htdocs\enolaphp\framework\supportModules\DependenciesEngine.php(54): Enola\Support\DependenciesEngine->injectDependencies(Object(Enola\Application), Array)
+#4 D:\xampp\htdocs\enolaphp\framework\core.php(166): Enola\Support\DependenciesEngine->injectDependency(Object(Enola\Application), 'cache')
+#5 D:\xampp\htdocs\enolaphp\framework\core.php(121): Enola\Applicatio
 ----------\n

@@ -163,7 +163,7 @@ class Application{
      * Carga el modulo cache y creo una instancia de la cache correspondiente en base a la configuracion
      */
     protected function loadCache(){
-        $this->cache= $this->dependenciesEngine->injectDependency($this, "cache");
+        $this->dependenciesEngine->injectDependency($this, "cache");
     }
     /**
      * Carga e inicializa el modulo HTTP

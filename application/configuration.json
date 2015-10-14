@@ -36,7 +36,7 @@
     },
     
     "dependency_injection":{
-        "cache":{"class": "Cache", "namespace":"Enola\\Cache",
+        "cache":{"class": "Cache", "namespace":"Enola\\Cache", "load_in": "controller",
             "constructor":{
                 "store":{"value": "File", "type": "string"}
             },
@@ -44,7 +44,10 @@
                 "prefix":{"ref": "validation"}
             }
         },
-        "validation":{"class": "Validation", "namespace": "Enola\\Lib",
+        "validation":{"class": "Validation", "namespace": "Enola\\Lib", "load_in": "controller",
+            "constructor":{
+                "store":{"value": "es", "type": "string"}
+            },
             "properties":{
                 "locale":{"ref": "cache"}
             }

@@ -51,7 +51,7 @@ class Cache implements CacheInterface{
      * driver correspondiente.
      * @param string $store
      */
-    public function __construct($store = "Default") {
+    public function __construct($store = "Default") {        
         $context= \EnolaContext::getInstance();
         if(self::$config == NULL){
             $json_cache= file_get_contents(PATHAPP . $context->getConfigurationFolder() . 'cache.json');
