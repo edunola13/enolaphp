@@ -9,6 +9,7 @@
 class EnolaContext {
     private static $instance;
     //Referencia al Nucleo
+    /** @var \Enola\Application */
     public $app;
     //Path basicos
     private $pathRoot;
@@ -172,8 +173,7 @@ class EnolaContext {
     
     /*
      * Getters
-     */
-    
+     */    
     public function getPathRoot(){
         return $this->pathRoot;
     }

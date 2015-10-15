@@ -45,20 +45,25 @@ $app->request();
  * @internal
  */
 class Application{
-    //Global    
+    /** @var \EnolaContext */
     public $context;
+    /** @var Cache\CacheInterface */
     public $cache;
     private $prefixApp= 'APP';
-    //Request
+    
+    /** @var Http\HttpCore */
     public $httpCore;
+    /** @var Component\ComponentCore */
     public $componentCore;
+    /** @var Cron\CronCore */
     public $cronCore;
-    //Controller
-    public $actualController;
-    //Dependency Injection
+    private $actualController;
+    
+    /** @var Support\DependenciesEngine */
     public $dependenciesEngine;
-    //Performance
-    public $performance;
+
+    /** @var Support\Performance */
+    private $performance;
     /**
      * Constructor - Ejecuta metodo init
      * @param EnolaContext $context
@@ -117,8 +122,6 @@ class Application{
         $this->supportModules();        
         //Cargo las librerias definidas por el usuario
         $this->loadLibraries();
-        //Cargo el modulo Cache
-        $this->loadCache();
     }    
     /**
      * Carga de modulos de soporte para que el framework trabaje correctamente
@@ -140,8 +143,11 @@ class Application{
         require $this->context->getPathFra() . 'supportModules/genericClass/Request.php';
         //Carga Clase Base Response
         require $this->context->getPathFra() . 'supportModules/genericClass/Response.php';
+        //Carga el modulo cache y creo una instancia de la cache correspondiente en base a la configuracion
+        require $this->context->getPathFra() . 'supportModules/Cache.php';
+        $this->cache= new Cache\Cache();
         //Carga el motor de Dependencias y creo una instancia del mismo
-        require $this->context->getPathFra() . 'supportModules/DependenciesEngine.php';  
+        require $this->context->getPathFra() . 'supportModules/DependenciesEngine.php';
         $this->dependenciesEngine= new Support\DependenciesEngine();
     }      
     /*
@@ -158,12 +164,6 @@ class Application{
             $dir= $libreria['path'];
             import_librarie($dir);
         }
-    }    
-    /**
-     * Carga el modulo cache y creo una instancia de la cache correspondiente en base a la configuracion
-     */
-    protected function loadCache(){
-        $this->dependenciesEngine->injectDependency($this, 'cache', 'cache');
     }
     /**
      * Carga e inicializa el modulo HTTP

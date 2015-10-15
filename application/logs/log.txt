@@ -322,4 +322,6 @@ Stack trace:
 ----------\n[2015-10-15 04:12:43.000000 ::1  - Unknown ] Undefined property: Index::$paginador
 ----------\n[2015-10-15 04:12:57.000000 ::1  - Unknown ] Undefined property: Index::$paginador
 ----------\n[2015-10-15 04:13:23.000000 ::1  - Unknown ] Undefined property: Index::$paginador
+----------\n[2015-10-15 22:16:26.000000 ::1  - Error Fatal - Parse - Strict ] Class 'Enola\Cache' not found
+----------\n[2015-10-15 22:57:22.000000 ::1  - Error Fatal - Parse - Strict ] Call to undefined method Enola\Application::loadCache()
 ----------\n

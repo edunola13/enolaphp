@@ -27,7 +27,6 @@
     },
                 
     "libraries": {
-        "cache":{"path": "Cache"},
         "database":{"path": "DataBase/DataBaseAR"},
         "validation": {"path": "Validation"},
         "paginator": {"path": "Paginator"}
@@ -36,30 +35,7 @@
     "composer": {
     },
     
-    "dependency_injection":{
-        "cache":{"class": "Cache", "namespace":"Enola\\Cache", "load_in": "controller", "load_in": "controller",
-            "constructor":{
-                "store":{"value": "File", "type": "string"}
-            },
-            "properties":{
-                "prefix":{"value": "File", "type": "string"}
-            }
-        },
-        "validation":{"class": "Validation", "namespace": "Enola\\Lib", "load_in": "controller",
-            "constructor":{
-                "store":{"value": "es", "type": "string"}
-            },
-            "properties":{
-                "locale":{"value": "es", "type": "string"}
-            }
-        },
-        "paginator":{"class": "Paginator", "namespace": "Enola\\Lib", "load_in": "controller",
-            "constructor":{
-                "amount":{"value": "5", "type": "integer"},
-                "total":{"value": "15", "type": "integer"},
-                "current":{"ref": "validation"}
-            }
-        }
+    "dependency_injection":{        
     },
     
     "database": {
