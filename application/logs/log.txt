@@ -286,4 +286,40 @@ Stack trace:
 #3 D:\xampp\htdocs\enolaphp\framework\supportModules\DependenciesEngine.php(54): Enola\Support\DependenciesEngine->injectDependencies(Object(Enola\Application), Array)
 #4 D:\xampp\htdocs\enolaphp\framework\core.php(166): Enola\Support\DependenciesEngine->injectDependency(Object(Enola\Application), 'cache')
 #5 D:\xampp\htdocs\enolaphp\framework\core.php(121): Enola\Applicatio
+----------\n[2015-10-15 01:58:24.000000 ::1  - Unknown ] Missing argument 3 for Enola\Support\DependenciesEngine::injectDependency(), called in C:\xampp-php5.6\htdocs\enolaphp\framework\core.php on line 166 and defined
+----------\n[2015-10-15 01:58:24.000000 ::1  - Unknown ] Undefined variable: dependencyName
+----------\n[2015-10-15 02:04:12.000000 ::1  - Error Fatal - Parse - Strict ] Call to a member function store() on null
+----------\n[2015-10-15 02:04:28.000000 ::1  - Unknown ] Object of class Enola\Lib\Validation could not be converted to string
+----------\n[2015-10-15 02:04:28.000000 ::1  - Unknown ] fopen(C:\xampp-php5.6\htdocs\enolaphp\application/cache/8bc3c617699253525527bc6337421891): failed to open stream: No such file or directory
+----------\n[2015-10-15 02:04:50.000000 ::1  - Unknown ] Undefined index: type
+----------\n[2015-10-15 02:04:50.000000 ::1  - Unknown ] settype(): Invalid type
+----------\n[2015-10-15 02:04:50.000000 ::1  - Unknown ] fopen(C:\xampp-php5.6\htdocs\enolaphp\application/cache/File8bc3c617699253525527bc6337421891): failed to open stream: No such file or directory
+----------\n[2015-10-15 02:04:50.000000 ::1  - Unknown ] Undefined index: type
+----------\n[2015-10-15 02:04:50.000000 ::1  - Unknown ] settype(): Invalid type
+----------\n[2015-10-15 02:04:50.000000 ::1  - Unknown ] Undefined index: type
+----------\n[2015-10-15 02:04:50.000000 ::1  - Unknown ] settype(): Invalid type
+----------\n[2015-10-15 02:05:00.000000 ::1  - Unknown ] fopen(C:\xampp-php5.6\htdocs\enolaphp\application/cache/File8bc3c617699253525527bc6337421891): failed to open stream: No such file or directory
+----------\n[2015-10-15 03:42:10.000000 ::1  - Unknown ] Undefined property: EnolaContext::$ao
+----------\n[2015-10-15 03:42:10.000000 ::1  - Unknown ] Argument 1 passed to Enola\Http\En_Controller::injectDependencies() must be an instance of Enola\Application, null given, called in C:\xampp-php5.6\htdocs\enolaphp\application\source\controllers\Index.php on line 11 and defined
+----------\n[2015-10-15 03:42:10.000000 ::1  - Unknown ] Trying to get property of non-object
+----------\n[2015-10-15 03:42:10.000000 ::1  - Error Fatal - Parse - Strict ] Call to a member function injectDependencies() on null
+----------\n[2015-10-15 03:42:11.000000 ::1  - Unknown ] Undefined property: EnolaContext::$ao
+----------\n[2015-10-15 03:42:11.000000 ::1  - Unknown ] Argument 1 passed to Enola\Http\En_Controller::injectDependencies() must be an instance of Enola\Application, null given, called in C:\xampp-php5.6\htdocs\enolaphp\application\source\controllers\Index.php on line 11 and defined
+----------\n[2015-10-15 03:42:11.000000 ::1  - Unknown ] Trying to get property of non-object
+----------\n[2015-10-15 03:42:11.000000 ::1  - Error Fatal - Parse - Strict ] Call to a member function injectDependencies() on null
+----------\n[2015-10-15 03:47:03.000000 ::1  - Error Fatal - Parse - Strict ] Uncaught exception 'ReflectionException' with message 'Class \Enola\Lib\Paginator does not exist' in C:\xampp-php5.6\htdocs\enolaphp\framework\supportModules\DependenciesEngine.php:96
+Stack trace:
+#0 C:\xampp-php5.6\htdocs\enolaphp\framework\supportModules\DependenciesEngine.php(96): ReflectionClass->__construct('\\Enola\\Lib\\Pagi...')
+#1 C:\xampp-php5.6\htdocs\enolaphp\framework\supportModules\DependenciesEngine.php(66): Enola\Support\DependenciesEngine->loadDependency('paginator', Array)
+#2 C:\xampp-php5.6\htdocs\enolaphp\framework\supportModules\DependenciesEngine.php(45): Enola\Support\DependenciesEngine->loadDependencyInObject(Object(Index), 'paginador', 'paginator', Array)
+#3 C:\xampp-php5.6\htdocs\enolaphp\framework\supportModules\genericClass\GenericBehavior.php(121): Enola\Support\DependenciesEngine->injectDependencies(Object(Index), Array)
+#4 C:\xampp-php5.6\htdocs\enolaphp\application\source\controllers\Index.php(11): Enola\Http\En_Controller->injectDependencies(Object(Enola\Application), Array)
+#
+----------\n[2015-10-15 03:47:41.000000 ::1  - Unknown ] Undefined property: Index::$paginator
+----------\n[2015-10-15 04:10:27.000000 ::1  - Unknown ] Undefined property: Index::$paginador
+----------\n[2015-10-15 04:11:17.000000 ::1  - Unknown ] Undefined property: Index::$paginador
+----------\n[2015-10-15 04:11:38.000000 ::1  - Unknown ] Undefined property: Index::$paginador
+----------\n[2015-10-15 04:12:43.000000 ::1  - Unknown ] Undefined property: Index::$paginador
+----------\n[2015-10-15 04:12:57.000000 ::1  - Unknown ] Undefined property: Index::$paginador
+----------\n[2015-10-15 04:13:23.000000 ::1  - Unknown ] Undefined property: Index::$paginador
 ----------\n

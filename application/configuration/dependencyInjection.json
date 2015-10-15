@@ -1,42 +1,4 @@
-{
-    "base_url": "http://localhost/enolaphp/",
-    "index_page": "",
-    "environment": "development",
-    "calculate_performance": "TRUE",
-    "configuration": "configuration/",
-    "charset": "UTF-8",
-      
-    "controllers": {
-        "index": {"class": "Index", "url": "/"}
-    },
-
-    "filters": {
-        "authorization": {"class": "Authorization", "filtered": "/*"}
-    },
-            
-    "filters_after_processing": {
-    },
-            
-    "i18n": {
-        "default": "es",
-        "locales": "en,fr,me"
-    },
-       
-    "url-components": "enola-components",
-    "components":{
-    },
-                
-    "libraries": {
-        "cache":{"path": "Cache"},
-        "database":{"path": "DataBase/DataBaseAR"},
-        "validation": {"path": "Validation"},
-        "paginator": {"path": "Paginator"}
-    },
-    
-    "composer": {
-    },
-    
-    "dependency_injection":{
+    {
         "cache":{"class": "Cache", "namespace":"Enola\\Cache", "load_in": "controller", "load_in": "controller",
             "constructor":{
                 "store":{"value": "File", "type": "string"}
@@ -60,9 +22,4 @@
                 "current":{"ref": "validation"}
             }
         }
-    },
-    
-    "database": {
-        "configuration": "database.json"
     }
-}

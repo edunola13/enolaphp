@@ -151,6 +151,12 @@ class EnolaContext {
         
         //Diferentes definiciones
         $this->librariesDefinition= $config['libraries'];
+        /**
+         * Que hacer aca
+         *
+        $json_configuration= file_get_contents($path_application . 'configuration/dependencyInjection.json');
+        $config['dependency_injection']= json_decode($json_configuration, true); 
+        */
         $this->dependencies= $config['dependency_injection'];
         $this->loadDependencies= array();
         foreach ($this->dependencies as $key => $value) {

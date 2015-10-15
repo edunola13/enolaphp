@@ -13,9 +13,10 @@ class DependenciesEngine {
         $this->context= \EnolaContext::getInstance();
     }
     /**
-     * Recorre las dependencias con load_in y analiza si carga o no una instncia de la clase determinada.
+     * Recorre las dependencias con load_in y analiza si carga o no una instancia de la dependencia en el objeto.
+     * Las nombres de las propiedades son las claves en la definicion de cada dependencia
      * Es llamado por GenericLoader en su construccion para inyectar las clases correspondientes.
-     * Esta funcion supone que la Clase ya se encuentra importada.
+     * Esta funcion supone que las Clases de la dependencia ya se encuentran importadas.
      * @param type $object
      * @param string $type
      */
@@ -30,28 +31,29 @@ class DependenciesEngine {
         }
     }
     /**
-     * Carga las dependencias indicadas en la instancia actual
-     * Esta funcion supone que la Clase ya se encuentra importada.
+     * Carga cada una de las dependencias indicadas en su correspondiente propiedad del objeto
+     * Esta funcion supone que las Clases de las dependencias ya se encuentran importadas.
      * @param type $object
-     * @param array $dependenciesName
+     * @param array $dependencies
      */
-    public function injectDependencies($object, array $dependenciesName){
-        $dependencies= $this->context->getDependencies();
-        foreach ($dependenciesName as $name) {
-            if(isset($dependencies[$name])){
-                $dependency= $dependencies[$name];
-                $this->loadDependencyInObject($object, $name, $name, $dependency);
+    public function injectDependencies($object, array $dependencies){
+        $dependenciesDefinition= $this->context->getDependencies();
+        //Recorre las dependencias indicadas y las que existe las carga
+        foreach ($dependencies as $property => $dependencyName) {
+            if(isset($dependenciesDefinition[$dependencyName])){
+                $dependency= $dependenciesDefinition[$dependencyName];
+                $this->loadDependencyInObject($object, $property, $dependencyName, $dependency);
             }
         }
     }
     /**
-     * Carga la dependencias indicada en la instancia actual
-     * Esta funcion supone que la Clase ya se encuentra importada.
+     * Carga la dependencias indicada en la propiedad del objeto
+     * Esta funcion supone que la Clase de la dependencia ya se encuentra importada.
      * @param type $object
      * @param string $dependencyName
      */
-    public function injectDependency($object, $dependencyName){
-        $this->injectDependencies($object, array($dependencyName));
+    public function injectDependency($object, $propertyName, $dependencyName){
+        $this->injectDependencies($object, array($propertyName => $dependencyName));
     }
     /**
      * Carga la dependencia y la setea en la propiedad del objeto a inyectar
@@ -63,18 +65,19 @@ class DependenciesEngine {
     protected function loadDependencyInObject($object, $property, $dependencyName, $dependencyDefinition){
         $dependency= $this->loadDependency($dependencyName, $dependencyDefinition);
         $properties= array($property => $dependency);
+        //Inyecto la dependencia
         $this->setPropertiesToObject($object, $properties);
     }
     /**
-     * Realiza la inyeccion de una dependencia
-     * Si $object == NULL se retorna la dependencia en vez de agregarla a un objeto 
+     * Realiza la carga de una dependencia que luego va a ser inyectada
      * @param string $name
      * @param array $dependencyDefinition
-     * @param type $object
-     * @return NULL / Type
+     * @param array &$loadedDependencies
+     * @return type
      */
     protected function loadDependency($name, $dependencyDefinition, &$loadedDependencies = array()){
         $newInstance= NULL;
+        //Si es singleton analiza si existe y si puede devuelve la msima
         if(isset($this->singletons[$name])){
             $newInstance= $this->singletons[$name];
         }else{            
@@ -86,12 +89,13 @@ class DependenciesEngine {
             //Consigo los parametros del constructor
             $params= array();
             if(isset($dependencyDefinition['constructor'])){
+                //Parseo los parametros correctamente
                 $params= $this->parseProperties($dependencyDefinition['constructor']);
             }
-            //Creo una instancia y la agrego a la lista de singleton si es necesario
+            //Creo una instancia con el constructor correspondiente en base a los parametros
             $reflection= new \ReflectionClass($class);
             $newInstance= $reflection->newInstanceArgs($params);
-            //La agrego a loadedDependencies
+            //La agrego a loadedDependencies para dependencias circulares
             $loadedDependencies[$name]= $newInstance;
             
             //Si es un singleton la guardo como tal
@@ -100,7 +104,7 @@ class DependenciesEngine {
             }
             
             //Injecto las dependencias a las propiedades
-            //Primero veo si hay Referencia a otras dependencias y cargo las mismas
+            //Primero veo si hay Referencia a otras dependencias y cargo las mismas y luego guardo las propiedades
             if(isset($dependencyDefinition['properties'])){
                 $properties= $this->parseProperties($dependencyDefinition['properties'], $loadedDependencies);
                 $this->setPropertiesToObject($newInstance, $properties);
@@ -109,8 +113,9 @@ class DependenciesEngine {
         return $newInstance;
     }
     /**
-     * Parsea los valores en string a lo que corresponda segun el contenido de la misma.
+     * Parsea los valores en string al tipo que corresponda segun el valor y el tipo definido.
      * @param array $propertiesDefinition
+     * @param array &$loadedDependencies
      * @return array
      */
     protected function parseProperties($propertiesDefinition, &$loadedDependencies = array()){
@@ -121,6 +126,7 @@ class DependenciesEngine {
                 //Conseguimos la dependencia
                 $property= $this->getDependency($definition['ref'], $loadedDependencies);
             }else{
+                //Casteo el valor al tipo indicado
                 $property= $definition['value'];
                 settype($property, $definition['type']);
             }
@@ -132,13 +138,15 @@ class DependenciesEngine {
      * Devuelve la dependencia en base a un nombre y una lista de dependencias.
      * Si no existe devuelve NULL
      * @param type $name
-     * @param type $loadedDependencies
+     * @param type &$loadedDependencies
      * @return Object o NULL
      */
     protected function getDependency($name, &$loadedDependencies = array()){
         $dependency= NULL;
         $dependencies= $this->context->getDependencies();
         if(isset($dependencies[$name])){
+            //Si la dependencia ya fue cargada anteriormente de forma circular se usa la misma, si no se carga y se 
+            //guarda en la lista de dependencias cargadas en la iteracion
             if(isset($loadedDependencies[$name])){
                 $dependency= $loadedDependencies[$name];                                
             }else{
@@ -148,8 +156,9 @@ class DependenciesEngine {
         return $dependency;
     }    
     /**
-     * Setea las propiedades de ub objeto mediante metodos set y en caso de no existir directamente con la variable que
-     * debe ser publica.
+     * Setea las propiedades de un objeto mediante metodo set y en caso de no existir directamente con la variable que
+     * debe ser publica. En caso de que no exista la variable se crea.
+     * Si no se cumple ninguna de las condiciones anteriores no se setea.
      * @param type $object
      * @param type $properties
      */

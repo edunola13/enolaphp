@@ -153,7 +153,7 @@ class Application{
             require_once $this->context->getPathRoot() . 'vendor/' . $this->context->getComposerAutoload();
         }        
         //Recorro de a una las librerias, las importo
-        foreach ($this->context->getLibrariesDefinition() as $name => $libreria) {
+        foreach ($this->context->getLibrariesDefinition() as $libreria) {
             //$libreria['class'] tiene la direccion completa desde LIBRARIE, no solo el nombre
             $dir= $libreria['path'];
             import_librarie($dir);
@@ -163,7 +163,7 @@ class Application{
      * Carga el modulo cache y creo una instancia de la cache correspondiente en base a la configuracion
      */
     protected function loadCache(){
-        $this->dependenciesEngine->injectDependency($this, "cache");
+        $this->dependenciesEngine->injectDependency($this, 'cache', 'cache');
     }
     /**
      * Carga e inicializa el modulo HTTP

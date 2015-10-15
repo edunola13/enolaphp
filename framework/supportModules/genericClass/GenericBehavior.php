@@ -105,7 +105,7 @@ trait GenericBehavior {
         $this->$name= new $class();
     }
     /**
-     * 
+     * Inyecta las dependencias que tienen seteado el tipo en load_in
      * @param \Enola\Application $app
      * @param string $type
      */
@@ -113,19 +113,19 @@ trait GenericBehavior {
         $app->dependenciesEngine->injectDependencyOfType($this,$type);
     }
     /**
-     * Carga las dependencias indicadas en la instancia actual
+     * Carga las dependencias indicadas en la instancia actual en las propiedades correspondientes
      * @param \Enola\Application $app
-     * @param array $dependenciesName
+     * @param array $dependencies / property => dependency
      */
-    protected function injectDependencies(\Enola\Application $app, $dependenciesName){
-        $app->dependenciesEngine->injectDependencies($this,$dependenciesName);
+    protected function injectDependencies(\Enola\Application $app, array $dependencies){
+        $app->dependenciesEngine->injectDependencies($this,$dependencies);
     }
     /**
-     * Carga la dependencias indicada en la instancia actual
+     * Carga la dependencias indicada en la instancia actual en la propiedad indicada
      * @param \Enola\Application $app
      * @param string $dependencyName
      */
-    protected function injectDependency(\Enola\Application $app, $dependencyName){
-        $app->dependenciesEngine->injectDependency($this,$dependencyName);
+    protected function injectDependency(\Enola\Application $app, $propertyName, $dependencyName){
+        $app->dependenciesEngine->injectDependency($this,$propertyName,$dependencyName);
     }
 }
