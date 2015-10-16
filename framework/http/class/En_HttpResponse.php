@@ -10,6 +10,7 @@ use Enola\Support\Response;
  * @category Enola\Http
  */
 class En_HttpResponse extends Response{
+    /** @var En_HttpRequest */
     protected $httpRequest;
     /**
      * Constructor
@@ -71,7 +72,7 @@ class En_HttpResponse extends Response{
     }
     /**
      * Devuelve todas las cookies
-     * @return type
+     * @return array
      */
     public function getCookies(){
         return $_COOKIE;        
@@ -79,7 +80,7 @@ class En_HttpResponse extends Response{
     /**
      * Devuelve la cookie asociado con un nombre.
      * @param string $name
-     * @return type
+     * @return array - null
      */
     public function getCookie($name){
         if(isset($_COOKIE[$name])){

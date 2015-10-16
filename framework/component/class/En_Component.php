@@ -25,8 +25,8 @@ class En_Component extends Support\GenericLoader implements Component{
     }    
     /**
      * Realiza el renderizado del componente
-     * @param \Enola\Support\Request $request
-     * @param \Enola\Support\Response $response
+     * @param Request $request
+     * @param Response $response
      * @param type $params
      */
     public function rendering(Request $request, Response $response, $params = NULL){        

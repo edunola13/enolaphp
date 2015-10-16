@@ -21,8 +21,8 @@ class En_Filter extends Support\GenericLoader implements Filter{
     }
     /**
      * Realiza la ejecucion del filtro
-     * @param \Enola\Http\En_HttpRequest $request
-     * @param \Enola\Http\En_HttpResponse $response
+     * @param En_HttpRequest $request
+     * @param En_HttpResponse $response
      */
     public function filter(En_HttpRequest $request, En_HttpResponse $response){}    
 }

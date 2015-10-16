@@ -45,6 +45,7 @@ interface CacheInterface {
 class Cache implements CacheInterface{
     private static $config;
     public $prefix;
+    /** @var CacheInterface */
     public $store;
     /**
      * Constructor del sistema de cahce. Levanta la configuracion del archivo o de la variable estatica e instancia al
@@ -54,8 +55,7 @@ class Cache implements CacheInterface{
     public function __construct($store = "Default") {        
         $context= \EnolaContext::getInstance();
         if(self::$config == NULL){
-            $json_cache= file_get_contents(PATHAPP . $context->getConfigurationFolder() . 'cache.json');
-            self::$config= json_decode($json_cache, TRUE);
+            self::$config= $context->readConfigurationFile('cache');
         }
         $this->prefix= self::$config["prefix"];
         $this->setCacheStore($store);
@@ -231,6 +231,7 @@ class CacheFileSystem implements CacheInterface{
 class CacheDataBase implements CacheInterface{
     public $nameDB;
     public $table;
+    /** @var DataBaseAR */
     public $connection;
     /**
      * Constructor - Inicia una conexion a la base de datos en base a la definicion seleccionada

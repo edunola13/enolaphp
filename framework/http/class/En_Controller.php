@@ -27,50 +27,50 @@ class En_Controller extends Support\GenericLoader implements Controller{
 
     /**
      * Atiende la peticion HTTP de tipo GET
-     * @param \Enola\Http\En_HttpRequest $request
-     * @param \Enola\Http\En_HttpResponse $response
+     * @param En_HttpRequest $request
+     * @param En_HttpResponse $response
      */
     public function doGet(En_HttpRequest $request, En_HttpResponse $response){}  
     /**
      * Atiende la peticion HTTP de tipo POST
-     * @param \Enola\Http\En_HttpRequest $request
-     * @param \Enola\Http\En_HttpResponse $response
+     * @param En_HttpRequest $request
+     * @param En_HttpResponse $response
      */
     public function doPost(En_HttpRequest $request, En_HttpResponse $response){}
     /**
      * Atiende la peticion HTTP de tipo DELETE
-     * @param \Enola\Http\En_HttpRequest $request
-     * @param \Enola\Http\En_HttpResponse $response
+     * @param En_HttpRequest $request
+     * @param En_HttpResponse $response
      */
     public function doDelete(En_HttpRequest $request, En_HttpResponse $response){}
     /**
      * Atiende la peticion HTTP de tipo PUT
-     * @param \Enola\Http\En_HttpRequest $request
-     * @param \Enola\Http\En_HttpResponse $response
+     * @param En_HttpRequest $request
+     * @param En_HttpResponse $response
      */
     public function doPut(En_HttpRequest $request, En_HttpResponse $response){}
     /**
      * Atiende la peticion HTTP de tipo HEAD
-     * @param \Enola\Http\En_HttpRequest $request
-     * @param \Enola\Http\En_HttpResponse $response
+     * @param En_HttpRequest $request
+     * @param En_HttpResponse $response
      */
     public function doHead(En_HttpRequest $request, En_HttpResponse $response){}
     /**
      * Atiende la peticion HTTP de tipo TRACE
-     * @param \Enola\Http\En_HttpRequest $request
-     * @param \Enola\Http\En_HttpResponse $response
+     * @param En_HttpRequest $request
+     * @param En_HttpResponse $response
      */
     public function doTrace(En_HttpRequest $request, En_HttpResponse $response){}
     /**
      * Atiende la peticion HTTP de tipo OPTIONS
-     * @param \Enola\Http\En_HttpRequest $request
-     * @param \Enola\Http\En_HttpResponse $response
+     * @param En_HttpRequest $request
+     * @param En_HttpResponse $response
      */
     public function doOptions(En_HttpRequest $request, En_HttpResponse $response){}
     /**
      * Atiende la peticion HTTP de tipo CONNECT
-     * @param \Enola\Http\En_HttpRequest $request
-     * @param \Enola\Http\En_HttpResponse $response
+     * @param En_HttpRequest $request
+     * @param En_HttpResponse $response
      */
     public function doConnect(En_HttpRequest $request, En_HttpResponse $response){}
     /**
@@ -98,8 +98,8 @@ class En_Controller extends Support\GenericLoader implements Controller{
     /**
      * Redireccion interna a otro Controlador.
      * Se indica si se debe filtrar o no la nueva solicitud
-     * @param type $uri
-     * @param Bool $filter
+     * @param string $uri
+     * @param boolean $filter
      */
     protected function forward($uri, $filter = FALSE){
         $this->context->app->httpCore->executeHttpRequest(NULL, $uri, $filter);

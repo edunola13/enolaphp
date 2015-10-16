@@ -324,4 +324,84 @@ Stack trace:
 ----------\n[2015-10-15 04:13:23.000000 ::1  - Unknown ] Undefined property: Index::$paginador
 ----------\n[2015-10-15 22:16:26.000000 ::1  - Error Fatal - Parse - Strict ] Class 'Enola\Cache' not found
 ----------\n[2015-10-15 22:57:22.000000 ::1  - Error Fatal - Parse - Strict ] Call to undefined method Enola\Application::loadCache()
+----------\n[2015-10-16 16:27:53.000000 ::1  - Error Fatal - Parse - Strict ] Access to undeclared static property: Enola\Http\En_HttpRequest::$instance
+----------\n[2015-10-16 16:31:32.000000 ::1  - Unknown ] Static function Enola\Support\Request::getInstance() should not be abstract
+----------\n[2015-10-16 16:31:33.000000 ::1  - Error Fatal - Parse - Strict ] Class Enola\Http\En_HttpRequest contains 1 abstract method and must therefore be declared abstract or implement the remaining methods (Enola\Support\Request::getInstance)
+----------\n[2015-10-16 16:31:44.000000 ::1  - Error Fatal - Parse - Strict ] Call to undefined method Enola\Http\En_HttpRequest::getInstance()
+----------\n[2015-10-16 17:16:14.000000 ::1  - Unknown ] Invalid argument supplied for foreach()
+----------\n[2015-10-16 17:16:27.000000 ::1  - Unknown ] Invalid argument supplied for foreach()
+----------\n[2015-10-16 18:33:23.000000 ::1  - Unknown ] Undefined property: EnolaContext::$dependencies
+----------\n[2015-10-16 18:33:23.000000 ::1  - Unknown ] Invalid argument supplied for foreach()
+----------\n[2015-10-16 18:34:00.000000 ::1  - Error Fatal - Parse - Strict ] Call to undefined method EnolaContext::readConfigurationFile()
+----------\n[2015-10-16 18:38:27.000000 ::1  - Error Fatal - Parse - Strict ] Uncaught exception 'ReflectionException' with message 'Class \Enola\\Cache\Cache does not exist' in D:\xampp\htdocs\enolaphp\framework\supportModules\DependenciesEngine.php:118
+Stack trace:
+#0 D:\xampp\htdocs\enolaphp\framework\supportModules\DependenciesEngine.php(118): ReflectionClass->__construct('\\Enola\\\\Cache\\C...')
+#1 D:\xampp\htdocs\enolaphp\framework\supportModules\DependenciesEngine.php(88): Enola\Support\DependenciesEngine->loadDependency('cache', Array)
+#2 D:\xampp\htdocs\enolaphp\framework\supportModules\DependenciesEngine.php(50): Enola\Support\DependenciesEngine->loadDependencyInObject(Object(Index), 'cache', 'cache', Array)
+#3 D:\xampp\htdocs\enolaphp\framework\supportModules\genericClass\GenericLoader.php(21): Enola\Support\DependenciesEngine->injectDependenciesOfType(Object(Index), 'controller')
+#4 D:\xampp\htdocs\enolaphp\framework\http\class\En_Controller.php(24): Enola\Support\GenericLoader->__construct('controller')
+#5 D:\xampp\htdocs\enolaphp\application\source\controllers\Index.php(
+----------\n[2015-10-16 22:10:10.000000 ::1  - Error Fatal - Parse - Strict ] Class 'Enola\DB\DataBaseAR' not found
+----------\n[2015-10-16 22:15:02.000000 ::1  - Unknown ] Undefined index: Local
+----------\n[2015-10-16 22:15:02.000000 ::1  - Unknown ] Undefined index: persistent
+----------\n[2015-10-16 22:15:02.000000 ::1  - Error Fatal - Parse - Strict ] Uncaught exception 'PDOException' with message 'could not find driver' in D:\xampp\htdocs\enolaphp\application\libraries\DataBase\DataBaseAR.php:83
+Stack trace:
+#0 D:\xampp\htdocs\enolaphp\application\libraries\DataBase\DataBaseAR.php(83): PDO->__construct(':host=;port=;db...', NULL, NULL, Array)
+#1 D:\xampp\htdocs\enolaphp\application\libraries\DataBase\DataBaseAR.php(38): Enola\DB\DataBaseAR->getConnection('Local')
+#2 D:\xampp\htdocs\enolaphp\framework\supportModules\Cache.php(244): Enola\DB\DataBaseAR->__construct(true, 'Local')
+#3 D:\xampp\htdocs\enolaphp\framework\supportModules\Cache.php(78): Enola\Cache\CacheDataBase->__construct('Local', 'cache')
+#4 D:\xampp\htdocs\enolaphp\framework\supportModules\Cache.php(62): Enola\Cache\Cache->setCacheStore('Default')
+#5 D:\xampp\htdocs\enolaphp\framework\core.php(125): Enola\Cache\Cache->__construct()
+#6 D:\xampp\htdocs\enolaphp\framework\core.php(73): Enola\Application->init()
+#7 D:\xampp\htdocs\enolaphp\framework\core.php(32): Enola\Application->__construct(Ob
+----------\n[2015-10-16 22:25:32.000000 ::1  - Unknown ] Undefined index: Local
+----------\n[2015-10-16 22:25:32.000000 ::1  - Unknown ] Undefined index: persistent
+----------\n[2015-10-16 22:25:32.000000 ::1  - Error Fatal - Parse - Strict ] Uncaught exception 'PDOException' with message 'could not find driver' in D:\xampp\htdocs\enolaphp\application\libraries\DataBase\DataBaseAR.php:84
+Stack trace:
+#0 D:\xampp\htdocs\enolaphp\application\libraries\DataBase\DataBaseAR.php(84): PDO->__construct(':host=;port=;db...', NULL, NULL, Array)
+#1 D:\xampp\htdocs\enolaphp\application\libraries\DataBase\DataBaseAR.php(38): Enola\DB\DataBaseAR->getConnection('Local')
+#2 D:\xampp\htdocs\enolaphp\framework\supportModules\Cache.php(244): Enola\DB\DataBaseAR->__construct(true, 'Local')
+#3 D:\xampp\htdocs\enolaphp\framework\supportModules\Cache.php(78): Enola\Cache\CacheDataBase->__construct('Local', 'cache')
+#4 D:\xampp\htdocs\enolaphp\framework\supportModules\Cache.php(62): Enola\Cache\Cache->setCacheStore('Default')
+#5 D:\xampp\htdocs\enolaphp\framework\core.php(125): Enola\Cache\Cache->__construct()
+#6 D:\xampp\htdocs\enolaphp\framework\core.php(73): Enola\Application->init()
+#7 D:\xampp\htdocs\enolaphp\framework\core.php(32): Enola\Application->__construct(Ob
+----------\n[2015-10-16 22:26:05.000000 ::1  - Unknown ] Undefined index: Local
+----------\n[2015-10-16 22:26:05.000000 ::1  - Unknown ] Undefined index: persistent
+----------\n[2015-10-16 22:26:05.000000 ::1  - Error Fatal - Parse - Strict ] Uncaught exception 'PDOException' with message 'could not find driver' in D:\xampp\htdocs\enolaphp\application\libraries\DataBase\DataBaseAR.php:85
+Stack trace:
+#0 D:\xampp\htdocs\enolaphp\application\libraries\DataBase\DataBaseAR.php(85): PDO->__construct(':host=;port=;db...', NULL, NULL, Array)
+#1 D:\xampp\htdocs\enolaphp\application\libraries\DataBase\DataBaseAR.php(38): Enola\DB\DataBaseAR->getConnection('Local')
+#2 D:\xampp\htdocs\enolaphp\framework\supportModules\Cache.php(244): Enola\DB\DataBaseAR->__construct(true, 'Local')
+#3 D:\xampp\htdocs\enolaphp\framework\supportModules\Cache.php(78): Enola\Cache\CacheDataBase->__construct('Local', 'cache')
+#4 D:\xampp\htdocs\enolaphp\framework\supportModules\Cache.php(62): Enola\Cache\Cache->setCacheStore('Default')
+#5 D:\xampp\htdocs\enolaphp\framework\core.php(125): Enola\Cache\Cache->__construct()
+#6 D:\xampp\htdocs\enolaphp\framework\core.php(73): Enola\Application->init()
+#7 D:\xampp\htdocs\enolaphp\framework\core.php(32): Enola\Application->__construct(Ob
+----------\n[2015-10-16 22:26:06.000000 ::1  - Unknown ] Undefined index: Local
+----------\n[2015-10-16 22:26:06.000000 ::1  - Unknown ] Undefined index: persistent
+----------\n[2015-10-16 22:26:06.000000 ::1  - Error Fatal - Parse - Strict ] Uncaught exception 'PDOException' with message 'could not find driver' in D:\xampp\htdocs\enolaphp\application\libraries\DataBase\DataBaseAR.php:85
+Stack trace:
+#0 D:\xampp\htdocs\enolaphp\application\libraries\DataBase\DataBaseAR.php(85): PDO->__construct(':host=;port=;db...', NULL, NULL, Array)
+#1 D:\xampp\htdocs\enolaphp\application\libraries\DataBase\DataBaseAR.php(38): Enola\DB\DataBaseAR->getConnection('Local')
+#2 D:\xampp\htdocs\enolaphp\framework\supportModules\Cache.php(244): Enola\DB\DataBaseAR->__construct(true, 'Local')
+#3 D:\xampp\htdocs\enolaphp\framework\supportModules\Cache.php(78): Enola\Cache\CacheDataBase->__construct('Local', 'cache')
+#4 D:\xampp\htdocs\enolaphp\framework\supportModules\Cache.php(62): Enola\Cache\Cache->setCacheStore('Default')
+#5 D:\xampp\htdocs\enolaphp\framework\core.php(125): Enola\Cache\Cache->__construct()
+#6 D:\xampp\htdocs\enolaphp\framework\core.php(73): Enola\Application->init()
+#7 D:\xampp\htdocs\enolaphp\framework\core.php(32): Enola\Application->__construct(Ob
+----------\n[2015-10-16 22:26:36.000000 ::1  - Unknown ] Undefined index: Local
+----------\n[2015-10-16 22:26:36.000000 ::1  - Unknown ] Undefined index: persistent
+----------\n[2015-10-16 22:26:37.000000 ::1  - Error Fatal - Parse - Strict ] Uncaught exception 'PDOException' with message 'could not find driver' in D:\xampp\htdocs\enolaphp\application\libraries\DataBase\DataBaseAR.php:85
+Stack trace:
+#0 D:\xampp\htdocs\enolaphp\application\libraries\DataBase\DataBaseAR.php(85): PDO->__construct(':host=;port=;db...', NULL, NULL, Array)
+#1 D:\xampp\htdocs\enolaphp\application\libraries\DataBase\DataBaseAR.php(38): Enola\DB\DataBaseAR->getConnection('Local')
+#2 D:\xampp\htdocs\enolaphp\framework\supportModules\Cache.php(244): Enola\DB\DataBaseAR->__construct(true, 'Local')
+#3 D:\xampp\htdocs\enolaphp\framework\supportModules\Cache.php(78): Enola\Cache\CacheDataBase->__construct('Local', 'cache')
+#4 D:\xampp\htdocs\enolaphp\framework\supportModules\Cache.php(62): Enola\Cache\Cache->setCacheStore('Default')
+#5 D:\xampp\htdocs\enolaphp\framework\core.php(125): Enola\Cache\Cache->__construct()
+#6 D:\xampp\htdocs\enolaphp\framework\core.php(73): Enola\Application->init()
+#7 D:\xampp\htdocs\enolaphp\framework\core.php(32): Enola\Application->__construct(Ob
+----------\n[2015-10-16 22:41:06.000000 ::1  - Unknown ] Undefined property: Enola\Cache\Cache::$context
+----------\n[2015-10-16 22:41:06.000000 ::1  - Error Fatal - Parse - Strict ] Call to a member function readConfigurationFile() on null
 ----------\n

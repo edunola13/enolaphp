@@ -19,14 +19,14 @@ class Session {
     /**
      * Agrega un dato a la session mediante una clave
      * @param string $key
-     * @param DATO $value
+     * @param type $value
      */
     public function set($key,$value){
         $_SESSION[$key] = $value;
     }
     /**
      * Agrega un dato a la session mediante una clave serializandolo previamente
-     * @param type $key
+     * @param string $key
      * @param type $value
      */
     public function setSerialize($key,$value){
@@ -35,7 +35,7 @@ class Session {
     /**
      * Devuelve un dato de la sesion o NULL si no existe
      * @param string $key
-     * @return NULL o value
+     * @return null o value
      */
     public function get($key){
         if (isset ($_SESSION[$key])) {
@@ -48,7 +48,7 @@ class Session {
     /**
      * Devuelve un dato deserializado de la sesion o NULL si no existe
      * @param type $key
-     * @return null o value
+     * @return null o type
      */
     public function getUnserialize($key){
         if (isset ($_SESSION[$key])) {

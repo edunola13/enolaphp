@@ -13,9 +13,9 @@ trait GenericBehavior {
      * Valida las variables de un objeto o de un array en base a una definicion de configuracion de validacion
      * Se puede utilizar la libreria que se desee pere debe respetar la inerfaz de la proporcionada por el framework.
      * @param type $var
-     * @param type $lib
-     * @param type $locale
-     * @return boolean
+     * @param string $lib
+     * @param string $locale
+     * @return bool
      */
     protected function validate($var, $lib= '\Enola\Lib\Validation', $locale = NULL){
         $validacion= new $lib($locale);
@@ -42,6 +42,7 @@ trait GenericBehavior {
     /**
      * Devuelve la configuracion de validacion
      * Deberia ser sobrescrita por la clase que desee validar, si no, no validara nada.
+     * @return array
      */
     protected function configValidation(){
         return array();
@@ -50,10 +51,10 @@ trait GenericBehavior {
      * Carga una vista PHP pasandole parametros y teniendo la oportunidad de guardar de retornar la vista para guardar 
      * en una variable.
      * Se crea una instancia de la clase Enola\Support\View en la variable $view
-     * @param type $view_template
-     * @param type $params
-     * @param type $buffer
-     * @return type
+     * @param string $view_template
+     * @param array $params
+     * @param boolean $buffer
+     * @return string - void
      */
     protected function loadView($view_template, $params = NULL, $buffer = FALSE){
         if($params != NULL && is_array($params)){
@@ -79,7 +80,7 @@ trait GenericBehavior {
      * @param array $params
      * @param string $action
      * @param bool $buffer
-     * @return type
+     * @return string - void
      */
     protected  function component($name, $params = NULL, $action = NULL, $buffer = FALSE){
         if($buffer){
@@ -95,8 +96,8 @@ trait GenericBehavior {
     }
     /**
      * Carga la instancia de una clase pasada como parametro en una variable del objeto actual con el nombre indicado
-     * @param type $class
-     * @param type $name
+     * @param string $class
+     * @param string $name
      */
     protected function addInstance($class, $name = ""){
         if($name == ""){

@@ -12,11 +12,9 @@ abstract class Request {
     public $attributes;
     /**
      * Devuelve la isntancia que se esta utilizando
-     */
-    public static function getInstance(){
-        if(self::$instance == NULL){
-            self::$instance= new En_HttpResponse();
-        }
+     * La instancia ya dede existir
+     */    
+    public static function getInstance() {
         return self::$instance;
     }
     /**
@@ -34,7 +32,7 @@ abstract class Request {
     }
     /**
      * Setea un atributo al requerimiento
-     * @param type $key
+     * @param string $key
      * @param type $value
      */
     public function setAttribute($key, $value){

@@ -11,6 +11,7 @@ use Enola\Support;
  */
 class DataBaseAR extends Support\GenericLoader{
     protected static $config_db;
+    protected $configFile;
     /** @var \PDO */
     public $connection;
     protected $currentDB;
@@ -33,8 +34,9 @@ class DataBaseAR extends Support\GenericLoader{
      * @param bool $conect
      * @param string $nameDB
      */
-    function __construct($conect = TRUE, $nameDB = NULL) {
+    function __construct($conect = TRUE, $nameDB = NULL, $configFile = 'database') {
         parent::__construct('db');
+        $this->configFile= $configFile;
 	if($conect)$this->connection= $this->getConnection($nameDB);
     }
     /**
@@ -44,18 +46,11 @@ class DataBaseAR extends Support\GenericLoader{
      * @throws \PDOException
      */
     protected function getConnection($nameDB = NULL){
-        $context= \EnolaContext::getInstance();
 	//Leo archivo de configuracion de BD si es la primera vez
-        if(self::$config_db == NULL){            
-            if($context->isDatabaseDefined()){
-                $json_basededatos= file_get_contents(PATHAPP . $context->getConfigurationFolder() . $context->getDatabaseConfiguration());
-            }
-            else {
-                general_error('Data Base', 'The configuration file of the Data Base is not especified', 'error_bd');
-            }
-            self::$config_db= json_decode($json_basededatos, TRUE);
+        if(self::$config_db == NULL){
+            self::$config_db= $this->context->readConfigurationFile($this->configFile);
         }
-        //Consulta la bd actual si no se indico opcion
+        //Consulta la bd actual si no se indico opcion        print_r(self::$config_db);
         if($nameDB == NULL)$nameDB= self::$config_db['actual_db'];
         //Cargo las opciones de la bd actual
         $cbd= self::$config_db[$nameDB];
@@ -82,7 +77,7 @@ class DataBaseAR extends Support\GenericLoader{
             //Abro la conexion                
             $gbd = new \PDO($dsn, $cbd['user'], $cbd['pass'], array(\PDO::ATTR_PERSISTENT => $cbd['persistent']));
             $gbd->exec("SET NAMES '".$cbd['charset']."'");
-            if($context->getEnvironment() == 'development'){
+            if($this->context->getEnvironment() == 'development'){
                 $gbd->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
             }else{
                 $gbd->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_SILENT);

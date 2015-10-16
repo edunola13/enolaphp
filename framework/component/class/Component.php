@@ -11,8 +11,8 @@ use Enola\Support\Response;
 interface Component {
     /**
      * Realiza el renderizado del componente
-     * @param \Enola\Support\En_HttpRequest $request
-     * @param \Enola\Support\En_HttpResponse $response
+     * @param Request $request
+     * @param Response $response
      * @param type $params
      */
     public function rendering(Request $request, Response $response, $params = NULL);

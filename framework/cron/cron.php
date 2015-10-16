@@ -18,14 +18,17 @@ require 'class/En_CronRequest.php';
  * @internal
  */
 class CronCore{
+    /** @var \Enola\Application */
     public $app;
+    /** @var En_CronRequest */
     public $cronRequest;
+    /** @var Response */
     public $cronResponse;
     
     /** 
      * Se instancia el nucleo.
      * Se definen los parametros y se define el Cron Request actual
-     * @param Application $app
+     * @param \Enola\Application $app
      */
     public function __construct($app, $params) {
         $this->app= $app;
@@ -67,7 +70,6 @@ class CronCore{
     /**
      * Ejecuta el cron correspondiente en base a los parametros pasados por la linea de comandos
      * Utilizado solo por el framework
-     * @param array[string] $params
      */
     public function executeCronController(){
         $cron= $this->cronRequest->getParamAll(1);
@@ -82,8 +84,8 @@ class CronCore{
     /**
      * Ejecuta el Cron mediante el metodo indicado
      * Este es utilizado por el metodo forward del CronController y de uso interno al modulo
-     * @param type $cron
-     * @param type $method
+     * @param string $cron
+     * @param string $method
      */
     public function executeCron($cron, $method= "index"){
         $dir= PATHAPP . 'source/crons/' . $cron . '.php';

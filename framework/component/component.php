@@ -21,11 +21,17 @@ require 'class/En_Component.php';
  * @internal
  */
 class ComponentCore{
+    /** @var \Enola\Application */
     public $app;
+    /** @var \Enola\Support\Request */
     public $request;
+    /** @var \Enola\Support\Response */
     public $response;
     /** 
-     * @param Application $app
+     * 
+     * @param \Enola\Application $app
+     * @param \Enola\Support\Request $request
+     * @param \Enola\Support\Response $response
      */
     public function __construct($app, $request, $response) {
         $this->app= $app;
@@ -34,10 +40,10 @@ class ComponentCore{
     }    
     /**
      * Analiza si mapea la URI actual con la URL de componentes definida
-     * @param En_HttpRequest $httpRequest
+     * @param \Enola\Http\En_HttpRequest $httpRequest
      * @return boolean 
      */
-    public function mapsComponents($httpRequest){
+    public function mapsComponents(\Enola\Http\En_HttpRequest $httpRequest){
         $uri_parts= explode("/", $httpRequest->uriApp);
         if($uri_parts[0] == $this->app->context->getComponentUrl()){
             return TRUE; 
@@ -49,7 +55,7 @@ class ComponentCore{
      * Una vez definido el componente a ejecutar y sus parametros delega el trabajo a executeComponent
      * @param En_HttpRequest $httpRequest
      */
-    public function executeUrlComponent($httpRequest){        
+    public function executeUrlComponent(\Enola\Http\En_HttpRequest $httpRequest){        
         $uri_parts= explode("/", $httpRequest->uriApp);
         $name= "";
         $params= array();
@@ -140,10 +146,10 @@ class ComponentCore{
     /**
      * Retorna el path de la carpeta donde se encuentra el component en base a su definicion
      * @param type $definition
-     * @param type $folder
+     * @param string $folder
      * @return string
      */
-    protected function buildDir($definition, $folder="controllers"){
+    protected function buildDir($definition, $folder="components"){
         $dir= "";
         if(! isset($definition['location'])){
             $dir= $this->app->context->getPathApp() . 'source/' . $folder . '/' . $definition['class'] . '.php';

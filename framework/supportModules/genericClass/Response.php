@@ -7,6 +7,7 @@ namespace Enola\Support;
  * @category Enola\Support
  */
 class Response {
+    /** @var Response */
     protected static $instance;
     protected static $body;
     /**
@@ -14,20 +15,20 @@ class Response {
      */
     public static function getInstance(){
         if(self::$instance == NULL){
-            self::$instance= new En_HttpResponse();
+            self::$instance= new Response();
         }
         return self::$instance;
     }
     /**
      * Setea el contenido de la respuesta
-     * @param type $content
+     * @param string $content
      */
     public function setContent($content){
         self::$body= $content;
     }
     /**
      * Agrega contenido a la respuesta
-     * @param type $content
+     * @param string $content
      */
     public function appendContent($content){
         self::$body.= $content;
@@ -35,14 +36,14 @@ class Response {
     /**
      * Setea el contenido de la respuesta en formato JSON
      * @param type $content
-     * @param type $jsonOptions
+     * @param int $jsonOptions
      */
     public function setJsonContent($content, $jsonOptions=0){
         self::$body= json_encode($content, $jsonOptions);
     }
     /**
      * Devuelve el contenido de la respuesta
-     * @return type
+     * @return string
      */
     public function getContent(){
         return self::$body;

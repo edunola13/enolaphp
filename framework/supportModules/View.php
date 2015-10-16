@@ -9,6 +9,10 @@ use EnolaContext;
  * @category Enola\Support
  */
 class View{
+    /**
+     *
+     * @var \Enola\Application
+     */
     public $app;
     public $context;
     public $request;
@@ -80,7 +84,7 @@ class View{
      * Arma una url para renderizar un componente
      * @param string $component
      * @param string $params
-     * @param type $locale
+     * @param string $locale
      * @return string 
      */
     function urlComponentFor($component, $params = "", $locale = NULL){
@@ -94,7 +98,7 @@ class View{
      * @param string $component
      * @param string $action
      * @param string $params
-     * @param type $locale
+     * @param string $locale
      * @return string 
      */
     function urlComponentActionFor($component, $action, $params = "", $locale = NULL){
@@ -141,6 +145,8 @@ class View{
      * @param string $name
      * @param array $params
      * @param string action
+     * @param bool $buffer
+     * @return void - string
      */
     function component($name, $params = NULL, $action = NULL, $buffer = FALSE){
         if($buffer){
@@ -157,8 +163,8 @@ class View{
     /**
      * Carga un archivo de internacionalizacion. Si no se especifica el locale carga el archivo por defecto, si no
      * le agrega el locale pasado como parametro
-     * @param type $file
-     * @param type $locale
+     * @param string $file
+     * @param string $locale
      */
     function i18n($file, $locale = NULL){
         $this->fileName= $file;
@@ -178,7 +184,7 @@ class View{
     }    
     /**
      * Cambia el archivo de internacionalizacion cargado. Lo cambia segun el locale pasado
-     * @param type $locale
+     * @param string $locale
      */
     function i18n_change_locale($locale){
         if(isset($this->fileName)){
@@ -214,6 +220,7 @@ class View{
     }    
     /**
      * Retorna el locale configurado para el contenido internacionalizado
+     * @return string
      */
     function i18n_locale(){
         if(isset($this->locale)){

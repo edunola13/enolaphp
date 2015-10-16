@@ -30,7 +30,11 @@
     }    
     // Asegura que no quedan espacios en blanco
     $path_application= rtrim($path_application, '/').'/';
-
+    //tipo de configuracion: YAML - JSON - PHP+
+    $configurationType= 'YAML';
+    //Carpeta de configuracion
+    $configuration= 'configuration/';
+    //Path Root
     $path_root= realpath(dirname(__FILE__)) . '/';
     /**
      * Delega el trabajo al nucleo del framework

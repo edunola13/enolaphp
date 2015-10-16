@@ -13,7 +13,8 @@ use Enola\Support\Security;
 class En_HttpRequest extends Request{
     //Propias de la peticion HTTP
     public $getParams;
-    public $postParams;    
+    public $postParams;
+    /** @var Session */
     public $session;
     public $requestMethod;
     public $queryString;
@@ -37,11 +38,11 @@ class En_HttpRequest extends Request{
     public function __construct($config){
         $this->init($config);
         self::$instance= $this;
-    }
+    }    
     /**
      * Setea todas las propiedades de la instancia
      * GET - POST - SERVER y FRAMEWORK
-     * @param type $config
+     * @param array $config
      */
     private function init($config){
         //Configuro valores basicos-genericos
@@ -117,8 +118,8 @@ class En_HttpRequest extends Request{
      * Lee los campos de un formulario y devuelve un objeto o un array con todos los valores correspondientes
      * si se devuelve un objeto los nombres de los campos deben coincidir con el de la clase.
      * @param type $var
-     * @param type $class
-     * @return type
+     * @param string $class
+     * @return array - object
      */
     public function readFields(&$var, $class = NULL){
         $vars= array();

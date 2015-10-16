@@ -43,7 +43,7 @@
     /**
      * Carga un archivo de configuracion que luego podra ser asignado a una variable desde application folder
      * @param string $dir
-     * @return type
+     * @return array
      */
     function load_application_config_file($dir){
         $dir= PATHAPP . $dir;
@@ -66,7 +66,7 @@
     /**
      * Carga un archivo de configuracion que luego podras ser asignado a una variable desde framework folder
      * @param string $dir
-     * @return type
+     * @return array
      */
     function load_frameworks_config_file($dir){
         $dir= PATHFRA . $dir;
@@ -75,11 +75,11 @@
     /**
      * Carga la instancia de una clase pasada como parametro en una variable del objeto pasado como parametro.
      * Supone que la clase ya se encuentra importada. 
-     * @param type $class
+     * @param string $class
      * @param type $obj
-     * @param type $name
+     * @param string $name
      */
-    function add_instance($class, $obj, $name = ""){
+    function add_property_instance($class, $obj, $name = ""){
         if($name == ""){
             $name= $class;
         }

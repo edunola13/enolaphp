@@ -29,8 +29,11 @@ require 'class/En_Controller.php';
  * @internal
  */
 class HttpCore{
+    /** @var \Enola\Application */
     public $app;
+    /** @var En_HttpRequest */
     public $httpRequest;
+    /** @var En_HttpResponse */
     public $httpResponse;
     /**
      * Se instancia el nucleo.
@@ -95,6 +98,7 @@ class HttpCore{
      * Analiza los filtros que mapean con la URI pasada y ejecuta los que correspondan. En caso de no pasar URI se utiliza
      * la de la peticion actual.
      * @param array[array] $filters
+     * @param string $uriapp
      */
     protected function executeFilters($filters, $uriapp = NULL){
         //Analizo los filtros y los aplico en caso de que corresponda

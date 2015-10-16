@@ -1,41 +1,36 @@
----
-  base_url: "http://localhost/enolaphp/"
-  index_page: ""
-  environment: "development"
-  calculate_performance: "TRUE"
-  configuration: "configuration/"
-  charset: "UTF-8"
+  base_url: http://localhost/enolaphp/
+  index_page: 
+  environment: development
+  calculate_performance: TRUE
+  charset: UTF-8
   
   controllers: 
     index: 
-      class: "Index"
-      url: "/"
+      class: Index
+      url: /
       
   filters: 
     authorization: 
-      class: "Authorization"
-      filtered: "/*"
-      
-  filters_after_processing:
-      
+      class: Authorization
+      filtered: /*
+  filters_after_processing: {}
+  
   i18n: 
-    default: "es"
-    locales: "en,fr,me"
+    default: es
+    locales: en,fr,me
     
-  url-components: "enola-components"
-  components:
+  url-components: enola-components
+  components: {}
       
   libraries: 
     database: 
-      path: "DataBase/DataBaseAR"
+      path: DataBase/DataBaseAR
     validation: 
-      path: "Validation"
+      path: Validation
     paginator: 
-      path: "Paginator"
+      path: Paginator
       
-  composer:
+  composer: 
       
-  dependency_injection: 
-  
-  database: 
-    configuration: "database.json"
+  dependency_injection:
+    - dependencyInjection

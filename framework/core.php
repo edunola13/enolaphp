@@ -4,7 +4,7 @@ use Enola\Error;
 
 require 'EnolaContext.php';
 //Instancio la Clase EnolaContext que carga la configuracion de la aplicacion
-$context= new \EnolaContext($path_root, $path_framework, $path_application); 
+$context= new \EnolaContext($path_root, $path_framework, $path_application, $configurationType, $configuration); 
 
 //Seteo la codificacion de caracteres, casi siempre es o debe ser UTF-8
 ini_set('default_charset', $context->getCharset());
@@ -57,7 +57,6 @@ class Application{
     public $componentCore;
     /** @var Cron\CronCore */
     public $cronCore;
-    private $actualController;
     
     /** @var Support\DependenciesEngine */
     public $dependenciesEngine;
@@ -104,7 +103,7 @@ class Application{
                 $this->componentCore->executeUrlComponent($this->httpCore->httpRequest);
             }else{
                 //Ejecuto el controlador correspondiente
-                $this->httpCore->executeHttpRequest($this->actualController);
+                $this->httpCore->executeHttpRequest();
             }
         }else{
             //Ejecuta el cron controller
@@ -122,6 +121,8 @@ class Application{
         $this->supportModules();        
         //Cargo las librerias definidas por el usuario
         $this->loadLibraries();
+        //Creo cache
+        $this->cache= new Cache\Cache();
     }    
     /**
      * Carga de modulos de soporte para que el framework trabaje correctamente
@@ -144,13 +145,12 @@ class Application{
         //Carga Clase Base Response
         require $this->context->getPathFra() . 'supportModules/genericClass/Response.php';
         //Carga el modulo cache y creo una instancia de la cache correspondiente en base a la configuracion
-        require $this->context->getPathFra() . 'supportModules/Cache.php';
-        $this->cache= new Cache\Cache();
+        require $this->context->getPathFra() . 'supportModules/Cache.php';        
         //Carga el motor de Dependencias y creo una instancia del mismo
         require $this->context->getPathFra() . 'supportModules/DependenciesEngine.php';
         $this->dependenciesEngine= new Support\DependenciesEngine();
     }      
-    /*
+    /**
      * Carga todas las librerias particulares de la aplicacion que se cargaran automaticamente indicadas en el archivo de configuracion
      */
     protected function loadLibraries(){
@@ -193,7 +193,7 @@ class Application{
         }    
     }
     /**
-     * Carga el modulo Component si se definio por lo menos un component
+     * Carga el modulo Component si se definido por lo menos un component
      */
     protected function loadComponentModule(){
         //Analizo la carga del modulo component segun si hay o no definiciones
@@ -209,21 +209,7 @@ class Application{
      */
     protected function loadUserConfig(){
         require $this->context->getPathApp() . 'load_user_config.php';    
-    }    
-    /**
-     * Define el controlador que mapea en el requerimiento actual
-     */
-    protected function actualController(){
-        //Lee los controladores. En caso de que no haya controladores avisa del error
-        //Me quedo con el controlador que mapea
-        $this->actualController= NULL;
-        if(count($this->context->getControllersDefinition()) > 0){
-            $this->actualController= $this->httpCore->mappingController($this->context->getControllersDefinition());
-        }
-        else{
-            Error::general_error('Controller Error', 'There isent define any controller');
-        }
-    }    
+    }  
     /**
      * Si corresponde:
      * Inicializa el calculo del tiempo de respuesta
@@ -255,7 +241,7 @@ class Application{
     
     /**
      * Retorna el Requerimiento actual
-     * @return Request
+     * @return Support\Request
      */
     public function getRequest(){
         if($this->httpCore != NULL){
@@ -266,7 +252,7 @@ class Application{
     }
     /**
      * Retorna el Response actual
-     * @return Response
+     * @return Support\Response
      */
     public function getResponse(){
         if($this->httpCore != NULL){

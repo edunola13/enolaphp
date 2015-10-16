@@ -24,13 +24,12 @@ class EnolaContext {
     private $calculatePerformance;
     private $environment;
     private $charset;
+    private $configurationType;
     private $configurationFolder;
-    private $databaseConfiguration;
     private $composerAutoload;
     //Definiciones de diferentes aspectos/partes
     private $librariesDefinition;
-    private $dependencies;
-    private $loadDependencies;
+    private $dependenciesFile;
     private $controllersDefinition;
     private $filtersBeforeDefinition;
     private $filtersAfterDefinition;
@@ -45,8 +44,8 @@ class EnolaContext {
      * @param string $path_framework
      * @param string $path_application
      */
-    public function __construct($path_root, $path_framework, $path_application) {
-        $this->init($path_root, $path_framework, $path_application);
+    public function __construct($path_root, $path_framework, $path_application, $configurationType, $configuration) {
+        $this->init($path_root, $path_framework, $path_application, $configurationType, $configuration);
         //Guardo la instancia para qienes quieran consultar desde cualqueir ubicacion
         self::$instance= $this;
     }
@@ -72,22 +71,24 @@ class EnolaContext {
      * @param string $path_framework
      * @param string $path_application
      */
-    private function init($path_root, $path_framework, $path_application){
-        /*
-         * Lee archivo configuracion.json donde se encuentra toda la configuracion de variables, filtros, controladores, 
-         * librerias, helpers, etc.
-         */
-        $json_configuration= file_get_contents($path_application . 'configuration.json');
-        $config= json_decode($json_configuration, true);    
-        if(! is_array($config)){
-            //Arma una respuesta de error de configuracion.
-            //No realiza el llamado a funciones de error porque todavia no se cargo el modulo de errores
-            $head= 'Configuration Error';
-            $message= 'The file configuration.json is not available or is misspelled';
-            require $path_application . 'errors/general_error.php';
-            //Cierra la aplicacion
-            exit;
-        }    
+    private function init($path_root, $path_framework, $path_application, $configurationType, $configuration){
+        //Librarie to YAML
+        if($configurationType == 'YAML'){
+            require $path_framework . 'supportModules/Spyc.php';
+        }
+        
+        //PATH_ROOT: direccion base donde se encuentra la aplicacion completa, es el directorio donde se encuentra el archivo index.php        
+        $this->pathRoot= $path_root;
+        //PATHFRA: direccion de la carpeta del framework - definida en index.php
+        $this->pathFra= $path_framework; 
+        //PATHAPP: direccion de la carpeta de la aplicacion - definida en index.php
+        $this->pathApp= $path_application;
+        //CONFIGURATION_TYPE: Indica el tipo de configuracion a utilizar
+        $this->configurationType= $configurationType;
+        //CONFIGURATION: Carpeta base de configuracion - definida en index.php
+        $this->configurationFolder= $configuration;        
+        
+        $config= $this->readConfigurationFile('configuration', FALSE);
         //Define si muestra o no los errores y en que nivel de detalle dependiendo en que fase se encuentre la aplicacion
         switch ($config['environment']){
             case 'development':
@@ -104,14 +105,7 @@ class EnolaContext {
                 $message= 'The environment is not defined in configuration.json';
                 require $path_application . 'errors/general_error.php';
                 exit;
-        }
-        //PATH_ROOT: direccion base donde se encuentra la aplicacion completa, es el directorio donde se encuentra el archivo index.php        
-        $this->pathRoot= $path_root;
-        //PATHFRA: direccion de la carpeta del framework - definida en index.php
-        $this->pathFra= $path_framework; 
-        //PATHAPP: direccion de la carpeta de la aplicacion - definida en index.php
-        $this->pathApp= $path_application;
-        
+        }       
         // BASE_URL: Base url de la aplicacion - definida por el usuario en el archivo de configuracion    
         $pos= strlen($config['base_url']) - 1;
         if($config['base_url'][$pos] != '/'){
@@ -128,14 +122,7 @@ class EnolaContext {
         //ENVIRONMENT: Indica el ambiente de la aplicacion
         $this->environment= $config['environment'];
         //CHARSET: Indica el charset que se esta utilizando en PHP
-        $this->charset= $config['charset'];
-        //CONFIGURATION: Carpeta base de configuracion - definida por el usuario en el archivo de configuracion
-        $this->configurationFolder= $config['configuration'];  
-        //JSON_CONFIG_BD: archivo de configuracion para la base de datos
-        //Si el usuario definio que va a tener bd, en el archivo de configuracion guarda el archivo de configuracion de la BD
-        if(isset($config['database']['configuration'])){
-            $this->databaseConfiguration= $config['database']['configuration'];
-        }
+        $this->charset= $config['charset'];          
         //AUTOLOAD_FILE: Indica la direccion del archivo autoload de composer
         if(isset($config['composer']['autoload_file'])){
             $this->composerAutoload= $config['composer']['autoload_file'];
@@ -152,19 +139,7 @@ class EnolaContext {
         
         //Diferentes definiciones
         $this->librariesDefinition= $config['libraries'];
-        /**
-         * Que hacer aca
-         *
-        $json_configuration= file_get_contents($path_application . 'configuration/dependencyInjection.json');
-        $config['dependency_injection']= json_decode($json_configuration, true); 
-        */
-        $this->dependencies= $config['dependency_injection'];
-        $this->loadDependencies= array();
-        foreach ($this->dependencies as $key => $value) {
-            if(isset($value['load_in'])){
-                $this->loadDependencies[$key]= $value;
-            }
-        }
+        $this->dependenciesFile= $config['dependency_injection'];
         $this->controllersDefinition= $config['controllers'];
         $this->filtersBeforeDefinition= $config['filters'];
         $this->filtersAfterDefinition= $config['filters_after_processing'];
@@ -204,11 +179,11 @@ class EnolaContext {
     public function getCharset(){
         return $this->charset;
     }
+    public function getConfigurationType(){
+        return $this->configurationType;
+    }
     public function getConfigurationFolder(){
         return $this->configurationFolder;
-    }
-    public function getDatabaseConfiguration(){
-        return $this->databaseConfiguration;
     }
     public function getComposerAutoload(){
         return $this->composerAutoload;
@@ -216,11 +191,8 @@ class EnolaContext {
     public function getLibrariesDefinition(){
         return $this->librariesDefinition;
     }
-    public function getDependencies(){
-        return $this->dependencies;
-    }
-    public function getLoadDependencies(){
-        return $this->loadDependencies;
+    public function getDependenciesFile(){
+        return $this->dependenciesFile;
     }
     public function getControllersDefinition(){
         return $this->controllersDefinition;
@@ -244,6 +216,27 @@ class EnolaContext {
     /*
      * Metodos facilitadores
      */
+    public function readConfigurationFile($name, $configFolder = TRUE){
+        //Lee archivo de configuracion principal donde se encuentra toda la configuracion de variables, filtros, controladores, etc.
+        $config= NULL;
+        $folder= $this->pathApp;
+        if($configFolder){$folder.= $this->configurationFolder;}
+        if($this->configurationType == 'YAML'){
+            $config = Spyc::YAMLLoad($folder . $name . '.yml');
+        }else{
+            $config= json_decode(file_get_contents($folder . $name . '.json'), true);  
+        }       
+        if(! is_array($config)){
+            //Arma una respuesta de error de configuracion.
+            //No realiza el llamado a funciones de error porque todavia no se cargo el modulo de errores
+            $head= 'Configuration Error';
+            $message= 'The configuration file ' . $name . ' is not available or is misspelled';
+            require $path_application . 'errors/general_error.php';
+            //Cierra la aplicacion
+            exit;
+        }
+        return $config;
+    }
     /**
      * Retorna si se debe o no calcular el tiempo de respuesta
      * @return boolean

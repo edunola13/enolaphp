@@ -15,8 +15,8 @@ use Enola;
 class UrlUri{    
     /**
      * Se crea la URI ACTUAL de la aplicacion, una URI con el Locale y otra sin Locale, se define la base url real, etc.
-     * @param EnolaContext $context
-     * @return void
+     * @param \EnolaContext $context
+     * @return array
      */
     public static function defineApplicationUri($context){
         //Resultado de Configuracion - DefinirURI
