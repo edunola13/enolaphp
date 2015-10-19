@@ -1,4 +1,4 @@
-  defaultStore: "DataBase"
+  defaultStore: "File"
   prefix: "enolaphp"
   stores: 
     File: 

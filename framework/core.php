@@ -4,7 +4,7 @@ use Enola\Error;
 
 require 'EnolaContext.php';
 //Instancio la Clase EnolaContext que carga la configuracion de la aplicacion
-$context= new \EnolaContext($path_root, $path_framework, $path_application, $configurationType, $configuration); 
+$context= new \EnolaContext($path_root, $path_framework, $path_application, $configurationType, $configurationFolder); 
 
 //Seteo la codificacion de caracteres, casi siempre es o debe ser UTF-8
 ini_set('default_charset', $context->getCharset());
@@ -116,13 +116,15 @@ class Application{
      */
     private function init(){
         //Inicializo el caluclo de la performance, si corresponde
-        $this->initPerformance();        
+        $this->initPerformance();
         //Realizo la carga de modulos de soporte
-        $this->supportModules();        
-        //Cargo las librerias definidas por el usuario
-        $this->loadLibraries();
-        //Creo cache
+        $this->supportModules();
+        //Instancio el sistema de Cache
         $this->cache= new Cache\Cache();
+        //Instancio el motor de Dependencias
+        $this->dependenciesEngine= new Support\DependenciesEngine();               
+        //Cargo las librerias definidas por el usuario
+        $this->loadLibraries();        
     }    
     /**
      * Carga de modulos de soporte para que el framework trabaje correctamente
@@ -144,11 +146,12 @@ class Application{
         require $this->context->getPathFra() . 'supportModules/genericClass/Request.php';
         //Carga Clase Base Response
         require $this->context->getPathFra() . 'supportModules/genericClass/Response.php';
-        //Carga el modulo cache y creo una instancia de la cache correspondiente en base a la configuracion
-        require $this->context->getPathFra() . 'supportModules/Cache.php';        
-        //Carga el motor de Dependencias y creo una instancia del mismo
-        require $this->context->getPathFra() . 'supportModules/DependenciesEngine.php';
-        $this->dependenciesEngine= new Support\DependenciesEngine();
+        //Cargo el modulo DataBase
+        require $this->context->getPathFra() . 'supportModules/DataBaseAR.php';
+        //Carga el modulo Cache
+        require $this->context->getPathFra() . 'supportModules/Cache.php';
+        //Carga el motor de Dependencias
+        require $this->context->getPathFra() . 'supportModules/DependenciesEngine.php';        
     }      
     /**
      * Carga todas las librerias particulares de la aplicacion que se cargaran automaticamente indicadas en el archivo de configuracion

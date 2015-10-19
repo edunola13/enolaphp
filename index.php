@@ -33,7 +33,7 @@
     //tipo de configuracion: YAML - JSON - PHP+
     $configurationType= 'YAML';
     //Carpeta de configuracion
-    $configuration= 'configuration/';
+    $configurationFolder= 'configuration/';
     //Path Root
     $path_root= realpath(dirname(__FILE__)) . '/';
     /**

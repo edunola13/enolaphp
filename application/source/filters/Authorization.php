@@ -6,8 +6,7 @@ use Enola\Http\En_HttpRequest,Enola\Http\En_HttpResponse;
  * Filtro que analiza la autorizacion de los usuarios
  * @author Enola
  */
-class Authorization extends Http\En_Filter{
-    
+class Authorization extends Http\En_Filter{    
     /**
      * Constructor
      */
@@ -19,9 +18,7 @@ class Authorization extends Http\En_Filter{
      */
     public function filter(En_HttpRequest $request, En_HttpResponse $response){
         //Leo el archivo de configuracion de seguridad
-        $json_segurirad= file_get_contents(PATHAPP . $this->context->getConfigurationFolder() . 'authorization.json');
-        //Pasa el archivo json a un arreglo
-        $seguridad= json_decode($json_segurirad, TRUE);
+        $seguridad= $this->context->readConfigurationFile('authorization');
         //Tipo por defecto
         $user_logged= 'default';
         if($request->session->exist('user_logged')){

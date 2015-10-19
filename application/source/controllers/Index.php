@@ -3,9 +3,7 @@ use Enola\Http;
 use Enola\Http\En_HttpRequest,Enola\Http\En_HttpResponse;
 
 class Index extends Http\En_Controller{
-    public $validacion;
-    
-    public function __construct() {
+    public function __construct() {        
         parent::__construct();
     }
     

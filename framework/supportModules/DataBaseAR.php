@@ -12,6 +12,8 @@ use Enola\Support;
 class DataBaseAR extends Support\GenericLoader{
     protected static $config_db;
     protected $configFile;
+    /** @var \EnolaContext */
+    protected $context;
     /** @var \PDO */
     public $connection;
     protected $currentDB;
@@ -34,10 +36,13 @@ class DataBaseAR extends Support\GenericLoader{
      * @param bool $conect
      * @param string $nameDB
      */
-    function __construct($conect = TRUE, $nameDB = NULL, $configFile = 'database') {
-        parent::__construct('db');
-        $this->configFile= $configFile;
-	if($conect)$this->connection= $this->getConnection($nameDB);
+    function __construct($conect = TRUE, $nameDB = NULL, $configFile = NULL) {
+        $this->context= \EnolaContext::getInstance();
+        $this->configFile= $this->context->getDatabaseConfiguration();
+        if($configFile != NULL){
+            $this->configFile= $configFile;
+        }
+        if($conect){$this->connection= $this->getConnection($nameDB);}
     }
     /**
      * Abre una conexion en base a la configuracion de la BD
@@ -390,13 +395,39 @@ class DataBaseAR extends Support\GenericLoader{
             $query= $this->prepareInsert($table, $values);
             //Ejecuto la consulta
             $query->execute($values);
-            $error= $query->errorInfo();
             //Retorno si salio todo bien o no
             return $this->isOk($query);
         } catch (\PDOException $e) {
             throw $e;
         }
     }
+    /**
+     * Inserta en una tabla un conjunto de valores indicados. Cada elemento del vector guardado debe tener la misma estructura
+     * @param string $table
+     * @param array[array] $manyValues
+     * @return boolean
+     * @throws \PDOException
+     */
+    public function insertMany($table, array $manyValues){
+        try{
+            reset($manyValues);
+            if(current($manyValues) != FALSE){
+                //Armo y preparo la consulta
+                $query= $this->prepareInsert($table, $values[0]);
+            }            
+            do{
+                //Ejecuto la consulta
+                $query->execute($values);
+                //Retorno si salio todo bien o no
+                $ok= $this->isOk($query);
+                //Paso al proximo
+                next($manyValues);
+            }while(current($manyValues) != FALSE && $ok);
+            return $ok;
+        } catch (\PDOException $e) {
+            throw $e;
+        }
+    }    
     /**
      * Actualiza una tabla en base a los datos indicados y la consulta armada al estilo Active Record
      * @param string $table
@@ -499,12 +530,11 @@ class DataBaseAR extends Support\GenericLoader{
     protected function prepareSelect($select, $from, $where='', $group='', $having='', $order='', $limit=''){     
         $sql= "SELECT " . $select;
         $sql.= " FROM " . $from;
-        if($where != '' && $where != NULL){$sql.= "WHERE " . $where;}        
+        if($where != '' && $where != NULL){$sql.= " WHERE " . $where;}        
         $sql.= $group;
-        if($having != '' && $having != NULL){$sql.= "HAVING " . $having;}
+        if($having != '' && $having != NULL){$sql.= " HAVING " . $having;}
         $sql.= $order;
         $sql.= $limit;
-        echo $sql;
         //Preparo la consulta y la retorno
         return $this->connection->prepare($sql);
     }
@@ -553,5 +583,7 @@ class DataBaseAR extends Support\GenericLoader{
     protected function prepareDelete($table, $where){
         $sql= 'DELETE FROM ' . $table . ' ';            
         if($where != ''){$sql.= " WHERE " . $where;}
+        //Preparo la consulta y la retorno
+        return  $this->connection->prepare($sql);
     }
 }

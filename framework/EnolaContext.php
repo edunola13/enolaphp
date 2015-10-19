@@ -27,6 +27,7 @@ class EnolaContext {
     private $configurationType;
     private $configurationFolder;
     private $composerAutoload;
+    private $databaseConfiguration;
     //Definiciones de diferentes aspectos/partes
     private $librariesDefinition;
     private $dependenciesFile;
@@ -127,7 +128,10 @@ class EnolaContext {
         if(isset($config['composer']['autoload_file'])){
             $this->composerAutoload= $config['composer']['autoload_file'];
         }
-        
+        //CONFIG_BD: archivo de configuracion para la base de datos
+        if(isset($config['database']) && $config['database'] != ''){
+            $this->databaseConfiguration= $config['database'];
+        }        
         //Internacionalizacion: En caso que se defina se setea el locale por defecto y todos los locales soportados
         if(isset($config['i18n'])){
             $this->i18nDefaultLocale= $config['i18n']['default'];
@@ -188,6 +192,9 @@ class EnolaContext {
     public function getComposerAutoload(){
         return $this->composerAutoload;
     }
+    public function getDatabaseConfiguration(){
+        return $this->databaseConfiguration;
+    }
     public function getLibrariesDefinition(){
         return $this->librariesDefinition;
     }
@@ -236,6 +243,9 @@ class EnolaContext {
             exit;
         }
         return $config;
+    }
+    public function isInProduction(){
+        return $this->environment == 'production';
     }
     /**
      * Retorna si se debe o no calcular el tiempo de respuesta

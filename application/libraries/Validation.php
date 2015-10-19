@@ -180,7 +180,7 @@ class Validation {
     private function required($nombre, $dato){
         if(! is_array($dato)){
             if($dato == ''){
-                $this->add_message($nombre, 'requerido');
+                $this->add_message($nombre, 'required');
                 return FALSE;
             }
             else{

@@ -1,4 +1,4 @@
-requerido=El valor es requerido
+required=El valor es requerido
 es_string=El campo debe ser un String
 max_length=El campo debe tener a lo sumo :max caracteres
 min_length=El campo debe tener como mínimo :min caracteres

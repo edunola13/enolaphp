@@ -1,4 +1,4 @@
-requerido=A value is required
+required=A value is required
 es_string=The value must be an string
 max_length=This field must have at the most :max characters
 min_length=This field must have at least :min characters
