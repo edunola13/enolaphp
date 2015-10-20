@@ -1,0 +1,17 @@
+[2015-10-20 16:08:02.000000 127.0.0.1  - Unknown ] Undefined index: HTTP_ACCEPT_LANGUAGE
+----------\n[2015-10-20 20:38:16.000000 ::1  - Unknown ] Undefined variable: config
+----------\n[2015-10-20 20:38:17.000000 ::1  - General Error ] Driver specified unsupported
+----------\n[2015-10-20 20:38:17.000000 ::1  - Error Fatal - Parse - Strict ] Class 'Enola\Http\UrlUri' not found
+----------\n[2015-10-20 20:54:58.000000 ::1  - Unknown ] Undefined index: stores
+----------\n[2015-10-20 20:54:58.000000 ::1  - General Error ] Driver specified unsupported
+----------\n[2015-10-20 20:54:58.000000 ::1  - Error Fatal - Parse - Strict ] Class 'Enola\Http\UrlUri' not found
+----------\n[2015-10-20 20:49:07.000000 ::1  - Unknown ] Undefined variable: timeBegin
+----------\n[2015-10-20 20:49:07.000000 ::1  - Unknown ] Undefined variable: timeBegin
+----------\n[2015-10-20 20:51:47.000000 ::1  - Error Fatal - Parse - Strict ] Using $this when not in object context
+----------\n[2015-10-20 20:53:15.000000 ::1  - Error Fatal - Parse - Strict ] Class 'Enola\Support\Performance' not found
+----------\n[2015-10-20 20:55:35.000000 ::1  - Error Fatal - Parse - Strict ] Call to undefined method Enola\Application::finishPerformane()
+----------\n[2015-10-20 20:57:25.000000 ::1  - Unknown ] Missing argument 1 for Enola\Application::initPerformance(), called in D:\xampp\htdocs\enolaphp\framework\core.php on line 13 and defined
+----------\n[2015-10-20 20:57:25.000000 ::1  - Unknown ] Undefined variable: timeBegin
+----------\n[2015-10-20 20:57:25.000000 ::1  - Error Fatal - Parse - Strict ] Call to undefined method Enola\Application::finishPerformance()
+----------\n[2015-10-20 20:57:42.000000 ::1  - Error Fatal - Parse - Strict ] Call to undefined method Enola\Application::finishPerformance()
+----------\n

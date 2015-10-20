@@ -24,6 +24,7 @@ class EnolaContext {
     private $calculatePerformance;
     private $environment;
     private $charset;
+    private $timeZone;
     private $configurationType;
     private $configurationFolder;
     private $composerAutoload;
@@ -45,8 +46,26 @@ class EnolaContext {
      * @param string $path_framework
      * @param string $path_application
      */
-    public function __construct($path_root, $path_framework, $path_application, $configurationType, $configuration) {
-        $this->init($path_root, $path_framework, $path_application, $configurationType, $configuration);
+    public function __construct($path_root, $path_framework, $path_application, $configurationType, $configuration, $charset, $timeZone) {
+        //Librarie to YAML if it's necessary
+        if($configurationType == 'YAML'){
+            require $path_framework . 'supportModules/Spyc.php';
+        }
+        
+        //PATH_ROOT: direccion base donde se encuentra la aplicacion completa, es el directorio donde se encuentra el archivo index.php        
+        $this->pathRoot= $path_root;
+        //PATHFRA: direccion de la carpeta del framework - definida en index.php
+        $this->pathFra= $path_framework; 
+        //PATHAPP: direccion de la carpeta de la aplicacion - definida en index.php
+        $this->pathApp= $path_application;
+        //CONFIGURATION_TYPE: Indica el tipo de configuracion a utilizar
+        $this->configurationType= $configurationType;
+        //CONFIGURATION: Carpeta base de configuracion - definida en index.php
+        $this->configurationFolder= $configuration;
+        //CHARSET: Indica el charset que se esta utilizando en PHP
+        $this->charset= $charset;
+        //TIMEZONE: Indica el default Time Zone
+        $this->timeZone= $timeZone;
         //Guardo la instancia para qienes quieran consultar desde cualqueir ubicacion
         self::$instance= $this;
     }
@@ -72,23 +91,7 @@ class EnolaContext {
      * @param string $path_framework
      * @param string $path_application
      */
-    private function init($path_root, $path_framework, $path_application, $configurationType, $configuration){
-        //Librarie to YAML
-        if($configurationType == 'YAML'){
-            require $path_framework . 'supportModules/Spyc.php';
-        }
-        
-        //PATH_ROOT: direccion base donde se encuentra la aplicacion completa, es el directorio donde se encuentra el archivo index.php        
-        $this->pathRoot= $path_root;
-        //PATHFRA: direccion de la carpeta del framework - definida en index.php
-        $this->pathFra= $path_framework; 
-        //PATHAPP: direccion de la carpeta de la aplicacion - definida en index.php
-        $this->pathApp= $path_application;
-        //CONFIGURATION_TYPE: Indica el tipo de configuracion a utilizar
-        $this->configurationType= $configurationType;
-        //CONFIGURATION: Carpeta base de configuracion - definida en index.php
-        $this->configurationFolder= $configuration;        
-        
+    public function init(){
         $config= $this->readConfigurationFile('configuration', FALSE);
         //Define si muestra o no los errores y en que nivel de detalle dependiendo en que fase se encuentre la aplicacion
         switch ($config['environment']){
@@ -121,9 +124,7 @@ class EnolaContext {
         //CALCULATE_PERFORMANCE: Indica si el framework debe calcular el tiempo de respuesta o no
         $this->calculatePerformance= $config['calculate_performance'];
         //ENVIRONMENT: Indica el ambiente de la aplicacion
-        $this->environment= $config['environment'];
-        //CHARSET: Indica el charset que se esta utilizando en PHP
-        $this->charset= $config['charset'];          
+        $this->environment= $config['environment'];                
         //AUTOLOAD_FILE: Indica la direccion del archivo autoload de composer
         if(isset($config['composer']['autoload_file'])){
             $this->composerAutoload= $config['composer']['autoload_file'];
@@ -148,6 +149,29 @@ class EnolaContext {
         $this->filtersBeforeDefinition= $config['filters'];
         $this->filtersAfterDefinition= $config['filters_after_processing'];
         $this->componentsDefinition= $config['components'];
+        
+        //Setea constantes basicas
+        $this->setBasicConstants();
+    }
+    /**
+     * Establece las constantes basicas del sistema
+     */
+    private function setBasicConstants(){
+        /*
+         * Algunas constantes - La idea es ir sacandolas
+         */
+        // BASE_URL: Base url de la aplicacion - definida por el usuario en el archivo de configuracion 
+        define('BASEURL', $this->getBaseUrl());
+        //PATHFRA: direccion de la carpeta del framework - definida en index.php
+        define('PATHFRA', $this->getPathFra());    
+        //PATHAPP: direccion de la carpeta de la aplicacion - definida en index.php
+        define('PATHAPP', $this->getPathApp());
+        //ENOLA_MODE: Indica si la aplicacion se esta ejecutando via HTTP o CLI
+        if(PHP_SAPI == 'cli' || !isset($_SERVER['REQUEST_METHOD'])){
+            define('ENOLA_MODE', 'CLI');
+        }else{
+            define('ENOLA_MODE', 'HTTP');
+        }
     }
     
     /*
@@ -225,15 +249,18 @@ class EnolaContext {
      */
     public function readConfigurationFile($name, $configFolder = TRUE){
         //Lee archivo de configuracion principal donde se encuentra toda la configuracion de variables, filtros, controladores, etc.
-        $config= NULL;
+        $realConfig= NULL;
         $folder= $this->pathApp;
         if($configFolder){$folder.= $this->configurationFolder;}
         if($this->configurationType == 'YAML'){
-            $config = Spyc::YAMLLoad($folder . $name . '.yml');
+            $realConfig = Spyc::YAMLLoad($folder . $name . '.yml');
+        }else if($this->configurationType == 'PHP'){
+            include $folder . $name . '.php';
+            $realConfig= $config;
         }else{
-            $config= json_decode(file_get_contents($folder . $name . '.json'), true);  
-        }       
-        if(! is_array($config)){
+            $realConfig= json_decode(file_get_contents($folder . $name . '.json'), true);  
+        }
+        if(! is_array($realConfig)){
             //Arma una respuesta de error de configuracion.
             //No realiza el llamado a funciones de error porque todavia no se cargo el modulo de errores
             $head= 'Configuration Error';
@@ -242,7 +269,7 @@ class EnolaContext {
             //Cierra la aplicacion
             exit;
         }
-        return $config;
+        return $realConfig;
     }
     public function isInProduction(){
         return $this->environment == 'production';

@@ -107,7 +107,7 @@ class ComponentCore{
      */ 
     public function executeComponent($name, $parameters = NULL, $action = NULL){
         $components= $this->app->context->getComponentsDefinition();
-        $componente= NULL;
+        $component= NULL;
         if(isset($components[$name])){
             $comp= $components[$name];
             $dir= $this->buildDir($comp, 'components');
@@ -121,19 +121,23 @@ class ComponentCore{
                     Error::general_error('Component Error', 'The component ' . $comp['class'] . ' dont exists');
                 } 
             }
-            $componente= new $class();
+            $component= new $class();
+            //Analizo si hay parametros en la configuracion
+            if(isset($comp['properties'])){
+                $this->app->dependenciesEngine->injectProperties($component, $comp['properties']);
+            } 
         }
-        if($componente != NULL){
+        if($component != NULL){
             //Analiza si existe el metodo render
-            if(method_exists($componente, 'rendering')){
+            if(method_exists($component, 'rendering')){
                 if($action != NULL){
-                    if(method_exists($componente, $action)){
-                        $componente->$action($this->request, $this->response, $parameters);
+                    if(method_exists($component, $action)){
+                        $component->$action($this->request, $this->response, $parameters);
                     }else{
                         Error::general_error('Component Error', 'The component ' . $name . ' dont implement the action ' . $action . '()');
                     }
                 }
-                return $componente->rendering($this->request, $this->response, $parameters);
+                return $component->rendering($this->request, $this->response, $parameters);
             }
             else{
                 Error::general_error('Component Error', 'The component ' . $name . ' dont implement the method rendering()');

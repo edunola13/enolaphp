@@ -30,8 +30,10 @@ class DependenciesEngine {
         }
         if(! $fromCache){
             $this->loadData();
-            //Guarda en cache
-            $this->context->app->setAttribute('DependenciesEngine', array($this->dependencies, $this->loadDependencies));
+            //Guarda en cache si esta en produccion
+            if($this->context->isInProduction()){
+                $this->context->app->setAttribute('DependenciesEngine', array($this->dependencies, $this->loadDependencies));
+            }
         }
     }
     /** Cargo los datos iniciales de los archivos de configuracion */
@@ -94,6 +96,15 @@ class DependenciesEngine {
         $this->injectDependencies($object, array($propertyName => $dependencyName));
     }
     /**
+     * Injecta definidicion de propiedades a una instancia
+     * @param type $object
+     * @param array $propertiesDefinition
+     */
+    public function injectProperties($object, $propertiesDefinition){
+        $properties= $this->parseProperties($propertiesDefinition);
+        $this->setPropertiesToObject($object, $properties);
+    }    
+    /**
      * Carga la dependencia y la setea en la propiedad del objeto a inyectar
      * @param type $object
      * @param string $property
@@ -103,7 +114,7 @@ class DependenciesEngine {
     protected function loadDependencyInObject($object, $property, $dependencyName, $dependencyDefinition){
         $dependency= $this->loadDependency($dependencyName, $dependencyDefinition);
         $properties= array($property => $dependency);
-        //Inyecto la dependencia
+        //Inyecto la dependencia mediante el metodo que sabe setear propiedades a objetos
         $this->setPropertiesToObject($object, $properties);
     }
     /**

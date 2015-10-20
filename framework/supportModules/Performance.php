@@ -12,7 +12,8 @@ class Performance {
     /**
      * Constructor
      */
-    public function __construct() {        
+    public function __construct($timeBegin = NULL) {
+        $this->timeBegin= $timeBegin;
     }
     /**
      * Resetea el analisis 

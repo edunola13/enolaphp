@@ -2,34 +2,19 @@
 namespace Enola;
 use Enola\Error;
 
+//Tiempo de Inicio de la aplicación
+$timeBegin= microtime(TRUE);
 require 'EnolaContext.php';
+
 //Instancio la Clase EnolaContext que carga la configuracion de la aplicacion
-$context= new \EnolaContext($path_root, $path_framework, $path_application, $configurationType, $configurationFolder); 
-
-//Seteo la codificacion de caracteres, casi siempre es o debe ser UTF-8
-ini_set('default_charset', $context->getCharset());
-//Set Default Time Zone si no esta seteada
-if(! ini_get('date.timezone')){
-    date_default_timezone_set('GMT');
-}
-/*
- * Algunas constantes - La idea es ir sacandolas
- */
-// BASE_URL: Base url de la aplicacion - definida por el usuario en el archivo de configuracion 
-define('BASEURL', $context->getBaseUrl());
-//PATHFRA: direccion de la carpeta del framework - definida en index.php
-define('PATHFRA', $context->getPathFra());    
-//PATHAPP: direccion de la carpeta de la aplicacion - definida en index.php
-define('PATHAPP', $context->getPathApp());
-//ENOLA_MODE: Indica si la aplicacion se esta ejecutando via HTTP o CLI
-if(PHP_SAPI == 'cli' || !isset($_SERVER['REQUEST_METHOD'])){
-    define('ENOLA_MODE', 'CLI');
-}else{
-    define('ENOLA_MODE', 'HTTP');
-}
-
+$context= new \EnolaContext($path_root, $path_framework, $path_application, $configurationType, $configurationFolder, $charset, $timeZone);        
 //Una vez realizada la carga de la configuracion empieza a trabajar el core del Framework
 $app= new Application($context);
+
+//Seteo el caluclo de la performance, si corresponde
+$app->initPerformance($timeBegin);
+$app->displayPerformance();
+
 //Ejecuto el requerimiento actual
 $app->request();
 
@@ -77,7 +62,7 @@ class Application{
      */
     public function __destruct() {
         //Termino e imprimo el calculo de la performance, si corresponde
-        $this->finishPerformance();
+        $this->displayPerformance();
     }    
     /**
      * Responde al requerimiento analizando el tipo del mismo, HTTP,CLI,COMPONENT,ETC.
@@ -114,15 +99,15 @@ class Application{
      * Realiza la carga de modulos, librerias y soporte que necesita el framework para su correcto funcionamiento
      * sin importar el tipo de requerimiento (HTTP, COMPONENT, CLI, Etc).
      */
-    private function init(){
-        //Inicializo el caluclo de la performance, si corresponde
-        $this->initPerformance();
+    private function init(){        
         //Realizo la carga de modulos de soporte
         $this->supportModules();
         //Instancio el sistema de Cache
         $this->cache= new Cache\Cache();
+        //Enolacontext->init(): Cargo las configuraciones de contexto faltante
+        $this->context->init();
         //Instancio el motor de Dependencias
-        $this->dependenciesEngine= new Support\DependenciesEngine();               
+        $this->dependenciesEngine= new Support\DependenciesEngine();              
         //Cargo las librerias definidas por el usuario
         $this->loadLibraries();        
     }    
@@ -137,7 +122,9 @@ class Application{
         //Carga de modulo con funciones para la vista
         require $this->context->getPathFra() . 'supportModules/View.php';
         //Carga de modulo de seguridad
-        require $this->context->getPathFra() . 'supportModules/Security.php';        
+        require $this->context->getPathFra() . 'supportModules/Security.php';
+        //Carga la clase Performance
+        require $this->context->getPathFra() . 'supportModules/Performance.php';
         //Carga Clase Base Loader
         require $this->context->getPathFra() . 'supportModules/genericClass/GenericLoader.php';
         //Carga Trait de funciones Comunes
@@ -217,22 +204,19 @@ class Application{
      * Si corresponde:
      * Inicializa el calculo del tiempo de respuesta
      */
-    protected function initPerformance(){
-        //Carga la clase Performance
-        require $this->context->getPathFra() . 'supportModules/Performance.php';
+    public function initPerformance($timeBegin = NULL){        
         //Analiza si calcula el tiempo que tarda la aplicacion en ejecutarse
         $this->performance= NULL;
         if($this->context->CalculatePerformance()){
             //Incluye la clase Rendimiento 
-            $this->performance= new Support\Performance();
-            $this->performance->start();
+            $this->performance= new Support\Performance($timeBegin);
         }
     }    
     /**
      * Si corresponde:
      * Finaliza el calculo del tiempo de respuesta e imprime el resultado
      */
-    protected function finishPerformance(){
+    public function displayPerformance(){
         if($this->performance != NULL){
             $this->performance->terminate();
             $mensaje= 'The execution time of the APP is: ' . $this->performance->elapsed() . ' seconds';

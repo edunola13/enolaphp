@@ -117,10 +117,14 @@ class HttpCore{
                         Error::general_error('Controller Error', 'The controller ' . $filter_esp['class'] . ' dont exists');
                     } 
                 }
-                $filtro= new $class();
+                $filterIns= new $class();
+                //Analizo si hay parametros en la configuracion
+                if(isset($filter_esp['properties'])){
+                    $this->app->dependenciesEngine->injectProperties($filterIns, $filter_esp['properties']);
+                }
                 //Analiza si existe el metodo filtrar
-                if(method_exists($filtro, 'filter')){
-                    $filtro->filter($this->httpRequest, $this->httpResponse);
+                if(method_exists($filterIns, 'filter')){
+                    $filterIns->filter($this->httpRequest, $this->httpResponse);
                 }
                 else{
                     Error::general_error('Filter Error', 'The filter ' . $filter_esp['class'] . ' dont implement the method filter()');
@@ -153,10 +157,8 @@ class HttpCore{
         $method= $uri_params['method'];
         $controller->setUriParams($uri_params['params']);
         //Analizo si hay parametros en la configuracion
-        if(isset($controller_esp['params'])){
-            foreach ($controller_esp['params'] as $key => $value) {
-                $controller->$key= $value;
-            }
+        if(isset($controller_esp['properties'])){
+            $this->app->dependenciesEngine->injectProperties($controller, $controller_esp['properties']);
         }       
         //Saca el metodo HTPP y en base a eso hace una llamada al metodo correspondiente
         $methodHttp= $_SERVER['REQUEST_METHOD'];

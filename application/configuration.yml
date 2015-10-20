@@ -2,7 +2,6 @@
   index_page: 
   environment: development
   calculate_performance: true
-  charset: UTF-8
   
   controllers: 
     index: 

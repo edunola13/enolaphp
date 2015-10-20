@@ -86,7 +86,7 @@
         public static function error_php($type, $level, $message, $file, $line){
             self::write_log($message, $type, $file, $line);
             if(error_reporting()){
-                require_once PATHAPP . 'errors/error_php.php';
+                include PATHAPP . 'errors/error_php.php';
             }
         }    
         /**
@@ -98,7 +98,7 @@
             $head= '404 Pagina no Encontrada';
             $message= 'La pagina que solicitaste no existe';
             Http\UrlUri::setEstadoHeader(404);
-            require_once PATHAPP . 'errors/error_404.php';
+            include PATHAPP . 'errors/error_404.php';
             exit;
         }    
         /**
@@ -114,7 +114,7 @@
             self::write_log($message, 'General Error');
             if(ENOLA_MODE == 'HTTP'){Http\UrlUri::setEstadoHeader($code_error);}
             if(error_reporting()){
-                require_once PATHAPP . 'errors/' . $template . '.php'; 
+                include PATHAPP . 'errors/' . $template . '.php'; 
             }        
         }
         /**
@@ -169,6 +169,6 @@
          * @param string $message
          */ 
         public static function display_information($title, $message){
-            require_once PATHFRA . 'information/information.php';
+            include PATHFRA . 'information/information.php';
         }
     }
