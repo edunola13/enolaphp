@@ -11,7 +11,7 @@ use Enola\Support;
  */
 class DataBaseAR extends Support\GenericLoader{
     protected static $config_db;
-    protected $configFile;
+    protected $configFile= 'database';
     /** @var \EnolaContext */
     protected $context;
     /** @var \PDO */
@@ -38,7 +38,6 @@ class DataBaseAR extends Support\GenericLoader{
      */
     function __construct($conect = TRUE, $nameDB = NULL, $configFile = NULL) {
         $this->context= \EnolaContext::getInstance();
-        $this->configFile= $this->context->getDatabaseConfiguration();
         if($configFile != NULL){
             $this->configFile= $configFile;
         }
@@ -115,7 +114,10 @@ class DataBaseAR extends Support\GenericLoader{
      * Realiza la conexion a la base indicada o por defecto
      * @param string $nameDB
      */
-    public function connect($nameDB = NULL){
+    public function connect($nameDB = NULL, $configFile = NULL){
+        if($configFile != NULL){
+            self::$config_db= NULL;
+        }
         $this->connection= $this->getConnection($nameDB);
     }
     /** Re conecta a la base actual */

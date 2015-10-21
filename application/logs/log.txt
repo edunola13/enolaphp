@@ -14,4 +14,34 @@
 ----------\n[2015-10-20 20:57:25.000000 ::1  - Unknown ] Undefined variable: timeBegin
 ----------\n[2015-10-20 20:57:25.000000 ::1  - Error Fatal - Parse - Strict ] Call to undefined method Enola\Application::finishPerformance()
 ----------\n[2015-10-20 20:57:42.000000 ::1  - Error Fatal - Parse - Strict ] Call to undefined method Enola\Application::finishPerformance()
+----------\n[2015-10-20 23:26:12.000000 ::1  - Unknown ] md5_file(APPC_dependencyInjection): failed to open stream: No such file or directory
+----------\n[2015-10-20 23:26:12.000000 ::1  - Unknown ] session_start(): Cannot send session cache limiter - headers already sent (output started at C:\xampp-php5.6\htdocs\enolaphp\framework\supportModules\Errors.php:89)
+----------\n[2015-10-20 23:26:12.000000 ::1  - Unknown ] md5_file(APPC_authorization): failed to open stream: No such file or directory
+----------\n[2015-10-20 23:26:12.000000 ::1  - Unknown ] Undefined property: Enola\Http\En_HttpResponse::$session
+----------\n[2015-10-20 23:26:12.000000 ::1  - Error Fatal - Parse - Strict ] Call to a member function deleteSession() on null
+----------\n[2015-10-20 23:26:41.000000 ::1  - Unknown ] : failed to open stream: Invalid argument
+----------\n[2015-10-20 23:26:41.000000 ::1  - Unknown ] : failed to open stream: No such file or directory
+----------\n[2015-10-20 23:27:14.000000 ::1  - Unknown ] : failed to open stream: Invalid argument
+----------\n[2015-10-20 23:27:14.000000 ::1  - Unknown ] : failed to open stream: No such file or directory
+----------\n[2015-10-20 23:28:31.000000 ::1  - Unknown ] : failed to open stream: Invalid argument
+----------\n[2015-10-20 23:28:31.000000 ::1  - Unknown ] : failed to open stream: No such file or directory
+----------\n[2015-10-20 23:28:49.000000 ::1  - Unknown ] md5_file(APPC_dependencyInjection): failed to open stream: No such file or directory
+----------\n[2015-10-20 23:28:49.000000 ::1  - Unknown ] md5_file(APPC_dependencyInjection): failed to open stream: No such file or directory
+----------\n[2015-10-20 23:28:49.000000 ::1  - Unknown ] : failed to open stream: Invalid argument
+----------\n[2015-10-20 23:28:49.000000 ::1  - Unknown ] session_start(): Cannot send session cache limiter - headers already sent (output started at C:\xampp-php5.6\htdocs\enolaphp\framework\supportModules\Errors.php:89)
+----------\n[2015-10-20 23:28:49.000000 ::1  - Unknown ] md5_file(APPC_authorization): failed to open stream: No such file or directory
+----------\n[2015-10-20 23:28:49.000000 ::1  - Unknown ] md5_file(APPC_authorization): failed to open stream: No such file or directory
+----------\n[2015-10-20 23:28:49.000000 ::1  - Unknown ] : failed to open stream: No such file or directory
+----------\n[2015-10-20 23:29:08.000000 ::1  - Unknown ] md5_file(APPC_dependencyInjection): failed to open stream: No such file or directory
+----------\n[2015-10-20 23:29:08.000000 ::1  - Unknown ] session_start(): Cannot send session cache limiter - headers already sent (output started at C:\xampp-php5.6\htdocs\enolaphp\framework\supportModules\Errors.php:89)
+----------\n[2015-10-20 23:29:08.000000 ::1  - Unknown ] md5_file(APPC_authorization): failed to open stream: No such file or directory
+----------\n[2015-10-20 23:29:08.000000 ::1  - Unknown ] Undefined property: Enola\Http\En_HttpResponse::$session
+----------\n[2015-10-20 23:29:08.000000 ::1  - Error Fatal - Parse - Strict ] Call to a member function deleteSession() on null
+----------\n[2015-10-20 23:53:06.000000 ::1  - Error Fatal - Parse - Strict ] Call to undefined method EnolaContext::app()
+----------\n[2015-10-20 23:59:39.000000 ::1  - Unknown ] Missing argument 2 for Enola\Application::setAttribute(), called in C:\xampp-php5.6\htdocs\enolaphp\application\source\controllers\Index.php on line 12 and defined
+----------\n[2015-10-20 23:59:39.000000 ::1  - Unknown ] Undefined variable: value
+----------\n[2015-10-21 00:10:44.000000 ::1  - Error Fatal - Parse - Strict ] Call to a member function get() on null
+----------\n[2015-10-21 02:42:07.000000 ::1  - Unknown ] Undefined index: environment
+----------\n[2015-10-21 02:42:07.000000 ::1  - Unknown ] Undefined variable: path_application
+----------\n[2015-10-21 02:42:07.000000 ::1  - Unknown ] require(errors/general_error.php): failed to open stream: No such file or directory
 ----------\n

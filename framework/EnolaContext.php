@@ -27,6 +27,7 @@ class EnolaContext {
     private $timeZone;
     private $configurationType;
     private $configurationFolder;
+    private $cacheConfigFiles;
     private $composerAutoload;
     private $databaseConfiguration;
     //Definiciones de diferentes aspectos/partes
@@ -46,7 +47,7 @@ class EnolaContext {
      * @param string $path_framework
      * @param string $path_application
      */
-    public function __construct($path_root, $path_framework, $path_application, $configurationType, $configuration, $charset, $timeZone) {
+    public function __construct($path_root, $path_framework, $path_application, $configurationType, $configurationFolder, $charset, $timeZone, $cache) {
         //Librarie to YAML if it's necessary
         if($configurationType == 'YAML'){
             require $path_framework . 'supportModules/Spyc.php';
@@ -60,12 +61,16 @@ class EnolaContext {
         $this->pathApp= $path_application;
         //CONFIGURATION_TYPE: Indica el tipo de configuracion a utilizar
         $this->configurationType= $configurationType;
-        //CONFIGURATION: Carpeta base de configuracion - definida en index.php
-        $this->configurationFolder= $configuration;
+        //CONFIGURATION_FOLDER: Carpeta base de configuracion - definida en index.php
+        $this->configurationFolder= $configurationFolder;
+        //CACHE_CONFIG_FILES: Indica si se cachean los archivos de configuracion
+        $this->cacheConfigFiles= $cache;
         //CHARSET: Indica el charset que se esta utilizando en PHP
         $this->charset= $charset;
         //TIMEZONE: Indica el default Time Zone
         $this->timeZone= $timeZone;
+        //Setea constantes basicas
+        $this->setBasicConstants();
         //Guardo la instancia para qienes quieran consultar desde cualqueir ubicacion
         self::$instance= $this;
     }
@@ -92,7 +97,7 @@ class EnolaContext {
      * @param string $path_application
      */
     public function init(){
-        $config= $this->readConfigurationFile('configuration', FALSE);
+        $config= $this->readConfigurationFile('config');
         //Define si muestra o no los errores y en que nivel de detalle dependiendo en que fase se encuentre la aplicacion
         switch ($config['environment']){
             case 'development':
@@ -150,18 +155,14 @@ class EnolaContext {
         $this->filtersAfterDefinition= $config['filters_after_processing'];
         $this->componentsDefinition= $config['components'];
         
-        //Setea constantes basicas
-        $this->setBasicConstants();
+        // BASE_URL: Base url de la aplicacion - definida por el usuario en el archivo de configuracion 
+        define('BASEURL', $this->getBaseUrl());
     }
     /**
      * Establece las constantes basicas del sistema
      */
     private function setBasicConstants(){
-        /*
-         * Algunas constantes - La idea es ir sacandolas
-         */
-        // BASE_URL: Base url de la aplicacion - definida por el usuario en el archivo de configuracion 
-        define('BASEURL', $this->getBaseUrl());
+        //Algunas constantes - La idea es ir sacandolas
         //PATHFRA: direccion de la carpeta del framework - definida en index.php
         define('PATHFRA', $this->getPathFra());    
         //PATHAPP: direccion de la carpeta de la aplicacion - definida en index.php
@@ -213,6 +214,9 @@ class EnolaContext {
     public function getConfigurationFolder(){
         return $this->configurationFolder;
     }
+    public function getCacheConfigFiles(){
+        return $this->cacheConfigFiles;
+    }
     public function getComposerAutoload(){
         return $this->composerAutoload;
     }
@@ -247,30 +251,57 @@ class EnolaContext {
     /*
      * Metodos facilitadores
      */
-    public function readConfigurationFile($name, $configFolder = TRUE){
+    /**
+     * Devuelve un array con los valores del archivo de configuracion
+     * @param string $name
+     * @param boolean $cache
+     * @return array
+     */
+    public function readConfigurationFile($name, $cache = TRUE){
         //Lee archivo de configuracion principal donde se encuentra toda la configuracion de variables, filtros, controladores, etc.
+        $config= NULL;
+        if($this->cacheConfigFiles && $cache && $this->app->cache != NULL){
+            //Si esta en produccion y se encuentra en cache lo cargo
+            $config= $this->app->getAttribute('C_' . $name);
+        }
+        if($config == NULL){
+            //Cargo la configuracion y guardo en cache si corresponde
+            $config= $this->readFile($name);
+            if($this->cacheConfigFiles && $cache && $this->app->cache != NULL){
+                $this->app->setAttribute('C_' . $name, $config);
+            }
+        }
+        if(! is_array($config)){
+            //Arma una respuesta de error de configuracion.
+            \Enola\Error::general_error('Configuration Error', 'The configuration file ' . $name . ' is not available or is misspelled');
+            //Cierra la aplicacion
+            exit;
+        }
+        return $config;
+    }
+    /**
+     * Lee un archivo y lo carga en un array
+     * @param string $name
+     * @return array
+     */
+    private function readFile($name){
         $realConfig= NULL;
-        $folder= $this->pathApp;
-        if($configFolder){$folder.= $this->configurationFolder;}
+        $folder= $this->pathApp . $this->configurationFolder;
         if($this->configurationType == 'YAML'){
             $realConfig = Spyc::YAMLLoad($folder . $name . '.yml');
         }else if($this->configurationType == 'PHP'){
             include $folder . $name . '.php';
+            //La variable $config la define cada archivo incluido
             $realConfig= $config;
         }else{
             $realConfig= json_decode(file_get_contents($folder . $name . '.json'), true);  
         }
-        if(! is_array($realConfig)){
-            //Arma una respuesta de error de configuracion.
-            //No realiza el llamado a funciones de error porque todavia no se cargo el modulo de errores
-            $head= 'Configuration Error';
-            $message= 'The configuration file ' . $name . ' is not available or is misspelled';
-            require $path_application . 'errors/general_error.php';
-            //Cierra la aplicacion
-            exit;
-        }
         return $realConfig;
     }
+    /**
+     * Indica si el ambiente actual es de produccion
+     * @return boolean
+     */
     public function isInProduction(){
         return $this->environment == 'production';
     }

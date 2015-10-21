@@ -19,25 +19,6 @@ class DependenciesEngine {
     }
     /** Realiza lar carga inicial */
     protected function init(){
-        $fromCache= FALSE;
-        if($this->context->isInProduction()){
-            //Si esta en produccion y se encuentra en cache lo cargo
-            if(($data= $this->context->app->getAttribute('DependenciesEngine')) != NULL){
-                $this->dependencies= $data[0];
-                $this->loadDependencies= $data[1];
-                $fromCache= TRUE;
-            }
-        }
-        if(! $fromCache){
-            $this->loadData();
-            //Guarda en cache si esta en produccion
-            if($this->context->isInProduction()){
-                $this->context->app->setAttribute('DependenciesEngine', array($this->dependencies, $this->loadDependencies));
-            }
-        }
-    }
-    /** Cargo los datos iniciales de los archivos de configuracion */
-    protected function loadData(){
         //Carga las dependencias en base a la lista de archivos definidos en configuracion global
         $this->dependencies= array();
         foreach ($this->context->getDependenciesFile() as $nameFile) {

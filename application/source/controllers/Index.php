@@ -8,6 +8,6 @@ class Index extends Http\En_Controller{
     }
     
     public function doGet(En_HttpRequest $request, En_HttpResponse $response){
-        $this->loadView("index", NULL);        
+        $this->loadView("index", NULL);
     }
 }

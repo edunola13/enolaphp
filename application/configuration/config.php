@@ -43,5 +43,3 @@ $config['composer']= '';
 $config['dependency_injection']= array(
     'dependencyInjection'
 );
-    
-$config['database']= 'database';

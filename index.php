@@ -1,23 +1,7 @@
 <?php
     /**
      * Este archivo es el primero en ser llamado, carga la configuracion inicial y delega el trabajo a nucleo.php
-     */
-    //Charset
-    $charset= 'UTF-8';
-    //Seteo la codificacion de caracteres, casi siempre es o debe ser UTF-8
-    ini_set('default_charset', $charset);
-    //Set Default Time Zone si no esta seteada
-    $timeZone= 'GMT';
-    if(! ini_get('date.timezone') || ini_get('date.timezone') != $timeZone){
-        date_default_timezone_set($timeZone);
-    }
-    //tipo de configuracion: YAML - PHP - JSON
-    $configurationType= 'YAML';
-    //Carpeta de configuracion
-    $configurationFolder= 'configuration/';
-    //Path Root
-    $path_root= realpath(dirname(__FILE__)) . '/';    
-    
+     */    
     /**
      *  Path donde se encuentra la carpeta con todos los archivos del framework
      *  Si la carpeta es cambiada de lugar es necesario modificar esta variable
@@ -46,6 +30,8 @@
     }    
     // Asegura que no quedan espacios en blanco
     $path_application= rtrim($path_application, '/').'/';
+    //Path Root
+    $path_root= realpath(dirname(__FILE__)) . '/';  
     /**
      * Delega el trabajo al nucleo del framework
      */

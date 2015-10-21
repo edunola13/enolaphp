@@ -31,5 +31,3 @@
       
   dependency_injection:
     - dependencyInjection
-    
-  database: database

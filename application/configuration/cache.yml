@@ -1,5 +1,5 @@
   defaultStore: "File"
-  prefix: "enolaphp"
+  prefix: "app"
   stores: 
     File: 
       driver: "file"
