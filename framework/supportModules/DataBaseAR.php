@@ -477,7 +477,7 @@ class DataBaseAR extends Support\GenericLoader{
             throw $e;
         }
         return $res;
-    }    
+    }
     /*
      * ACTIVE RECORD - INTERNAS
      */

@@ -331,10 +331,10 @@ class UrlUri{
     }
     /**
      * Setea el codigo del header HTTP
-     * @param int $codigo
+     * @param int $code
      * @param string $text
      */
-    public static function setEstadoHeader($codigo = 200, $text = ''){
+    public static function setEstadoHeader($code = 200, $text = ''){
         //Arreglo con todos los codigos y su respectivo texto
         $states = array(
                                                         100     => 'Continue',
