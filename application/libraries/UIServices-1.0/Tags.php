@@ -394,7 +394,7 @@ class Tags {
         $GLOBALS['radio_num']++;
         $api->componente('radio_option', $valores);
     }
-    public static function selectFull($simple, $label, $id, $name, $value, $options, $varLabel = NULL, $varValue = NULL,$defaultLabel=NULL,$defaultValue=NULL,$onchange = NULL, $multiple = FALSE, $message = NULL, $typeError = NULL, $size = 'md'){
+    public static function selectFull($simple, $label, $id, $name, $value, $options, $varLabel = 0, $varValue = 1,$defaultLabel=NULL,$defaultValue=NULL,$onchange = NULL, $multiple = FALSE, $message = NULL, $typeError = NULL, $size = 'md'){
         $form= 'select';
         if($simple){$form='select_simple';}
         $api= ApiUi::getInstance();
@@ -416,8 +416,8 @@ class Tags {
                 $optionLab= $option->$varLabel;
                 $optionVal= $option->$varValue;
             }else{
-                $optionLab= $option[0];
-                $optionVal= $option[1];                
+                $optionLab= $option[$varLabel];
+                $optionVal= $option[$varValue];
             }            
             $valores_option= array('config.label' => $optionLab, 'datos.value' => $optionVal);
             $checked= FALSE;

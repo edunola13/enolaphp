@@ -120,7 +120,7 @@ class UrlUri{
         }
         $uri_front= $uri_explode[0];
         //Separo la uri actual
-        $actual_uri_parts= explode("/", $uri_front);        
+        $actual_uri_parts= explode("/", $uri_front);
         $maps= TRUE;        
         //Analiza que url-uri tiene mas elementos
         if(count($url_parts) >= count($actual_uri_parts)){
@@ -150,7 +150,7 @@ class UrlUri{
                             }
                         }                        
                         //Si alguna esta vacia no compara el mapeo con () y voy directo a la comparacion
-                        if(empty($url_parts[$i]) || empty($actual_uri_parts[$i])){
+                        if($url_parts[$i] == '' || $actual_uri_parts[$i] == ''){
                             //Si no coinciden las partes no mapean
                             if($url_parts[$i] != $actual_uri_parts[$i]){
                                 $maps= FALSE;
@@ -210,7 +210,7 @@ class UrlUri{
                             }
                         }
                         //Si alguna esta vacia no compara el mapeo con () y voy directo a la comparacion
-                        if(empty($url_parts[$i]) || empty($actual_uri_parts[$i])){
+                        if($url_parts[$i] == '' || $actual_uri_parts[$i] == ''){
                             //Si no coinciden las partes no mapean
                             if($url_parts[$i] != $actual_uri_parts[$i]){
                                 $maps= FALSE;
@@ -310,9 +310,14 @@ class UrlUri{
             }
         }        
         //Pase lo que pase arriba esto puede ir siempre, ya que puede estar anterior al * o al -
+        //Analizo si hay parametros asociativos con porque se mapean entre "(" ")"
         $count_uri_parts= count($url_parts);
         for($i= 0; $i < $count_uri_parts; $i++){
-            if(empty($url_parts[$i]) || empty($actual_uri_parts[$i])){
+            if(count($actual_uri_parts)-1 < $i){
+                //Si la uri de peticion actual no tiene mas partes no agrego nada
+                break;
+            }
+            if($url_parts[$i] == '' || $actual_uri_parts[$i] == ''){
                 //Si alguno esta vacio ya no hay parametros uri, es decir ()
                 break;
             }

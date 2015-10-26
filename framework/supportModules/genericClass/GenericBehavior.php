@@ -17,7 +17,7 @@ trait GenericBehavior {
      * @param string $locale
      * @return bool
      */
-    protected function validate($var, $lib= '\Enola\Lib\Validation', $locale = NULL){
+    protected function validate($var, $locale = NULL, $lib= '\Enola\Lib\Validation'){
         $validacion= new $lib($locale);
         $reglas= $this->configValidation();
         if(is_object($var)){

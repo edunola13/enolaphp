@@ -1,5 +1,5 @@
   default: 
     permit: 
-      front: "/*"
+      front: /*
     deny: {}
-    error: "login"
+    error: login
