@@ -59,7 +59,7 @@ class Authorization extends Http\En_Filter{
         else{
             //Si no existe la configuracion aviso del error
             echo "No existe definicion de seguridad para $user_logged";
-            $response->session->deleteSession();
+            $request->session->deleteSession();
             exit();
         }
     }

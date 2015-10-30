@@ -16,6 +16,8 @@ class En_Component extends Support\GenericLoader implements Component{
     use Support\GenericBehavior;
     
     protected $viewFolder;
+    //errors
+    public $errors; 
     /**
      * Inicializa el component llamando al constructor de su padre y seteando el HttpRequest correspondiente
      */

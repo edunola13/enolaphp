@@ -4,14 +4,14 @@ namespace Enola\Lib;
 /**
  * Version 1.0
  * Libreria que realiza validacion de campos de formulario
- *
- * @author Enola
+ * @author Eduardo Sebastian Nola <edunola13@gmail.com>
+ * @category Enola\Lib
  */
 class Validation {
     //Configuro donde se encuentran los mensajes
     public $dir_content= '../source/content/messages';
     //Variable con toda la informacion sobre los datos/campos
-    private $campos_datos;
+    private $fieldsState;
     private $messages;
     private $messagesLocale= NULL;
     private $locale= NULL;
@@ -28,24 +28,24 @@ class Validation {
     }
     /**
      * Resetea el validador
-     * Limpia la variable campos_datos que contiene todas las definiciones y los resultados de ejecutar las reglas 
+     * Limpia la variable $fieldsState que contiene todas las definiciones y los resultados de ejecutar las reglas 
      */
     public function reset(){
-        $this->campos_datos= array();
+        $this->fieldsState= array();
     }
     /**
      * Agregar una regla de validacion que luego sera validada
-     * @param string $nombre
-     * @param DATO $dato
-     * @param array[string] $reglas
+     * @param string $name
+     * @param type $value
+     * @param array[string] $rules
      */
-    public function add_rule($nombre, $dato, $reglas){
-        $this->campos_datos[$nombre] = array(
-			'nombre'			=> $nombre,
-			'dato'				=> $dato,
-			'reglas'			=> explode('|', $reglas),
-                        'valido'                        => TRUE,
-                        'mensaje'                       => NULL
+    public function add_rule($name, $value, $rules){
+        $this->fieldsState[$name] = array(
+			'name'			=> $name,
+			'value'				=> $value,
+			'rules'			=> explode('|', $rules),
+                        'valid'                        => TRUE,
+                        'message'                       => NULL
         );
     }    
     /**
@@ -54,47 +54,47 @@ class Validation {
      * @return boolean
      */
     public function validate(){
-        if(count($this->campos_datos) == 0){
+        if(count($this->fieldsState) == 0){
             //Si no hay datos devuelve TRUE
             return TRUE;
         }
         else{
             //Si hay datos valida sus reglas            
             //El formulario empieza siendo valido
-            $formulario_valido= TRUE;            
+            $form_valid= TRUE;            
             //Recorro todos los datos y sus reglas
-            foreach ($this->campos_datos as $campos_dato) {
-                $valido= TRUE;                
+            foreach ($this->fieldsState as $fieldState) {
+                $valid= TRUE;                
                 //Recorro cada regla del dato
-                foreach ($campos_dato['reglas'] as $regla) {
+                foreach ($fieldState['rules'] as $rule) {
                     //Ve el tipo de regla, con o sin parametros
-                    if (count(explode('[', $regla)) > 1){
+                    if (count(explode('[', $rule)) > 1){
                         //Si hay reglas con parametros, separa la regla y su parametro               
-                        $vars= explode('[', $regla);
-                        $regla= $vars[0];
+                        $vars= explode('[', $rule);
+                        $rule= $vars[0];
                         $var= explode(']', $vars[1]);
                         $var= $var[0];
                         //Realiza el llamado a la funcion correspondiente
-                        $valido= call_user_func_array(array($this, $regla), array($campos_dato['nombre'], $campos_dato['dato'], $var));
+                        $valid= call_user_func_array(array($this, $rule), array($fieldState['name'], $fieldState['value'], $var));
                     }
                     else{
                         //Regla sin parametros
                         //Realiza el llamado a la funcion correspondiente
-                        $valido= call_user_func_array(array($this, $regla), array($campos_dato['nombre'], $campos_dato['dato']));
+                        $valid= call_user_func_array(array($this, $rule), array($fieldState['name'], $fieldState['value']));
                     }
                     
                     //Si una regla ya no es valida, no reviso las demas
-                    if(!$valido){
+                    if(!$valid){
                         //Asigno al campo Valido del dato FALSE
-                        $nombre= $campos_dato['nombre'];
-                        $this->campos_datos["$nombre"]['valido']= FALSE;
+                        $name= $fieldState['name'];
+                        $this->fieldsState["$name"]['valid']= FALSE;
                         break;
                     }
                 }                
                 //Actualizo el valor de formulario_valido de manera que si ya es falso se mantiene en falso
-                $formulario_valido= $formulario_valido && $valido;
+                $form_valid= $form_valid && $valid;
             }            
-            return $formulario_valido;
+            return $form_valid;
         }
     }
     /**
@@ -103,32 +103,32 @@ class Validation {
      * @return array[string]
      */
     public function error_messages(){
-        $mensajes= array();
-        foreach ($this->campos_datos as $campos_dato) {
+        $messages= array();
+        foreach ($this->fieldsState as $fieldState) {
             //Si no es valido agrego el mensaje de error
-            if(! $campos_dato['valido']){
-                $nombre= $campos_dato['nombre'];
-                $mensajes["$nombre"]= $campos_dato['mensaje'];
+            if(! $fieldState['valid']){
+                $name= $fieldState['name'];
+                $messages["$name"]= $fieldState['message'];
             }
         }
-        return $mensajes;
+        return $messages;
     }    
     /**
      * Funcion utilizada internamente para agregar mensajes de error a los campos
-     * @param string $nombre
-     * @param string $mensaje
+     * @param string $name
+     * @param string $message
      */
-    private function add_message($nombre, $mensaje, $parametros = array()){
+    private function add_message($name, $message, $parametros = array()){
         //Carga el archivo si es la primer llamada
         $this->load_messages();        
         //Consigue el mensaje
-        $mensaje= $this->messages[$mensaje];        
+        $message= $this->messages[$message];        
         //Analiza si se pasaron parametros y si se pasaron cambia los valores correspondientes
         foreach ($parametros as $key => $valor) {
-            $mensaje= str_replace(":$key", $valor, $mensaje);
+            $message= str_replace(":$key", $valor, $message);
         }        
         //Guarda el mensaje en el campo correspondiente
-        $this->campos_datos["$nombre"]['mensaje']= $mensaje;
+        $this->fieldsState["$name"]['message']= $message;
     }    
     /**
      * Carga el archivo de mensajes en la primer llamada
@@ -150,19 +150,19 @@ class Validation {
         }
     }    
     /**
-     * Este proceso analiza de a una las lineas del archivo de mensajes usado. En este caso ini file y me arma lo que seria
+     * Este proceso analiza de a una las lineas del archivo de mensajes usado. En este caso txt y me arma lo que seria
      * un array asociativo clave valor en base a la linea.
-     * @param type $lineas
-     * @return type
+     * @param array $lines
+     * @return array
      */
-    private function parse_properties($lineas) {
+    private function parse_properties($lines) {
         $result= NULL;
-        foreach($lineas as $i=>$linea) {
-            if(empty($linea) || !isset($linea) || strpos($linea,"#") === 0){
+        foreach($lines as $i=>$line) {
+            if(empty($line) || !isset($line) || strpos($line,"#") === 0){
                 continue;
             }
-            $key = substr($linea,0,strpos($linea,'='));
-            $value = substr($linea,strpos($linea,'=') + 1, strlen($linea));
+            $key = substr($line,0,strpos($line,'='));
+            $value = substr($line,strpos($line,'=') + 1, strlen($line));
             $result[$key] = $value;
         }
         return $result;
@@ -173,14 +173,14 @@ class Validation {
     
     /**
      * Regla requerido: analiza si el campo fue completado 
-     * @param string $nombre
-     * @param DATO $dato
+     * @param string $name
+     * @param DATO $value
      * @return boolean
      */
-    private function required($nombre, $dato){
-        if(! is_array($dato)){
-            if($dato == ''){
-                $this->add_message($nombre, 'required');
+    private function required($name, $value){
+        if(! is_array($value)){
+            if($value == ''){
+                $this->add_message($name, 'required');
                 return FALSE;
             }
             else{
@@ -188,7 +188,7 @@ class Validation {
             }
         }
         else{
-            if(count($dato) > 1){
+            if(count($value) > 1){
                 return TRUE;
             }
             else{
@@ -198,15 +198,15 @@ class Validation {
     }    
     /**
      * Regla max_length: analiza que el string no contenga mas de $max caracteres
-     * @param string $nombre
-     * @param DATO $dato
+     * @param string $name
+     * @param DATO $value
      * @param int $max
      * @return boolean
      */
-    private function max_length($nombre, $dato, $max){
-        if(is_string($dato)){
-            if(strlen($dato) > $max){
-                $this->add_message($nombre, 'max_length', array('max' => $max));
+    private function max_length($name, $value, $max){
+        if(is_string($value)){
+            if(strlen($value) > $max){
+                $this->add_message($name, 'max_length', array('max' => $max));
                 return FALSE;
             }
             else{
@@ -214,21 +214,21 @@ class Validation {
             }
         }
         else{
-            $this->add_message($nombre, 'es_string');
+            $this->add_message($name, 'is_string');
             return FALSE;
         }
     }    
     /**
      * Regla min_lenght: analiza que el string no contenga menos de $min caracteres
-     * @param string $nombre
-     * @param DATO $dato
+     * @param string $name
+     * @param DATO $value
      * @param int $min
      * @return boolean
      */
-    private function min_length($nombre, $dato, $min){
-        if(is_string($dato)){
-            if(strlen($dato) < $min){
-                $this->add_message($nombre, 'min_length', array('min' => $min));
+    private function min_length($name, $value, $min){
+        if(is_string($value)){
+            if(strlen($value) < $min){
+                $this->add_message($name, 'min_length', array('min' => $min));
                 return FALSE;
             }
             else{
@@ -236,64 +236,64 @@ class Validation {
             }
         }
         else{
-            $this->add_message($nombre, 'es_string');
+            $this->add_message($name, 'is_string');
             return FALSE;
         }
     }    
     /**
      * Regla length_between: analiza que el string este entre un minimo y un maximo
-     * @param type $nombre
-     * @param type $dato
+     * @param type $name
+     * @param type $value
      * @param type $param El minimo y el maximo separado por &
      * @return boolean 
      */
-    private function length_between($nombre, $dato, $param){
+    private function length_between($name, $value, $param){
         $params= explode('&', $param);
         $min= $params[0];
         $max= $params[1];
-        if(is_string($dato)){
-            if(strlen($dato) >= $min && strlen($dato) <= $max){
+        if(is_string($value)){
+            if(strlen($value) >= $min && strlen($value) <= $max){
                 return TRUE;
             }
             else{
-                $this->add_message($nombre, 'length_between', array('min' => $min, 'max' => $max));
+                $this->add_message($name, 'length_between', array('min' => $min, 'max' => $max));
             }
         }
         else{
-            $this->add_message($nombre, 'es_string');
+            $this->add_message($name, 'is_string');
             return FALSE;
         }
     }
     /**
      * Regla es_integer: analiza que el campo sea un integer
-     * @param string $nombre
-     * @param DATO $dato
+     * @param string $name
+     * @param DATO $value
      * @return boolean
      */
-    private function is_integer($nombre, $dato){
-        if(is_numeric($dato)){
+    private function is_integer($name, $value){
+        if(is_numeric($value)){
             return TRUE;
         }
         else{
-            $this->add_message($nombre, 'es_integer');
+            $this->add_message($name, 'is_integer');
             return FALSE;
         }
     }    
     /**
      * Regla max: analiza que el numero no se mayor a $max
-     * @param string $nombre
-     * @param DATO $dato
+     * @param string $name
+     * @param DATO $value
      * @param int $max
      * @return boolean
      */
-    private function max($nombre, $dato, $max){
-        if($dato == ''){
+    private function max($name, $value, $max){
+        if($value == ''){
             return TRUE;
         }
-        if(is_numeric($dato)){
-            $dato= (float)$dato;
-            if($dato > $max){
-                $this->add_message($nombre, 'max', array('max' => $max));
+        if(is_numeric($value)){
+            $value= (float)$value;
+            if($value > $max){
+                $this->add_message($name, 'max', array('max' => $max));
                 return FALSE;
             }
             else{
@@ -301,22 +301,22 @@ class Validation {
             }
         }
         else{
-            $this->add_message($nombre, 'es_integer');
+            $this->add_message($name, 'is_integer');
             return FALSE;
         }
     }    
     /**
      * Regla min: analiza que el numero no sea menor a $min
-     * @param string $nombre
-     * @param DATO $dato
+     * @param string $name
+     * @param DATO $value
      * @param int $min
      * @return boolean
      */
-    private function min($nombre, $dato, $min){
-        if(is_numeric($dato)){
-            $dato= (float)$dato;
-            if($dato < $min){
-                $this->add_message($nombre, 'min', array('min' => $min));
+    private function min($name, $value, $min){
+        if(is_numeric($value)){
+            $value= (float)$value;
+            if($value < $min){
+                $this->add_message($name, 'min', array('min' => $min));
                 return FALSE;
             }
             else{
@@ -324,257 +324,255 @@ class Validation {
             }
         }
         else{
-            $this->add_message($nombre, 'es_integer');
+            $this->add_message($name, 'is_integer');
             return FALSE;
         }
     }
     /**
      * Regla num_between: analiza que el numero este entre un minimo y un maximo
-     * @param type $nombre
-     * @param type $dato
+     * @param type $name
+     * @param type $value
      * @param type $param El minimo y el maximo separado por &
      * @return boolean 
      */
-    private function num_between($nombre, $dato, $param){
+    private function num_between($name, $value, $param){
         $params= explode('&', $param);
         $min= $params[0];
         $max= $params[1];
-        if(is_numeric($dato)){
-            if($dato >= $min && $dato <= $max){
+        if(is_numeric($value)){
+            if($value >= $min && $value <= $max){
                 return TRUE;
             }
             else{
-                $this->add_message($nombre, 'num_between', array('min' => $min, 'max' => $max));
+                $this->add_message($name, 'num_between', array('min' => $min, 'max' => $max));
             }
         }
         else{
-            $this->add_message($nombre, 'es_integer');
+            $this->add_message($name, 'is_integer');
             return FALSE;
         }
     }
     /**
      * Regla igual: analiza si 2 datos son iguales
-     * @param string $nombre
-     * @param DATO $dato
-     * @param DATO $acomparar
+     * @param string $name
+     * @param DATO $value
+     * @param DATO $toCompare
      * @return boolean
      */
-    private function equal($nombre, $dato, $acomparar){
-        if($dato == $this->campos_datos["$acomparar"]['dato']){
+    private function equal($name, $value, $toCompare){
+        if($value == $this->fieldsState["$toCompare"]['value']){
             return TRUE;
         }
         else{
-            $this->add_message($nombre, 'igual', array('acomparar' => $acomparar));
+            $this->add_message($name, 'igual', array('tocompare' => $toCompare));
             return FALSE;
         }
     } 
     /**
      * Regla username: analiza si un string cumple con un mínimo de 5 caracteres y un máximo de 20, y que se usen sólo letras, números y guión bajo
-     * @param string $nombre
-     * @param string $dato
+     * @param string $name
+     * @param string $value
      * @return boolean
      */
-    private function user_name ($nombre, $dato){
+    private function user_name ($name, $value){
     	$expresion = '/^[a-zA-Záéíóúñ\d_]{5,20}$/i';
-    	if(preg_match($expresion, $dato)){
+    	if(preg_match($expresion, $value)){
             return TRUE;
     	}
     	else{
-            $this->add_message($nombre, 'user_name');
+            $this->add_message($name, 'user_name');
             return FALSE;
     	}
     }
     /**
      * Regla letras: analiza si un string contiene sólo letras y vocales con acento
-     * @param string $nombre
-     * @param string $dato
+     * @param string $name
+     * @param string $value
      * @return boolean
      */
-    private function letters ($nombre, $dato){
+    private function letters ($name, $value){
     	$expresion = '/^[a-zA-Záéíóúñ\s]*$/';
-    	if(preg_match($expresion, $dato)){
+    	if(preg_match($expresion, $value)){
             return TRUE;
     	}
     	else{
-            $this->add_message($nombre, 'letters');
+            $this->add_message($name, 'letters');
             return FALSE;
     	}
     }
     /**
      * Regla letras y nums: analiza si un string contiene sólo letras y/o números
-     * @param string $nombre
-     * @param string $dato
+     * @param string $name
+     * @param string $value
      * @return boolean
      */
-    private function letters_numbers ($nombre, $dato){
+    private function letters_numbers ($name, $value){
     	$expresion = '/^[a-zA-Záéíóúñ0-9]*$/';
-    	if(preg_match($expresion, $dato)){
+    	if(preg_match($expresion, $value)){
             return TRUE;
     	}
     	else{
-            $this->add_message($nombre, 'letters_numbers');
+            $this->add_message($name, 'letters_numbers');
             return FALSE;
     	}
     }
     /**
      * Regla telefono: analiza si un número de teléfono es correcto
-     * @param string $nombre
-     * @param string $dato
+     * @param string $name
+     * @param string $value
      * @return boolean
      */
-    private function telephone ($nombre, $dato){
+    private function telephone ($name, $value){
     	$expresion = '/^\+?\d{0,3}?[- .]?\(?(?:\d{0,3})\)?[- .]?\d{2,4}?[- .]?\d\d\d\d$/';
-    	if(preg_match($expresion, $dato)){
+    	if(preg_match($expresion, $value)){
             return TRUE;
     	}
     	else{
-            $this->add_message($nombre, 'telephone');
+            $this->add_message($name, 'telephone');
             return FALSE;
     	}
     }
     /**
      * Regla email: analiza si el string cumple el formato de mail
-     * @param string $nombre
-     * @param string $dato
+     * @param string $name
+     * @param string $value
      * @return boolean
      */
-    private function email($nombre, $dato){
-        if(filter_var($dato, FILTER_VALIDATE_EMAIL)){
+    private function email($name, $value){
+        if(filter_var($value, FILTER_VALIDATE_EMAIL)){
             return TRUE; 
         }
         else{
-            $this->add_message($nombre, 'email');
+            $this->add_message($name, 'email');
             return FALSE;
         }
     }    
     //Regla url: ve si el dato es un link correcto
     /**
      * Regla url: analiza si el string cumple el formato de URL
-     * @param string $nombre
-     * @param string $dato
+     * @param string $name
+     * @param string $value
      * @return boolean
      */
-    private function link($nombre, $dato){
-        if(filter_var($dato, FILTER_VALIDATE_URL)){
+    private function link($name, $value){
+        if(filter_var($value, FILTER_VALIDATE_URL)){
             return TRUE; 
         }
         else{
-            $this->add_message($nombre, 'link');
+            $this->add_message($name, 'link');
             return FALSE;
         }
     }    
     /**
      * Regla fecha: analiza si un string cumple el formato de fecha segun un formato pasado pasado como parametro
-     * @param string $nombre
-     * @param string $dato
-     * @param string $formato (no obligatorio)
+     * @param string $name
+     * @param string $value
+     * @param string $format
      * @return boolean
      */
-    private function date($nombre, $dato, $formato){
-        $tipo_separador= array(
+    private function date($name, $value, $format){
+        $separator_type= array(
             "/",
             "-",
             "."
         );        
-        $separador_usado= NULL;
-        foreach ($tipo_separador as $separador) {
-            $find= stripos($dato, $separador);
+        $separator_used= NULL;
+        foreach ($separator_type as $separator) {
+            $find= stripos($value, $separator);
             if($find <> FALSE){
-                $separador_usado= $separador;
+                $separator_used= $separator;
             }
         }        
-        if($separador_usado != NULL){      
-            $dato_array= explode($separador_usado, $dato);
-            $valido= FALSE;
-            switch ($formato){
+        if($separator_used != NULL){      
+            $dato_array= explode($separator_used, $value);
+            $valid= FALSE;
+            switch ($format){
                 case 'Y-m-d':
-                    if($separador_usado == '-'){
-                        $valido= checkdate($dato_array[1], $dato_array[2], $dato_array[0]);
+                    if($separator_used == '-'){
+                        $valid= checkdate($dato_array[1], $dato_array[2], $dato_array[0]);
                     }
                     break;
                 case 'd-m-Y':
-                    if($separador_usado == '-'){
-                        $valido= checkdate($dato_array[1], $dato_array[0], $dato_array[2]);
+                    if($separator_used == '-'){
+                        $valid= checkdate($dato_array[1], $dato_array[0], $dato_array[2]);
                     }
                     break;
                 case 'd/m/Y':
-                    if($separador_usado == '/'){
-                        $valido= checkdate($dato_array[1], $dato_array[0], $dato_array[2]);
+                    if($separator_used == '/'){
+                        $valid= checkdate($dato_array[1], $dato_array[0], $dato_array[2]);
                     }
                     break;
                 case 'Y/m/d':
-                    if($separador_usado == '/'){
-                        $valido= checkdate($dato_array[1], $dato_array[2], $dato_array[0]);
+                    if($separator_used == '/'){
+                        $valid= checkdate($dato_array[1], $dato_array[2], $dato_array[0]);
                     }
                     break;
                 case 'Y.m.d':
-                    if($separador_usado == '.'){
-                        $valido= checkdate($dato_array[1], $dato_array[2], $dato_array[0]);
+                    if($separator_used == '.'){
+                        $valid= checkdate($dato_array[1], $dato_array[2], $dato_array[0]);
                     }
                     break;
                 case 'd.m.Y':
-                    if($separador_usado == '.'){
-                        $valido= checkdate($dato_array[1], $dato_array[0], $dato_array[2]);
+                    if($separator_used == '.'){
+                        $valid= checkdate($dato_array[1], $dato_array[0], $dato_array[2]);
                     }
                     break;
                 default :
-                    if($separador_usado == '-'){
-                        $valido= checkdate($dato_array[1], $dato_array[2], $dato_array[0]);
+                    if($separator_used == '-'){
+                        $valid= checkdate($dato_array[1], $dato_array[2], $dato_array[0]);
                     }
                     break;          
             }
-        }
-        else{
-            $valido= false;
+        }else{
+            $valid= false;
         }
         
-        if($valido){
+        if($valid){
             return TRUE;
-        }
-        else{
-            $this->add_message($nombre, 'date', array('formato' => $formato));
+        }else{
+            $this->add_message($name, 'date', array('format' => $format));
             return FALSE;
         }        
     }
     /**
      * Ve si el dato fecha es mayor que la fecha pasada
-     * @param type $nombre
-     * @param type $dato
+     * @param type $name
+     * @param type $value
      * @param type $param tiene el formato y la fecha separada por &
      * @return boolean 
      */
-    private function date_is_greater($nombre, $dato, $param){
+    private function date_is_greater($name, $value, $param){
         $params= explode('&', $param);
-        $formato= $params[0];
-        $fecha= $params[1];
-    	$date1  = \DateTime::createFromFormat($formato, "$dato");
-    	$date2  = \DateTime::createFromFormat($formato, "$fecha");    	 
+        $format= $params[0];
+        $date= $params[1];
+    	$date1  = \DateTime::createFromFormat($format, "$value");
+    	$date2  = \DateTime::createFromFormat($format, "$date");    	 
     	if(($date1 > $date2)){
             return TRUE;
     	}
     	else{
-            $this->add_message($nombre, 'date_is_greater', array('fecha' => $fecha));
+            $this->add_message($name, 'date_is_greater', array('date' => $date));
             return FALSE;
     	}
     }
     /**
      * Ve si el dato fecha es menor que la fecha pasada
-     * @param type $nombre
-     * @param type $dato
+     * @param type $name
+     * @param type $value
      * @param type $param tiene el formato y la fecha separada por &
      * @return boolean 
      */
-    private function date_is_lover($nombre, $dato, $param){
+    private function date_is_lover($name, $value, $param){
         $params= explode('&', $param);
-        $formato= $params[0];
-        $fecha= $params[1];
-    	$date1  = \DateTime::createFromFormat($formato, "$dato");
-    	$date2  = \DateTime::createFromFormat($formato, "$fecha");    	 
+        $format= $params[0];
+        $date= $params[1];
+    	$date1  = \DateTime::createFromFormat($format, "$value");
+    	$date2  = \DateTime::createFromFormat($format, "$date");    	 
     	if(($date1 < $date2)){
             return TRUE;
     	}
     	else{
-            $this->add_message($nombre, 'date_is_lover', array('fecha' => $fecha));
+            $this->add_message($name, 'date_is_lover', array('date' => $date));
             return FALSE;
     	}
     }

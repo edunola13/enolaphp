@@ -6,7 +6,7 @@ use Enola\Error;
 include $path_application . 'setup.php';
 //Tiempo de Inicio de la aplicación
 $timeBegin= microtime(TRUE);
-require 'EnolaContext.php';
+require $path_framework . 'EnolaContext.php';
 
 //Instancio la Clase EnolaContext que carga la configuracion de la aplicacion
 $context= new \EnolaContext($path_root, $path_framework, $path_application, $configurationType, $configurationFolder, $charset, $timeZone, $cache);

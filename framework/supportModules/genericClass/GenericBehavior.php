@@ -21,8 +21,9 @@ trait GenericBehavior {
         $validacion= new $lib($locale);
         $reglas= $this->configValidation();
         if(is_object($var)){
+            $reflection= new Reflection($var);
             foreach ($reglas as $key => $regla) {
-                $validacion->add_rule($key, $var->$key, $regla);
+                $validacion->add_rule($key, $reflection->getProperty($key), $regla);
             }
         }
         else{

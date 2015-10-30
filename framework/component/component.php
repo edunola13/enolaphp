@@ -65,7 +65,7 @@ class ComponentCore{
             unset($uri_parts[0]);
             unset($uri_parts[1]);
             //Reseteo los indices
-            $uri_parts= array_values($uri_parts);            
+            $uri_parts= array_values($uri_parts);          
             if(isset($uri_parts[0]) && $uri_parts[0] == 'actionComponent' && isset($uri_parts[1])){
                 $action= $uri_parts[1];
                 unset($uri_parts[0]);
@@ -82,18 +82,15 @@ class ComponentCore{
             //Evalua si el componente existe y si se encuentra habilitado via URL
             if(isset($components[$name])){
                 $comp= $components[$name];
-                if($comp['enabled-url'] == 'TRUE' || $comp['enabled-url'] == 'true'){
+                if(isset($comp['enabled-url']) && ($comp['enabled-url'] == 'TRUE' || $comp['enabled-url'] == 'true')){
                     $this->executeComponent($name, $params, $action);
-                }
-                else{
+                }else{
                     echo "The component is disabled via URL";
                 }
-            }
-            else{
+            }else{
                 echo "There isent a component with the name: " + $name;
             }
-        }
-        else{  
+        }else{  
             echo "Enola Components";
         }
     }    

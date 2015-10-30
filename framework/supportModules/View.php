@@ -9,13 +9,13 @@ use EnolaContext;
  * @category Enola\Support
  */
 class View{
-    /**
-     *
-     * @var \Enola\Application
-     */
+    /** @var \Enola\Application */
     public $app;
+    /** @var EnolaContext */
     public $context;
+    /** @var Request */
     public $request;
+    /** @var Response */
     public $response;
     //i18n
     protected $locale;

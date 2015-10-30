@@ -3,9 +3,9 @@ namespace Enola\Lib;
 
 /**
  * Version 1.0
- * Description of Paginador
- *
- * @author Enola
+ * Libreria que ayuda a paginar un conjunto de resultados
+ * @author Eduardo Sebastian Nola <edunola13@gmail.com>
+ * @category Enola\Lib
  */
 class Paginator {
     public $amount_per_page;
