@@ -81,6 +81,18 @@ class En_Controller extends Support\GenericLoader implements Controller{
         $this->uriParams= $uri_params;
     }
     /**
+     * Devuelve un uri param si existe y si no devuelve NULL
+     * @param string $name
+     * @return null o string
+     */
+    protected function getUriParam($name){
+        if(isset($this->uriParams[$name])){
+            return $this->uriParams[$name];
+        }else{
+            return NULL;
+        }
+    }
+    /**
      * Funcion que actua cuando acurre un error en el controlador
      */
     protected function error(){        

@@ -132,13 +132,11 @@
             }
             $arch = fopen(PATHAPP . 'logs/log.txt', "a+"); 
             if(ENOLA_MODE == 'HTTP'){
-                fwrite($arch, "[".date("Y-m-d H:i:s.u")." ".$_SERVER['REMOTE_ADDR']." ".
-                       " - $type ] ".$chain."\n");
+                fwrite($arch, "[".date("Y-m-d H:i:s.u")." ".$_SERVER['REMOTE_ADDR']." "." - $type ] ".$chain." - $file - $line \n");
             }else{
-                fwrite($arch, "[".date("Y-m-d H:i:s.u")." MODE CLI ".
-                       " - $type ] ".$chain." - $file - $line \n");
+                fwrite($arch, "[".date("Y-m-d H:i:s.u")." MODE CLI "." - $type ] ".$chain." - $file - $line \n");
             }
-            fwrite($arch, '----------\n');
+            fwrite($arch, "---------- \n");
             fclose($arch);
         }    
         /**

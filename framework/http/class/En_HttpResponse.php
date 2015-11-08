@@ -75,7 +75,7 @@ class En_HttpResponse extends Response{
      * @return array
      */
     public function getCookies(){
-        return $_COOKIE;        
+        return filter_input_array(INPUT_COOKIE);        
     }
     /**
      * Devuelve la cookie asociado con un nombre.
@@ -83,11 +83,7 @@ class En_HttpResponse extends Response{
      * @return array - null
      */
     public function getCookie($name){
-        if(isset($_COOKIE[$name])){
-            return $_COOKIE[$name];
-        }else{
-            return NULL;
-        }
+        return filter_input(INPUT_COOKIE, $name);
     }
     /**
      * Setea una cookie

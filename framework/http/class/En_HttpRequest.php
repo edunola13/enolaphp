@@ -46,17 +46,17 @@ class En_HttpRequest extends Request{
      */
     private function init($config){
         //Configuro valores basicos-genericos
-        $this->getParams= $_GET;
-        $this->postParams= $_POST;
+        $this->getParams= filter_input_array(INPUT_GET);
+        $this->postParams= filter_input_array(INPUT_POST);
         $this->attributes= array();
         $this->session= new Session();
-        $this->requestMethod= $_SERVER['REQUEST_METHOD'];
-        $this->queryString= $_SERVER['QUERY_STRING'];
-        $this->requestUri= $_SERVER['REQUEST_URI'];
-        $this->httpHost= $_SERVER['HTTP_HOST'];        
-        $this->httpAccept= $_SERVER['HTTP_ACCEPT'];
-        $this->httpAcceptLanguage= $_SERVER['HTTP_ACCEPT_LANGUAGE'];
-        $this->httpUserAgent= $_SERVER['HTTP_USER_AGENT'];
+        $this->requestMethod= filter_input(INPUT_SERVER, 'REQUEST_METHOD');
+        $this->queryString= filter_input(INPUT_SERVER, 'QUERY_STRING');
+        $this->requestUri= filter_input(INPUT_SERVER, 'REQUEST_URI');
+        $this->httpHost= filter_input(INPUT_SERVER, 'HTTP_HOST');        
+        $this->httpAccept= filter_input(INPUT_SERVER, 'HTTP_ACCEPT');
+        $this->httpAcceptLanguage= filter_input(INPUT_SERVER, 'HTTP_ACCEPT_LANGUAGE');
+        $this->httpUserAgent= filter_input(INPUT_SERVER, 'HTTP_USER_AGENT');
         //Configuro la URIAPP y defino varios valores propios de la Aplicación        
         $this->realBaseUrl= $config['REAL_BASE_URL'];
         $this->baseUrlLocale= $config['BASEURL_LOCALE'];
