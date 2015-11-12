@@ -64,7 +64,7 @@ trait GenericBehavior {
             }
         }
         //Creo var view
-        $view= new View();
+        //$view= new View();
         if($buffer){
             ob_start();            
         }

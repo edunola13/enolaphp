@@ -11,6 +11,6 @@ if(! ini_get('date.timezone') || ini_get('date.timezone') != $timeZone){
 //Tipo de configuracion: YAML - PHP - JSON
 $configurationType= 'YAML';
 //Carpeta de configuracion
-$configurationFolder= 'configuration/';
+$configurationFolder= 'config/';
 //Indica si se cachean los archivo de configuracion
 $cache= FALSE;  

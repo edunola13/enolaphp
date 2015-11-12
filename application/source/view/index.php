@@ -1,3 +1,6 @@
+<?php
+$view= new \Enola\Support\View();
+?>
 <!DOCTYPE html>
 <html>
 <head>
