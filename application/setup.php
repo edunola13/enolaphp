@@ -13,4 +13,4 @@ $configurationType= 'YAML';
 //Carpeta de configuracion
 $configurationFolder= 'config/';
 //Indica si se cachean los archivo de configuracion
-$cache= FALSE;  
+$cache= FALSE;

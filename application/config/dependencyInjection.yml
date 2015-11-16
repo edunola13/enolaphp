@@ -15,12 +15,3 @@
       store: {value: es, type: string}
     properties: 
       locale: {value: es, type: string}
-        
-  paginator: 
-    class: Paginator
-    namespace: Enola\Lib
-    load_in: controller
-    constructor: 
-      amount: {value: 5, type: integer}
-      total: {value: 15, type: integer}
-      current: {ref: validation}

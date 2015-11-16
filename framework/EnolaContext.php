@@ -19,6 +19,7 @@ class EnolaContext {
     private $baseUrl;
     private $indexPage;
     private $componentUrl;
+    private $sessionProfile;
     //Variables simples
     private $error;
     private $calculatePerformance;
@@ -125,6 +126,11 @@ class EnolaContext {
         $this->indexPage= $config['index_page']; 
         //URL_COMPONENT: URL con la cual se deben mapear los componentes via URL
         $this->componentUrl= trim($config['url-components'], '/');
+        //SESSION_PROFILE: Setea la clave en la que se guarda el profile del usuario
+        $this->sessionProfile= "";
+        if(isset($config['session-profile'])){
+            $this->sessionProfile= $config['session-profile'];
+        }
         
         //CALCULATE_PERFORMANCE: Indica si el framework debe calcular el tiempo de respuesta o no
         $this->calculatePerformance= $config['calculate_performance'];
@@ -195,6 +201,9 @@ class EnolaContext {
     }
     public function getComponentUrl(){
         return $this->componentUrl;
+    }
+    public function getSessionProfile(){
+        return $this->sessionProfile;
     }
     public function getError(){
         return $this->error;

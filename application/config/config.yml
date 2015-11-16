@@ -7,7 +7,10 @@
     index: 
       class: Index
       url: /
-      
+      properties:
+        prop1:
+          value: algo
+          type: string
   filters: 
     authorization: 
       class: Authorization
@@ -15,17 +18,16 @@
   filters_after_processing: {}
   
   i18n: 
-    default: es
-    locales: en,fr,me
+    default: en
+    locales: es,fr,me
     
   url-components: enola-components
+  session-profile: user_logged 
   components: {}
       
   libraries:
     validation: 
       path: Validation
-    paginator: 
-      path: Paginator
       
   composer: 
       

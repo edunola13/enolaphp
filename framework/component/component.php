@@ -1,9 +1,10 @@
 <?php
 namespace Enola\Component;
 use Enola\Error;
+use Enola\Http\En_HttpRequest;
     
 /**
- * Este modulo es el encargado de todo lo referente a las solicitudes HTTP
+ * Este modulo es el encargado de todo lo referente a los componentes
  * Importa todos los modulos de soporte - clases que necesita para el correcto funcionamiento
  */
 //Interface y Clase de la que deben extender todos los components
@@ -12,10 +13,7 @@ require 'class/En_Component.php';
 /**
  * Esta clase representa el Nucleo del modulo Component y es donde se encuentra toda la funcionalidad del mismo.
  * Este proveera metodos para saber si la URL mapea con la de los componentes y ejecutar un component via URL o
- * internamente
- * que controlador mapea segun determinada URI y ejecutar un controlador aplicando o no
- * los filtros correspondientes. Luego estas delegaran trabajo a los diferentes metodos privados.
- * Esta clase tiene una dependencia de la clase UrlUri para resolver cuestiones de URLs y URIs. 
+ * internamente 
  * @author Eduardo Sebastian Nola <edunola13@gmail.com>
  * @category Enola\Component
  * @internal
@@ -82,10 +80,10 @@ class ComponentCore{
             //Evalua si el componente existe y si se encuentra habilitado via URL
             if(isset($components[$name])){
                 $comp= $components[$name];
-                if(isset($comp['enabled-url']) && ($comp['enabled-url'] == 'TRUE' || $comp['enabled-url'] == 'true')){
+                if($this->isEnabledUrl($comp) && $this->havaAuthorization($comp)){
                     $this->executeComponent($name, $params, $action);
                 }else{
-                    echo "The component is disabled via URL";
+                    echo "The component is disabled via URL or you dont have authorization";
                 }
             }else{
                 echo "There isent a component with the name: " + $name;
@@ -142,6 +140,34 @@ class ComponentCore{
         }
         else{
             Error::general_error('Component Error', "The component $name dont exists");
+        }
+    }
+    /**
+     * Indica si el componente indicado esta habilitado via URL
+     * @param array $component
+     * @return boolean
+     */
+    protected function isEnabledUrl($component){
+        return (isset($component['enabled-url']) && ($component['enabled-url'] == 'TRUE' || $component['enabled-url'] == 'true'));
+    }
+    /**
+     * Indica si el usuario actual tiene permiso para ejecutar el componente
+     * @param array $component
+     * @return boolean
+     */
+    protected function havaAuthorization($component){
+        if(isset($component['authorization-profiles']) && $component['authorization-profiles'] != ""){
+            $profiles= str_replace(' ', '', $component['authorization-profiles']);
+            $profiles= explode(',', $component['authorization-profiles']);
+            $sessionProfile= 'default';
+            $session= $this->request->session;
+            if($session->exist($this->app->context->getSessionProfile())){
+                $sessionProfile= $session->get($this->app->context->getSessionProfile());
+            }
+            return in_array($sessionProfile,$profiles);
+        }else{
+            //Si no esta seteado o es vacio el componente es publico
+            return TRUE;
         }
     }
     /**
