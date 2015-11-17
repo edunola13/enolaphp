@@ -2,8 +2,8 @@
 namespace Enola\Support;
     
 /**
- * Esta clase realiza acciones de seguridad basicas
- * el comportamiento que provee es utilizada tanto por el framework como para el usuario
+ * Esta clase realiza acciones de seguridad basicas el comportamiento que provee es utilizada tanto por el framework 
+ * como para el usuario.
  * Como no se necesita tener ningun estado para el comportamiento todos los metodos estan disponibles estaticamente.
  * @author Eduardo Sebastian Nola <edunola13@gmail.com>
  * @category Enola\Support
