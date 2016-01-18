@@ -12,9 +12,9 @@ use Enola\Support;
  */
 class En_Filter extends Support\GenericLoader implements Filter{
     use Support\GenericBehavior;
-
-    //errors
-    public $errors; 
+    /** Errores que levanto el controlador
+     * @var mixed */
+    public $errors;  
     /**
      * Inicializa el controlador llamando al constructor de su padre y seteando el HttpRequest correspondiente
      */

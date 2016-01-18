@@ -7,7 +7,11 @@ namespace Enola\Support;
  * @category Enola\Support
  */
 class Performance {
+    /** Tiempo de inicio en microtime
+     * @var float */
     protected $timeBegin;
+    /** Tiempo de fin en microtime
+     * @var float */
     protected $timeEnd;
     /**
      * Constructor

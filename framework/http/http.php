@@ -29,11 +29,14 @@ require 'class/En_Controller.php';
  * @internal
  */
 class HttpCore{
-    /** @var \Enola\Application */
+    /** Referencia al nucleo de la aplicacion 
+     * @var \Enola\Application */
     public $app;
-    /** @var En_HttpRequest */
+    /** Referencia al HttpRequest actual 
+     * @var En_HttpRequest */
     public $httpRequest;
-    /** @var En_HttpResponse */
+    /** Referencia al HttpResponse actual 
+     * @var En_HttpResponse */
     public $httpResponse;
     /**
      * Se instancia el nucleo.

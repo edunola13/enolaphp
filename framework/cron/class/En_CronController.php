@@ -11,10 +11,12 @@ use Enola\Support;
  */
 class En_CronController extends Support\GenericLoader{
     use Support\GenericBehavior;
-
+    /** Carpeta donde se encuentran las vistas
+     * @var string */
     protected $viewFolder;
-    //errores
-    public $errors;    
+    /** Errores que levanto el controlador
+     * @var mixed */
+    public $errors; 
     /**
      * Inicializa el controlador llamando al constructor de su padre
      */

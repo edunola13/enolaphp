@@ -11,9 +11,12 @@ use Enola\Support\Security;
  * @category Enola\Cron
  */
 class En_CronRequest extends Request{
+    /** Parametros de la linea de comandos no utilizados por el framework
+     * @var array */
     protected $params;
-    protected $allParams;
- 
+    /** Parametros de la linea de comandos. Incluidos los utilizados por el framework
+     * @var array */
+    protected $allParams; 
     /**
      * Crea la instancia del request en base a la configuracion pasada
      * @param type $config

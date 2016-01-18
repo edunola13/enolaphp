@@ -19,11 +19,14 @@ require 'class/En_Component.php';
  * @internal
  */
 class ComponentCore{
-    /** @var \Enola\Application */
+    /** Referencia al nucleo de la aplicacion 
+     * @var \Enola\Application */
     public $app;
-    /** @var \Enola\Support\Request */
+    /** Referencia al Request actual 
+     * @var \Enola\Support\Request */
     public $request;
-    /** @var \Enola\Support\Response */
+    /** Referencia al Response actual 
+     * @var \Enola\Support\Response */
     public $response;
     /** 
      * 

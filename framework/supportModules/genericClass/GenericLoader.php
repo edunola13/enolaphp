@@ -9,7 +9,8 @@ namespace Enola\Support;
  * @category Enola\Support
  */
 abstract class GenericLoader {
-    /** @var \EnolaContext */
+    /** Referencia al contexto de la aplicacion 
+     * @var \EnolaContext */
     protected $context;
     /**
      * Constructor que realiza la carga inicial

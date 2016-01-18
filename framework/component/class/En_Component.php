@@ -14,9 +14,11 @@ use Enola\Support;
  */
 class En_Component extends Support\GenericLoader implements Component{ 
     use Support\GenericBehavior;
-    
+    /** Carpeta donde se encuentran las vistas
+     * @var string */
     protected $viewFolder;
-    //errors
+    /** Errores que levanto el controlador
+     * @var mixed */
     public $errors; 
     /**
      * Inicializa el component llamando al constructor de su padre y seteando el HttpRequest correspondiente

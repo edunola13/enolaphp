@@ -6,11 +6,17 @@ namespace Enola\Support;
  * @category Enola\Support
  */
 class DependenciesEngine {
-    /** @var \EnolaContext */
+    /** Referencia al contexto de la aplicacion 
+     * @var \EnolaContext */
     protected $context;
+    /** Referencia a todos las dependencias que son singletons
+     * @var array */
     protected $singletons;
-    
+    /** Definicion de todas las dependencias
+     * @var array */
     protected $dependencies;
+    /** Definicion de todas las dependencias auto cargables por tipo
+     * @var type */
     protected $loadDependencies;
     /** Constructor */
     public function __construct() {

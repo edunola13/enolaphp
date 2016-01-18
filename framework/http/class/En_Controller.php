@@ -12,10 +12,14 @@ use Enola\Support;
  */
 class En_Controller extends Support\GenericLoader implements Controller{
     use Support\GenericBehavior;
-
+    /** Parametros de URI
+     * @var array */
     protected $uriParams;
+    /** Carpeta donde se encuentran las vistas
+     * @var string */
     protected $viewFolder;
-    //errors
+    /** Errores que levanto el controlador
+     * @var mixed */
     public $errors;    
     /**
      * Inicializa el controlador llamando al constructor de su padre y seteando el HttpRequest correspondiente

@@ -2,20 +2,31 @@
 namespace Enola\Lib;
 
 /**
- * Version 1.0
  * Libreria que realiza validacion de campos de formulario
  * @author Eduardo Sebastian Nola <edunola13@gmail.com>
  * @category Enola\Lib
+ * @version 1.0
  */
 class Validation {
-    //Configuro donde se encuentran los mensajes
+    /** Indica donde se encuentran los mensajes
+     * @var string */
     public $dir_content= '../source/content/messages';
-    //Variable con toda la informacion sobre los datos/campos
+    /** Contiene toda la informacion sobre los datos/campos  
+     * @var array */
     private $fieldsState;
+    /** Contiene todos los mensajes posibles 
+     * @var array */
     private $messages;
+    /** Locale de los mensajes cargados 
+     * @var string */
     private $messagesLocale= NULL;
+    /** Locale a utilizar 
+     * @var string */
     private $locale= NULL;
-    
+    /**
+     * Constructor
+     * @param string $locale
+     */
     public function __construct($locale = NULL) {
         $this->locale= $locale;
     }
@@ -42,10 +53,10 @@ class Validation {
     public function add_rule($name, $value, $rules){
         $this->fieldsState[$name] = array(
 			'name'			=> $name,
-			'value'				=> $value,
+			'value'			=> $value,
 			'rules'			=> explode('|', $rules),
-                        'valid'                        => TRUE,
-                        'message'                       => NULL
+                        'valid'                 => TRUE,
+                        'message'               => NULL
         );
     }    
     /**
@@ -172,9 +183,9 @@ class Validation {
      */
     
     /**
-     * Regla requerido: analiza si el campo fue completado 
+     * Regla required: analiza si el campo fue completado 
      * @param string $name
-     * @param DATO $value
+     * @param mixed $value
      * @return boolean
      */
     private function required($name, $value){
@@ -182,16 +193,13 @@ class Validation {
             if($value == ''){
                 $this->add_message($name, 'required');
                 return FALSE;
-            }
-            else{
+            }else{
                 return TRUE;
             }
-        }
-        else{
+        }else{
             if(count($value) > 1){
                 return TRUE;
-            }
-            else{
+            }else{
                 return FALSE;
             }
         }
@@ -199,7 +207,7 @@ class Validation {
     /**
      * Regla max_length: analiza que el string no contenga mas de $max caracteres
      * @param string $name
-     * @param DATO $value
+     * @param mixed $value
      * @param int $max
      * @return boolean
      */
@@ -208,12 +216,10 @@ class Validation {
             if(strlen($value) > $max){
                 $this->add_message($name, 'max_length', array('max' => $max));
                 return FALSE;
-            }
-            else{
+            }else{
                 return TRUE;
             }
-        }
-        else{
+        }else{
             $this->add_message($name, 'is_string');
             return FALSE;
         }
@@ -221,7 +227,7 @@ class Validation {
     /**
      * Regla min_lenght: analiza que el string no contenga menos de $min caracteres
      * @param string $name
-     * @param DATO $value
+     * @param mixed $value
      * @param int $min
      * @return boolean
      */
@@ -230,21 +236,19 @@ class Validation {
             if(strlen($value) < $min){
                 $this->add_message($name, 'min_length', array('min' => $min));
                 return FALSE;
-            }
-            else{
+            }else{
                 return TRUE;
             }
-        }
-        else{
+        }else{
             $this->add_message($name, 'is_string');
             return FALSE;
         }
     }    
     /**
      * Regla length_between: analiza que el string este entre un minimo y un maximo
-     * @param type $name
-     * @param type $value
-     * @param type $param El minimo y el maximo separado por &
+     * @param string $name
+     * @param mixed $value
+     * @param string $param El minimo y el maximo separado por &
      * @return boolean 
      */
     private function length_between($name, $value, $param){
@@ -254,12 +258,10 @@ class Validation {
         if(is_string($value)){
             if(strlen($value) >= $min && strlen($value) <= $max){
                 return TRUE;
-            }
-            else{
+            }else{
                 $this->add_message($name, 'length_between', array('min' => $min, 'max' => $max));
             }
-        }
-        else{
+        }else{
             $this->add_message($name, 'is_string');
             return FALSE;
         }
@@ -267,14 +269,13 @@ class Validation {
     /**
      * Regla es_integer: analiza que el campo sea un integer
      * @param string $name
-     * @param DATO $value
+     * @param mixed $value
      * @return boolean
      */
     private function is_integer($name, $value){
         if(is_numeric($value)){
             return TRUE;
-        }
-        else{
+        }else{
             $this->add_message($name, 'is_integer');
             return FALSE;
         }
@@ -282,7 +283,7 @@ class Validation {
     /**
      * Regla max: analiza que el numero no se mayor a $max
      * @param string $name
-     * @param DATO $value
+     * @param mixed $value
      * @param int $max
      * @return boolean
      */
@@ -295,12 +296,10 @@ class Validation {
             if($value > $max){
                 $this->add_message($name, 'max', array('max' => $max));
                 return FALSE;
-            }
-            else{
+            }else{
                 return TRUE;
             }
-        }
-        else{
+        }else{
             $this->add_message($name, 'is_integer');
             return FALSE;
         }
@@ -308,7 +307,7 @@ class Validation {
     /**
      * Regla min: analiza que el numero no sea menor a $min
      * @param string $name
-     * @param DATO $value
+     * @param mixed $value
      * @param int $min
      * @return boolean
      */
@@ -318,21 +317,19 @@ class Validation {
             if($value < $min){
                 $this->add_message($name, 'min', array('min' => $min));
                 return FALSE;
-            }
-            else{
+            }else{
                 return TRUE;
             }
-        }
-        else{
+        }else{
             $this->add_message($name, 'is_integer');
             return FALSE;
         }
     }
     /**
      * Regla num_between: analiza que el numero este entre un minimo y un maximo
-     * @param type $name
-     * @param type $value
-     * @param type $param El minimo y el maximo separado por &
+     * @param string $name
+     * @param mixed $value
+     * @param string $param El minimo y el maximo separado por &
      * @return boolean 
      */
     private function num_between($name, $value, $param){
@@ -342,12 +339,10 @@ class Validation {
         if(is_numeric($value)){
             if($value >= $min && $value <= $max){
                 return TRUE;
-            }
-            else{
+            }else{
                 $this->add_message($name, 'num_between', array('min' => $min, 'max' => $max));
             }
-        }
-        else{
+        }else{
             $this->add_message($name, 'is_integer');
             return FALSE;
         }
@@ -355,15 +350,14 @@ class Validation {
     /**
      * Regla igual: analiza si 2 datos son iguales
      * @param string $name
-     * @param DATO $value
-     * @param DATO $toCompare
+     * @param mixed $value
+     * @param mixed $toCompare
      * @return boolean
      */
     private function equal($name, $value, $toCompare){
         if($value == $this->fieldsState["$toCompare"]['value']){
             return TRUE;
-        }
-        else{
+        }else{
             $this->add_message($name, 'igual', array('tocompare' => $toCompare));
             return FALSE;
         }
@@ -371,15 +365,14 @@ class Validation {
     /**
      * Regla username: analiza si un string cumple con un mínimo de 5 caracteres y un máximo de 20, y que se usen sólo letras, números y guión bajo
      * @param string $name
-     * @param string $value
+     * @param mixed $value
      * @return boolean
      */
     private function user_name ($name, $value){
     	$expresion = '/^[a-zA-Záéíóúñ\d_]{5,20}$/i';
     	if(preg_match($expresion, $value)){
             return TRUE;
-    	}
-    	else{
+    	}else{
             $this->add_message($name, 'user_name');
             return FALSE;
     	}
@@ -387,15 +380,14 @@ class Validation {
     /**
      * Regla letras: analiza si un string contiene sólo letras y vocales con acento
      * @param string $name
-     * @param string $value
+     * @param mixed $value
      * @return boolean
      */
     private function letters ($name, $value){
     	$expresion = '/^[a-zA-Záéíóúñ\s]*$/';
     	if(preg_match($expresion, $value)){
             return TRUE;
-    	}
-    	else{
+    	}else{
             $this->add_message($name, 'letters');
             return FALSE;
     	}
@@ -403,15 +395,14 @@ class Validation {
     /**
      * Regla letras y nums: analiza si un string contiene sólo letras y/o números
      * @param string $name
-     * @param string $value
+     * @param mixed $value
      * @return boolean
      */
     private function letters_numbers ($name, $value){
     	$expresion = '/^[a-zA-Záéíóúñ0-9]*$/';
     	if(preg_match($expresion, $value)){
             return TRUE;
-    	}
-    	else{
+    	}else{
             $this->add_message($name, 'letters_numbers');
             return FALSE;
     	}
@@ -419,15 +410,14 @@ class Validation {
     /**
      * Regla telefono: analiza si un número de teléfono es correcto
      * @param string $name
-     * @param string $value
+     * @param mixed $value
      * @return boolean
      */
     private function telephone ($name, $value){
     	$expresion = '/^\+?\d{0,3}?[- .]?\(?(?:\d{0,3})\)?[- .]?\d{2,4}?[- .]?\d\d\d\d$/';
     	if(preg_match($expresion, $value)){
             return TRUE;
-    	}
-    	else{
+    	}else{
             $this->add_message($name, 'telephone');
             return FALSE;
     	}
@@ -435,38 +425,35 @@ class Validation {
     /**
      * Regla email: analiza si el string cumple el formato de mail
      * @param string $name
-     * @param string $value
+     * @param mixed $value
      * @return boolean
      */
     private function email($name, $value){
         if(filter_var($value, FILTER_VALIDATE_EMAIL)){
             return TRUE; 
-        }
-        else{
+        }else{
             $this->add_message($name, 'email');
             return FALSE;
         }
-    }    
-    //Regla url: ve si el dato es un link correcto
+    }
     /**
-     * Regla url: analiza si el string cumple el formato de URL
+     * Regla link: analiza si el string cumple el formato de URL
      * @param string $name
-     * @param string $value
+     * @param mixed $value
      * @return boolean
      */
     private function link($name, $value){
         if(filter_var($value, FILTER_VALIDATE_URL)){
             return TRUE; 
-        }
-        else{
+        }else{
             $this->add_message($name, 'link');
             return FALSE;
         }
     }    
     /**
-     * Regla fecha: analiza si un string cumple el formato de fecha segun un formato pasado pasado como parametro
+     * Regla date: analiza si un string cumple el formato de fecha segun un formato pasado pasado como parametro
      * @param string $name
-     * @param string $value
+     * @param mixed $value
      * @param string $format
      * @return boolean
      */
@@ -535,10 +522,10 @@ class Validation {
         }        
     }
     /**
-     * Ve si el dato fecha es mayor que la fecha pasada
-     * @param type $name
-     * @param type $value
-     * @param type $param tiene el formato y la fecha separada por &
+     * Regla date_is_greater: ve si el dato fecha es mayor que la fecha pasada
+     * @param string $name
+     * @param mixed $value
+     * @param string $param tiene el formato y la fecha separada por &
      * @return boolean 
      */
     private function date_is_greater($name, $value, $param){
@@ -549,20 +536,19 @@ class Validation {
     	$date2  = \DateTime::createFromFormat($format, "$date");    	 
     	if(($date1 > $date2)){
             return TRUE;
-    	}
-    	else{
+    	}else{
             $this->add_message($name, 'date_is_greater', array('date' => $date));
             return FALSE;
     	}
     }
     /**
-     * Ve si el dato fecha es menor que la fecha pasada
-     * @param type $name
-     * @param type $value
-     * @param type $param tiene el formato y la fecha separada por &
+     * Regla date_is_lower: ve si el dato fecha es menor que la fecha pasada
+     * @param string $name
+     * @param mixed $value
+     * @param string $param tiene el formato y la fecha separada por &
      * @return boolean 
      */
-    private function date_is_lover($name, $value, $param){
+    private function date_is_lower($name, $value, $param){
         $params= explode('&', $param);
         $format= $params[0];
         $date= $params[1];
@@ -570,8 +556,7 @@ class Validation {
     	$date2  = \DateTime::createFromFormat($format, "$date");    	 
     	if(($date1 < $date2)){
             return TRUE;
-    	}
-    	else{
+    	}else{
             $this->add_message($name, 'date_is_lover', array('date' => $date));
             return FALSE;
     	}

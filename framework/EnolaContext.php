@@ -7,39 +7,91 @@
  * @internal
  */
 class EnolaContext {
+    /** Instancia de el mismo. Singleton
+     * @var EnolaContext */
     private static $instance;
-    //Referencia al Nucleo
-    /** @var \Enola\Application */
+    /** Referencia el nucleo del framework 
+     * @var \Enola\Application */
     public $app;
     //Path basicos
+    /** Path raiz de toda la aplicacion
+     * @var string */
     private $pathRoot;
+    /** Path de la carpeta framework
+     * @var string */    
     private $pathFra;
+    /** Path de la carpeta application
+     * @var string */
     private $pathApp;
     //URLs base
+    /** Direccion base donde funciona la aplicacion
+     * @var string */
     private $baseUrl;
+    /** Archivo index de la aplicacion
+     * @var string */
     private $indexPage;
+    /** Direccion relativa sobre la que funcionan sobre los componentes via URL
+     * @var string */
     private $componentUrl;
+    /** Nombre de la variable de sesion que contiene el perfil del usuario
+     * @var string */
     private $sessionProfile;
     //Variables simples
+    /** Nivel de errores a controlar
+     * @var string */
     private $error;
+    /** Indica si calcula la performance de la aplicacion
+     * @var string */
     private $calculatePerformance;
+    /** Ambiente actual de la aplicacion
+     * @var string */
     private $environment;
+    /** Charset a utilizar en PHP
+     * @var string */
     private $charset;
+    /** Time Zone default en PHP
+     * @var string */
     private $timeZone;
+    /** Tipo de configuracion a utilizar
+     * @var string */
     private $configurationType;
+    /** Carpeta donde se encuentra la configuracion
+     * @var string */
     private $configurationFolder;
+    /** Indica se se cachean los archivos de configuracion
+     * @var string */
     private $cacheConfigFiles;
+    /** Path archivo autoload.php
+     * @var string */
     private $composerAutoload;
+    /** Path archivo de configuracion de database
+     * @var string */
     private $databaseConfiguration;
     //Definiciones de diferentes aspectos/partes
+    /** Definicion de librerias
+     * @var string */
     private $librariesDefinition;
+    /** Definicion de archvios de dependencias
+     * @var string */
     private $dependenciesFile;
+    /** Definicion de controladores
+     * @var string */
     private $controllersDefinition;
+    /** Definicion de filtros pre procesameinto
+     * @var string */
     private $filtersBeforeDefinition;
+    /** Definicion de filtros post procesamiento
+     * @var string */
     private $filtersAfterDefinition;
+    /** Definicion de componentes
+     * @var string */
     private $componentsDefinition;
     //I18n
+    /** Locale por defecto de la aplicacion
+     * @var string */
     private $i18nDefaultLocale;
+    /** Locales soportados por la aplicacion
+     * @var string */
     private $i18nLocales;
     
     /**

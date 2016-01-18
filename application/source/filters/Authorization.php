@@ -4,7 +4,7 @@ use Enola\Http\En_HttpRequest,Enola\Http\En_HttpResponse;
 
 /**
  * Filtro que analiza la autorizacion de los usuarios
- * @author Enola
+ * @author Eduardo Sebastian Nola <edunola13@gmail.com>
  */
 class Authorization extends Http\En_Filter{    
     /**

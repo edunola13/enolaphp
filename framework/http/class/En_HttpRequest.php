@@ -12,25 +12,55 @@ use Enola\Support\Security;
  */
 class En_HttpRequest extends Request{
     //Propias de la peticion HTTP
+    /** Parametros GET de la peticion
+     * @var array */
     public $getParams;
+    /** Parametros POST de la peticion
+     * @var array */
     public $postParams;
-    /** @var Session */
+    /** Referencia a la Session 
+     * @var Session */
     public $session;
+    /** Metodo HTTP
+     * @var string */
     public $requestMethod;
+    /** Query string de la peticion
+     * @var string */
     public $queryString;
+    /** Request URI de la peticion
+     * @var string */
     public $requestUri;
-    public $httpHost;    
+    /** HTTP Host de la peticion
+     * @var string */
+    public $httpHost;
+    /** HTTP Accept de la peticion
+     * @var string */
     public $httpAccept;
+    /** HTTP Accept Language
+     * @var string */
     public $httpAcceptLanguage;
+    /** HTTP User Agent
+     * @var string */
     public $httpUserAgent;
     //Propias del Framework
+    /** Base URL de la aplicacion
+     * @var string */
     public $realBaseUrl;
+    /** Base URL Locale de la aplicacion
+     * @var string */
     public $baseUrlLocale;
+    /** URI actual de la peticion
+     * @var string */
     public $uriApp;
-    public $uriAppLocale;    
+    /** URI actual de la peticion con el fragmento de i18n
+     * @var string */
+    public $uriAppLocale;
+    /** URI Locale
+     * @var string */
     public $localeUri;
-    public $locale;
-    
+    /** Locale
+     * @var string */
+    public $locale;    
     /**
      * Crea la instancia del request en base a la configuracion pasada
      * @param type $config

@@ -32,9 +32,6 @@ $config['components']= array();
 $config['libraries']= array(
     'validation' => array( 
         'path' => 'Validation'
-    ),
-    'paginator' => array(
-        'path' => 'Paginator'
     )
 );
       

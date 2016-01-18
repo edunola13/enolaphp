@@ -7,8 +7,11 @@ namespace Enola\Support;
  * @category Enola\Support
  */
 class Response {
-    /** @var Response */
+    /** Instancia de el mismo. Singleton 
+     * @var Response */
     protected static $instance;
+    /** Cuerpo de la respuesta
+     * @var string */
     protected static $body;
     /**
      * Devuelve la isntancia que se esta utilizando

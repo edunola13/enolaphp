@@ -10,7 +10,8 @@ use Enola\Support\Response;
  * @category Enola\Http
  */
 class En_HttpResponse extends Response{
-    /** @var En_HttpRequest */
+    /** Referencia al HttpRequest actual 
+     * @var En_HttpRequest */
     protected $httpRequest;
     /**
      * Constructor

@@ -43,9 +43,14 @@ interface CacheInterface {
  * @category Enola\Cache
  */
 class Cache implements CacheInterface{
+    /** Contiene los datos del archivo de configuracion
+     * @var array */
     private static $config;
+    /** Prefijo a utilizar
+     * @var string */
     public $prefix;
-    /** @var CacheInterface */
+    /** Referencia al driver 
+     * @var CacheInterface */
     public $store;
     /**
      * Constructor del sistema de cahce. Levanta la configuracion del archivo o de la variable estatica e instancia al
@@ -133,6 +138,8 @@ class Cache implements CacheInterface{
  * @category Enola\Cache
  */
 class CacheFileSystem implements CacheInterface{
+    /** Carpeta donde se almacenara la cache
+     * @var string */
     public $folder;
     /**
      * Constructor
@@ -229,9 +236,14 @@ class CacheFileSystem implements CacheInterface{
  * @category Enola\Cache
  */
 class CacheDataBase implements CacheInterface{
+    /** Conexion a Base de Datos a utilizar
+     * @var string */
     public $nameDB;
+    /** Tabla de la Base de Datos a utilizar
+     * @var string */
     public $table;
-    /** @var DataBaseAR */
+    /** Referencia a la DataBaseAR 
+     * @var DataBaseAR */
     public $connection;
     /**
      * Constructor - Inicia una conexion a la base de datos en base a la definicion seleccionada
@@ -315,6 +327,9 @@ class CacheDataBase implements CacheInterface{
  * @category Enola\Cache
  */
 class CacheApc implements CacheInterface{
+    /**
+     * Constructor
+     */
     public function __construct() {
     }
     /**
@@ -363,6 +378,8 @@ class CacheApc implements CacheInterface{
  * @category Enola\Cache
  */
 class CacheMemCache implements CacheInterface{
+    /** Referencia a Memcached
+     * @var \Memcached */
     public $connection;
     /**
      * Constructor - Instancia la clase Memcached y agrega los servidores indicados

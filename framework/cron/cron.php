@@ -18,13 +18,15 @@ require 'class/En_CronRequest.php';
  * @internal
  */
 class CronCore{
-    /** @var \Enola\Application */
+    /** Referencia al nucleo de la aplicacion 
+     * @var \Enola\Application */
     public $app;
-    /** @var En_CronRequest */
+    /** Referencia al CronRequest actual 
+     * @var En_CronRequest */
     public $cronRequest;
-    /** @var Response */
-    public $cronResponse;
-    
+    /** Referencia al Response actual 
+     * @var Response */
+    public $cronResponse;    
     /** 
      * Se instancia el nucleo.
      * Se definen los parametros y se define el Cron Request actual

@@ -31,23 +31,31 @@ $app->request();
  * @internal
  */
 class Application{
-    /** @var \EnolaContext */
+    /** Referencia a la clase EnolaContext 
+     * @var \EnolaContext */
     public $context;
-    /** @var Cache\CacheInterface */
+    /** Instancia del Sistema de Cache de uso interno 
+     * @var Cache\CacheInterface */
     public $cache;
+    /** Prefijo a utilizar en el Sistema de Cache 
+     * @var string */
     private $prefixApp= 'APP';
     
-    /** @var Http\HttpCore */
+    /** Referencia al nucleo HTTP 
+     * @var Http\HttpCore */
     public $httpCore;
-    /** @var Component\ComponentCore */
+    /** Referencia al nucleo Component 
+     * @var Component\ComponentCore */
     public $componentCore;
-    /** @var Cron\CronCore */
+    /** Referencia al nucleo Core 
+     * @var Cron\CronCore */
     public $cronCore;
     
-    /** @var Support\DependenciesEngine */
+    /** Instancia del motor de dependencias
+     * @var Support\DependenciesEngine */
     public $dependenciesEngine;
-
-    /** @var Support\Performance */
+    /** Instancia de la clase Performance 
+     * @var Support\Performance */
     private $performance;
     /**
      * Constructor - Ejecuta metodo init

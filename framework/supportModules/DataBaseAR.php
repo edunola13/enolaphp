@@ -10,13 +10,23 @@ use Enola\Support;
  * @category Enola\DataBase
  */
 class DataBaseAR extends Support\GenericLoader{
+    /** Contiene los datos del archivo e configuracion
+     * @var array */
     protected static $config_db;
+    /** Indica archivo de configuracion
+     * @var string */
     protected $configFile= 'database';
-    /** @var \EnolaContext */
+    /** Referencia al contexto de la aplicacion 
+     * @var \EnolaContext */
     protected $context;
-    /** @var \PDO */
+    /** Conexion a la Base de Datos 
+     * @var \PDO */
     public $connection;
+    /** Conexion actual
+     * @var string */
     protected $currentDB;
+    /** Configuracion de conexion actual
+     * @var array */
     protected $currentConfiguration;
     //Campos Active Record
     protected $select= "*";
@@ -28,8 +38,14 @@ class DataBaseAR extends Support\GenericLoader{
     protected $order= '';
     protected $limit= '';
     //Estado de Transaccion
+    /** Estado de la transferencia
+     * @var boolean */
     public $stateTran= TRUE;
+    /** Errores de la transferencia
+     * @var array */
     public $errorTran= array();
+    /** Contiene el ultimo error
+     * @var type */
     public $lastError= NULL;
     /**
      * Constructor que conecta a la bd y carga las librerias que se indicaron en el archivo de configuracion

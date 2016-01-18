@@ -9,17 +9,27 @@ use EnolaContext;
  * @category Enola\Support
  */
 class View{
-    /** @var \Enola\Application */
+    /** Referencia al nucleo de la aplicacion
+     * @var \Enola\Application */
     public $app;
-    /** @var EnolaContext */
+    /** Referencia al context de la aplicacion 
+     * @var EnolaContext */
     public $context;
-    /** @var Request */
+    /** Referencia al Request actual 
+     * @var Request */
     public $request;
-    /** @var Response */
+    /** Referencia al Response actual 
+     * @var Response */
     public $response;
     //i18n
+    /** Locale actual
+     * @var string */
     protected $locale;
+    /** Path archivo de internacionalizacion
+     * @var string */
     protected $fileName;
+    /** Contenido del archivo cargado por linea en un array
+     * @var array */
     protected $i18nContent;
     /*
      * Constructor - Setea variables que necesitara luego para resolver su comportamiento 

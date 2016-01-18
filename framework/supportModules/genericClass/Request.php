@@ -8,7 +8,11 @@ namespace Enola\Support;
  * @category Enola\Support
  */
 abstract class Request {
+    /** Instancia de el mismo. Singleton 
+     * @var Request */
     protected static $instance;
+    /** Atributos de alcance requerimiento
+     * @var array */
     public $attributes;
     /**
      * Devuelve la isntancia que se esta utilizando
