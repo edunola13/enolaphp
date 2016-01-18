@@ -50,6 +50,9 @@ class Application{
     /** Referencia al nucleo Core 
      * @var Cron\CronCore */
     public $cronCore;
+    /** Referencia a la clase View 
+     * @var Support\View */
+    public $view;
     
     /** Instancia del motor de dependencias
      * @var Support\DependenciesEngine */
@@ -76,7 +79,7 @@ class Application{
     /**
      * Responde al requerimiento analizando el tipo del mismo, HTTP,CLI,COMPONENT,ETC.
      */
-    public function request(){ 
+    public function request(){        
         //Cargo el modulo correspondiente en base al tipo de requerimiento
         if(ENOLA_MODE == 'HTTP'){
             //Cargo el modulo Http
@@ -86,7 +89,9 @@ class Application{
             $this->loadCronModule();
         }
         //Cargo el modulo Component
-        $this->loadComponentModule();
+        $this->loadComponentModule();        
+        //Luego de la carga de todos los modulos creo una instancia de Support\View
+        $this->view= new Support\View();
         //Cargo la configuracion del usuario
         $this->loadUserConfig();
         //Analizo si estoy en modo HTTP o CLI
@@ -129,7 +134,9 @@ class Application{
         //Carga de modulo para carga de archivos
         require $this->context->getPathFra() . 'supportModules/load_files.php';
         //Carga de modulo con funciones para la vista
-        require $this->context->getPathFra() . 'supportModules/View.php';
+        require $this->context->getPathFra() . 'supportModules/View.php';        
+        //Carga el modulo de funciones de vista exportadas al usuario de manera simple
+        require $this->context->getPathFra() . 'supportModules/fn_view.php';
         //Carga de modulo de seguridad
         require $this->context->getPathFra() . 'supportModules/Security.php';
         //Carga la clase Performance
