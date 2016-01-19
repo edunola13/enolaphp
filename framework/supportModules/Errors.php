@@ -126,11 +126,11 @@
          * @param string $line
          */
         public static function write_log($chain, $type, $file="", $line=""){
-            if(filesize(PATHAPP . 'logs/log.txt') > 100000){           
+            /*if(filesize(PATHAPP . 'logs/log.txt') > 100000){           
                 $arch= fopen(PATHAPP . 'logs/log.txt', "w");
                 fclose($arch); 
-            }
-            $arch = fopen(PATHAPP . 'logs/log.txt', "a+"); 
+            }*/
+            $arch = fopen(PATHAPP . 'logs/log-' . date('Y-m-d') . '.txt', "a+"); 
             if(ENOLA_MODE == 'HTTP'){
                 fwrite($arch, "[".date("Y-m-d H:i:s.u")." ".$_SERVER['REMOTE_ADDR']." "." - $type ] ".$chain." - $file - $line \n");
             }else{

@@ -60,6 +60,9 @@ class Application{
     /** Instancia de la clase Performance 
      * @var Support\Performance */
     private $performance;
+    /** Indica si se muestra o no el calculo realizado
+     * @var boolean TRUE (default)*/
+    private $showPerformance= TRUE;
     /**
      * Constructor - Ejecuta metodo init
      * @param EnolaContext $context
@@ -233,13 +236,20 @@ class Application{
      * Finaliza el calculo del tiempo de respuesta e imprime el resultado
      */
     public function displayPerformance(){
-        if($this->performance != NULL){
+        if($this->performance != NULL && $this->showPerformance){
             $this->performance->terminate();
             $mensaje= 'The execution time of the APP is: ' . $this->performance->elapsed() . ' seconds';
             $titulo= 'Performance';
             //Muestra la informacion al usuario
             Error::display_information($titulo, $mensaje);
         }
+    }
+    /**
+     * Setea la variable que indica si se muestra o no el resultado del calculo de performance
+     * @param boolean $show
+     */
+    public function showPerformance($show=TRUE){
+        $this->showPerformance= TRUE;
     }
     
     /**
