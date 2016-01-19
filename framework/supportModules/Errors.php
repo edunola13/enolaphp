@@ -146,7 +146,7 @@
         public static function catch_server_error(){
             if(isset($_GET['error_apache_enola'])){
                 //Cargo el archivo con los errores
-                $errores= load_framework_file('information/errorsHTTP.ini');
+                $errores= \E_fn\load_framework_file('information/errorsHTTP.ini');
                 $errores= parse_properties($errores);
                 //Escribo el Log
                 self::write_log('error_http', $errores[$_GET['error_apache_enola']]);

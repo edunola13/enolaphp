@@ -181,13 +181,13 @@ class View{
         $this->i18nContent= NULL;
         if($locale != NULL){
             if(file_exists(PATHAPP . 'source/content/' . $file . "_$locale" . '.txt')){
-                $this->i18nContent= load_application_file('source/content/' . $file . "_$locale" . '.txt');
+                $this->i18nContent= \E_fn\load_application_file('source/content/' . $file . "_$locale" . '.txt');
                 $this->i18nContent= $this->parse_properties($this->i18nContent);
                 $this->locale= $locale;
             }
         }
         if($this->i18nContent == NULL){
-            $this->i18nContent= load_application_file('source/content/' . $file . '.txt');
+            $this->i18nContent= \E_fn\load_application_file('source/content/' . $file . '.txt');
             $this->i18nContent= $this->parse_properties($this->i18nContent);
             $this->locale= 'Default';
         }

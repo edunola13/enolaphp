@@ -132,7 +132,7 @@ class Application{
         //Carga del modulo errores - se definen manejadores de errores
         require $this->context->getPathFra() . 'supportModules/Errors.php';    
         //Carga de modulo para carga de archivos
-        require $this->context->getPathFra() . 'supportModules/load_files.php';
+        require $this->context->getPathFra() . 'supportModules/fn_load_files.php';
         //Carga de modulo con funciones para la vista
         require $this->context->getPathFra() . 'supportModules/View.php';        
         //Carga el modulo de funciones de vista exportadas al usuario de manera simple
@@ -168,7 +168,7 @@ class Application{
         foreach ($this->context->getLibrariesDefinition() as $libreria) {
             //$libreria['class'] tiene la direccion completa desde LIBRARIE, no solo el nombre
             $dir= $libreria['path'];
-            import_librarie($dir);
+            \E_fn\import_librarie($dir);
         }
     }
     /**
