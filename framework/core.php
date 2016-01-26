@@ -249,7 +249,7 @@ class Application{
      * @param boolean $show
      */
     public function showPerformance($show=TRUE){
-        $this->showPerformance= TRUE;
+        $this->showPerformance= $show;
     }
     
     /**

@@ -7,6 +7,14 @@ la clase.
 */
 
 /**
+ * Realiza el include de una vista dentro de otra
+ * @param string $view
+ */
+function includeView($view){
+    $dir= PATHAPP . 'source/view/' . $view . '.php';
+    include $dir;
+}
+/**
  * Retorna la baseurl
  * @return string
  */

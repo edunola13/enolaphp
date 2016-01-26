@@ -10,35 +10,35 @@ namespace Enola\Lib;
 class Pager {
     /** Cantidad de elementos por pagina 
      * @var int */
-    public $amount_per_page;
+    public $amountPerPage;
     /** Total de elementos 
      * @var int */
-    public $total_amount;
+    public $totalAmount;
     /** Pagina actual
      * @var int */
-    public $current_page;
+    public $currentPage;
     /** Posicion de inicio del primer elemento. Suele ser 0
      * @var int */
-    public $start_position;
+    public $startPosition;
     /**
      * Constructor
-     * @param int $amount_per_page
-     * @param int $total_amount
-     * @param int $current_page
-     * @param int $start_position
+     * @param int $amountPerPage
+     * @param int $totalAmount
+     * @param int $currentPage
+     * @param int $startPosition
      */    
-    public function __construct($amount_per_page, $total_amount, $current_page, $start_position = 0) {
-        $this->amount_per_page= $amount_per_page;
-        $this->total_amount= $total_amount;
-        $this->current_page= $current_page;
-        $this->start_position= $start_position;
+    public function __construct($amountPerPage, $totalAmount, $currentPage, $startPosition = 0) {
+        $this->amountPerPage= $amountPerPage;
+        $this->totalAmount= $totalAmount;
+        $this->currentPage= $currentPage;
+        $this->startPosition= $startPosition;
     }    
     /**
      * Retorna la cantidad de paginas
      * @return int
      */
-    public function number_of_pages(){
-        $cantidad= $this->total_amount / $this->amount_per_page;
+    public function numberOfPages(){
+        $cantidad= $this->totalAmount / $this->amountPerPage;
         if(is_int($cantidad)){
             return $cantidad;
         }else{
@@ -54,27 +54,27 @@ class Pager {
      * Retorna la posicion del elemento de inicio de la pagina actual.
      * @return int
      */
-    public function element_start_position(){
-        return ($this->amount_per_page * $this->current_page) - ($this->amount_per_page + $this->start_position);
+    public function elementStartPosition(){
+        return ($this->amountPerPage * $this->currentPage) - ($this->amountPerPage + $this->startPosition);
     }    
     /**
      * Retorna la posicion del elemento de fin de la pagina actual.
      * @return int
      */
-    public function element_end_position(){
-        if($this->number_of_pages() == $this->current_page){
-            return $this->total_amount - (1 - $this->start_position);
+    public function elementEndPosition(){
+        if($this->numberOfPages() == $this->currentPage){
+            return $this->totalAmount - (1 - $this->startPosition);
         }else{
-            return $this->element_start_position() + $this->amount_per_page - 1;
+            return $this->elementStartPosition() + $this->amountPerPage - 1;
         }
     }    
     /**
      * Retorna la pagina anterior o null en caso de que no haya anterior
      * @return int
      */
-    public function previous_page(){
-        if($this->current_page > 1){
-            return $this->current_page - 1;
+    public function previousPage(){
+        if($this->currentPage > 1){
+            return $this->currentPage - 1;
         }else{
             return NULL;
         }
@@ -83,9 +83,9 @@ class Pager {
      * Retorna la pagina siguiente o null en caso de que no haya siguiente
      * @return int
      */
-    public function next_page(){
-        if($this->current_page < $this->number_of_pages()){
-            return $this->current_page + 1;
+    public function nextPage(){
+        if($this->currentPage < $this->numberOfPages()){
+            return $this->currentPage + 1;
         }else{
             return NULL;
         }
@@ -95,7 +95,7 @@ class Pager {
      * @param int $page
      * @return bool
      */
-    public function is_actual_page($page){
-        return ($this->current_page == $page);
+    public function isActualPage($page){
+        return ($this->currentPage == $page);
     }
 }

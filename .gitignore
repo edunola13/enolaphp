@@ -1,3 +1,3 @@
-/nbproject/private/
-/application/cache/*
-/application/logs/*
+nbproject/
+application/cache/*
+application/logs/*
