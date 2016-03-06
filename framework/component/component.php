@@ -167,7 +167,12 @@ class ComponentCore{
             if($session->exist($this->app->context->getSessionProfile())){
                 $sessionProfile= $session->get($this->app->context->getSessionProfile());
             }
-            return in_array($sessionProfile,$profiles);
+            //Comprueba si el usuario logueado tiene o no multiples perfiles y en base a eso comprueba
+            if(is_array($sessionProfile)){
+                return (count(array_intersect($sessionProfile, $profiles)) > 0);
+            }else{
+                return in_array($sessionProfile,$profiles);
+            }            
         }else{
             //Si no esta seteado o es vacio el componente es publico
             return TRUE;
