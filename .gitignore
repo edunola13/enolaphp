@@ -1,3 +1,4 @@
+vendor/
 nbproject/
 application/cache/*
 application/logs/*
