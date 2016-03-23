@@ -7,10 +7,7 @@
     index: 
       class: Index
       url: /
-      properties:
-        prop1:
-          value: algo
-          type: string
+      
   filters: 
     authorization: 
       class: Authorization
