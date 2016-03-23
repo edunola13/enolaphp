@@ -1,5 +1,17 @@
-  default: 
-    permit: 
-      front: /*
-    deny: {}
-    error: login
+  modules:
+    front: {url: /*, method: *}
+    admin: {url: admin/*, method: *}
+  
+  users:
+    default: 
+      permit:
+        - front
+      deny:
+        - admin
+      error: login
+  
+    administrator:
+      permit:
+          - front
+      deny:
+        error: /

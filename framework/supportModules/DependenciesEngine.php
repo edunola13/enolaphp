@@ -122,30 +122,42 @@ class DependenciesEngine {
             $dir= explode("/", $dependencyDefinition['class']);
             $class= $dir[count($dir) - 1];
             if($namespace != ''){ $class= "\\" . $namespace . "\\" . $class;}
-            //Consigo los parametros del constructor
-            $params= array();
-            if(isset($dependencyDefinition['constructor'])){
-                //Parseo los parametros correctamente
-                $params= $this->parseProperties($dependencyDefinition['constructor']);
+            
+            $newInstance= NULL;
+            if(isset($dependencyDefinition['factory-method'])){
+                $factoryMethod= $dependencyDefinition['factory-method'];
+                if(isset($dependencyDefinition['factory-bean'])){
+                    $factoryBean= $this->getDependency($dependencyDefinition['factory-bean'], $loadedDependencies);
+                    $newInstance= $factoryBean->$factoryMethod();
+                }else{
+                    $newInstance= $class::$factoryMethod();
+                }
+            }else{
+                //Consigo los parametros del constructor
+                $params= array();
+                if(isset($dependencyDefinition['construct'])){
+                    //Parseo los parametros correctamente
+                    $params= $this->parseProperties($dependencyDefinition['construct']);
+                }
+                //Creo una instancia con el constructor correspondiente en base a los parametros
+                $reflection= new \ReflectionClass($class);
+                $newInstance= $reflection->newInstanceArgs($params);
+                //La agrego a loadedDependencies para dependencias circulares
+                $loadedDependencies[$name]= $newInstance;
             }
-            //Creo una instancia con el constructor correspondiente en base a los parametros
-            $reflection= new \ReflectionClass($class);
-            $newInstance= $reflection->newInstanceArgs($params);
-            //La agrego a loadedDependencies para dependencias circulares
-            $loadedDependencies[$name]= $newInstance;
             
             //Si es un singleton la guardo como tal
             if(isset($dependencyDefinition['singleton']) && ($dependencyDefinition['singleton'] == "TRUE" || $dependencyDefinition['singleton'] == "true")){
                 $this->singletons[$name]= $newInstance;
             }
-            
+
             //Injecto las dependencias a las propiedades
             //Primero veo si hay Referencia a otras dependencias y cargo las mismas y luego guardo las propiedades
             if(isset($dependencyDefinition['properties'])){
                 $properties= $this->parseProperties($dependencyDefinition['properties'], $loadedDependencies);
                 $reflection= new Reflection($newInstance);
                 $reflection->setProperties($properties, TRUE);
-            }
+            }                       
         }        
         return $newInstance;
     }

@@ -146,7 +146,7 @@ class En_HttpRequest extends Request{
     }
     /**
      * Lee los campos de un formulario y devuelve un objeto o un array con todos los valores correspondientes
-     * si se devuelve un objeto los nombres de los campos deben coincidir con el de la clase.
+     * si se devuelve un objeto los nombres de los campos deben coincidir con los setters y/o propiedades de la clase (publicos).
      * @param type $var
      * @param string $class
      * @return array - object
@@ -159,12 +159,11 @@ class En_HttpRequest extends Request{
         else{
             $vars= $this->getParams;
         }
-        if($class != NULL){                    
+        if($class != NULL && $vars){
             $object= new $class();
+            $reflection= new \Enola\Support\Reflection($object);
             foreach ($vars as $key => $value) {
-                if(property_exists($object, $key)){
-                    $object->$key= $value;
-                }
+                $reflection->setProperty($key, $value);
             }
             $var= $object;
         }

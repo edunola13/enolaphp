@@ -146,9 +146,13 @@ class DataBaseAR extends Support\GenericLoader{
         $this->errorTran= array();
         $this->connection->beginTransaction();
     }
-    /** Finaliza una Transaccion - Si fue todo bien realiza commit, en caso contrario rolllBack */
-    public function finishTransaction(){
-        if($this->stateTran){
+    /** 
+     * Finaliza una Transaccion - Si fue todo bien realiza commit, en caso contrario rolllBack
+     * Se puede realizar roolback manualmente pasando $ok=false
+     * @param boolean $ok
+     */
+    public function finishTransaction($ok = TRUE){
+        if($this->stateTran && $ok){
             $this->connection->commit();
         }else{
             $this->connection->rollBack();
