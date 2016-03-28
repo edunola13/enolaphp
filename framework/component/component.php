@@ -159,24 +159,8 @@ class ComponentCore{
      * @return boolean
      */
     protected function havaAuthorization($component){
-        if(isset($component['authorization-profiles']) && $component['authorization-profiles'] != ""){
-            $profiles= str_replace(' ', '', $component['authorization-profiles']);
-            $profiles= explode(',', $component['authorization-profiles']);
-            $sessionProfile= 'default';
-            $session= $this->request->session;
-            if($session->exist($this->app->context->getSessionProfile())){
-                $sessionProfile= $session->get($this->app->context->getSessionProfile());
-            }
-            //Comprueba si el usuario logueado tiene o no multiples perfiles y en base a eso comprueba
-            if(is_array($sessionProfile)){
-                return (count(array_intersect($sessionProfile, $profiles)) > 0);
-            }else{
-                return in_array($sessionProfile,$profiles);
-            }            
-        }else{
-            //Si no esta seteado o es vacio el componente es publico
-            return TRUE;
-        }
+        $auth= \Enola\Support\Authorization::getInstance();
+        return $auth->userHasAccessToComponentDefinition($this->request, $component);
     }
     /**
      * Retorna el path de la carpeta donde se encuentra el component en base a su definicion

@@ -241,7 +241,29 @@ class UrlUri{
             }
         }        
         return $maps;
-    }    
+    }
+    /**
+     * Indica si un metodo o conjunto de ellos mapea con el metodo actual de la app o el parametrizado
+     * @param string $method
+     * @param string $methodApp
+     * @return boolean
+     */
+    public static function mapsActualMethod($method, $methodApp = NULL){
+        if($method == "*"){
+            return TRUE;
+        }else{
+            if($methodApp == NULL){
+                $methodApp= En_HttpRequest::getInstance()->requestMethod;
+            }
+            $method= str_replace(' ', '', $method);
+            $methods= explode(',', $method);
+            if(in_array($methodApp, $methods)){
+                return TRUE;
+            }else{
+                return FALSE;
+            }
+        }
+    }
     /**
      * Redireccionar a otra pagina pasando una uri relativa a la aplicacion
      * @param En_HttpRequest $httpRequest

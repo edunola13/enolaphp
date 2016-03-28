@@ -7,9 +7,6 @@
     
     <!-- Bootstrap CSS -->
     <link href="<?php echo E_fn\urlResourceFor('css/bootstrap.min.css');?>" rel="stylesheet">
-    <!-- Bootstrap JavaScript -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
-    <script src="<?php echo E_fn\urlResourceFor('js/bootstrap.min.js');?>"></script>
 </head>
 <body style="padding-top: 50px;">
   <div class="container">

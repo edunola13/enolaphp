@@ -61,6 +61,9 @@ class EnolaContext {
     /** Indica se se cachean los archivos de configuracion
      * @var string */
     private $cacheConfigFiles;
+    /** Path archivo de authorization
+     * @var string */
+    private $authorizationFile;
     /** Path archivo autoload.php
      * @var string */
     private $composerAutoload;
@@ -187,7 +190,9 @@ class EnolaContext {
         //CALCULATE_PERFORMANCE: Indica si el framework debe calcular el tiempo de respuesta o no
         $this->calculatePerformance= $config['calculate_performance'];
         //ENVIRONMENT: Indica el ambiente de la aplicacion
-        $this->environment= $config['environment'];                
+        $this->environment= $config['environment'];
+        //AUTHORIZATION_FILE: Indica el archivo que contiene la configuracion de autorizacion
+        $this->authorizationFile= $config['authorization_file'];
         //AUTOLOAD_FILE: Indica la direccion del archivo autoload de composer
         if(isset($config['composer']['autoload_file'])){
             $this->composerAutoload= $config['composer']['autoload_file'];
@@ -274,6 +279,9 @@ class EnolaContext {
     }
     public function getConfigurationFolder(){
         return $this->configurationFolder;
+    }
+    public function getAuthorizationFile(){
+        return $this->authorizationFile;
     }
     public function getCacheConfigFiles(){
         return $this->cacheConfigFiles;

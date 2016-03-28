@@ -116,12 +116,12 @@ class Application{
      * Realiza la carga de modulos, librerias y soporte que necesita el framework para su correcto funcionamiento
      * sin importar el tipo de requerimiento (HTTP, COMPONENT, CLI, Etc).
      */
-    private function init(){        
+    private function init(){  
         //Realizo la carga de modulos de soporte
         $this->supportModules();
         //Instancio el sistema de Cache
         $this->cache= new Cache\Cache();
-        //Enolacontext->init(): Cargo las configuraciones de contexto faltante
+        //EnolaContext->init(): Cargo las configuraciones de contexto faltante
         $this->context->init();
         //Instancio el motor de Dependencias
         $this->dependenciesEngine= new Support\DependenciesEngine();              
@@ -157,7 +157,9 @@ class Application{
         //Carga el modulo Cache
         require $this->context->getPathFra() . 'supportModules/Cache.php';
         //Carga el motor de Dependencias
-        require $this->context->getPathFra() . 'supportModules/DependenciesEngine.php';        
+        require $this->context->getPathFra() . 'supportModules/DependenciesEngine.php';
+        //Carga de modulo de autorizacion
+        require $this->context->getPathFra() . 'supportModules/Authorization.php';
     }      
     /**
      * Carga todas las librerias particulares de la aplicacion que se cargaran automaticamente indicadas en el archivo de configuracion

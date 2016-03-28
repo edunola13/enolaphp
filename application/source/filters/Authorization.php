@@ -7,8 +7,6 @@ use Enola\Http\En_HttpRequest,Enola\Http\En_HttpResponse;
  * @author Eduardo Sebastian Nola <edunola13@gmail.com>
  */
 class Authorization extends Http\En_Filter{
-    /** @var string */
-    public $configFile= 'authorization';
     /**
      * Constructor
      */
@@ -21,77 +19,32 @@ class Authorization extends Http\En_Filter{
      * @param En_HttpResponse $response
      */
     public function filter(En_HttpRequest $request, En_HttpResponse $response){
-        //Leo el archivo de configuracion de seguridad
-        $seguridad= $this->context->readConfigurationFile($this->configFile);
+        $auth= \Enola\Support\Authorization::getInstance();
         //Tipo por defecto
-        $user_logged= 'default';
+        $userProfile= 'default';
+        $actualProfile= $userProfile;
         if($request->session->exist('user_logged')){
             //Si existe le asigno el tipo correspondiente
-            $user_logged= $request->session->get('user_logged');
+            $userProfile= $request->session->get('user_logged');
         }
         $maps= FALSE;
-        if(is_array($user_logged)){
-            foreach ($user_logged as $profile) {
-                $maps= $this->checkAuthorization($seguridad, $profile, $request, $response);
+        if(is_array($userProfile)){
+            foreach ($userProfile as $profile) {
+                $maps= $auth->profileHasAccessToUrl($profile, $request->uriApp, $request->requestMethod);
+                $actualProfile= $profile;
                 if($maps){break;}
             }
-        }else{            
-            $maps= $this->checkAuthorization($seguridad, $user_logged, $request, $response);
+        }else{
+            $actualProfile= $userProfile;
+            $maps= $auth->profileHasAccessToUrl($userProfile, $request->uriApp, $request->requestMethod);
         }
         if(! $maps){
-            //Si no tiene permiso es redireccionado
-            $response->redirect($seguridad[$user_logged]['error']);
-        }
-    }
-    /**
-     * Comprueba si un tipo de usuario-profile tiene permisos
-     * @param type $seguridad
-     * @param type $profile
-     * @param type $response
-     */
-    private function checkAuthorization($seguridad, $profile, $request, $response){
-        $maps= FALSE;
-        //Compruebo que exista la configuracion para el tipo de usuario logueado
-        if(isset($seguridad[$profile])){
-            //Seteo la configuracion del usuario correpondiente
-            $config_seguridad= $seguridad[$profile];
-            //Seteo los permisos del usuario
-            $permisos= $config_seguridad['permit'];            
-            //Recorro sus permisos y veo si alguno coincice
-            foreach ($permisos as $permiso) {
-                if(Http\UrlUri::mapsActualUrl($permiso)){
-                    //Cuando alguno coincide salgo del for
-                    $maps= TRUE;
-                    break;
-                }
+            //Si el perfil no existe elimina la sesion
+            if($auth->getProfile($actualProfile) == NULL){
+                $request->session->deleteSession();
             }
-            if($maps){
-                //Si hubo mapeo, recorro las url denegadas para el usuario
-                $denegados= $config_seguridad['deny'];
-                foreach ($denegados as $denegado) {
-                    if(Http\UrlUri::mapsActualUrl($denegado)){
-                        //Si la url es denegada salgo del for
-                        $maps= FALSE;
-                        break;
-                    }
-                }
-            }            
+            //Si no tiene permiso es redireccionado            
+            $response->redirect($auth->getProfile($actualProfile)['error']);
         }
-        else{
-            //Si no existe la configuracion aviso del error
-            echo "No existe definicion de seguridad para $profile";
-            $request->session->deleteSession();
-            exit();
-        }
-        return $maps;
-    }
-    
-    /** @return string */
-    public function getConfigFile(){
-        return $this->configFile;
-    }
-    /** @param string $configFile */
-    public function setConfigFile($configFile){
-        $this->configFile= $configFile;
     }
 }

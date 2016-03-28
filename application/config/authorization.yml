@@ -1,17 +1,9 @@
   modules:
     front: {url: /*, method: *}
-    admin: {url: admin/*, method: *}
   
-  users:
+  profiles:
     default: 
       permit:
         - front
-      deny:
-        - admin
+      deny: {}
       error: login
-  
-    administrator:
-      permit:
-          - front
-      deny:
-        error: /
