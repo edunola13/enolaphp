@@ -52,6 +52,15 @@ class EnolaContext {
     /** Time Zone default en PHP
      * @var string */
     private $timeZone;
+    /** Indica si soporta o no multi dominios
+     * @var string */
+    private $multiDomain;
+    /** Dominio de la App
+     * @var string */
+    private $domain;
+    /** Archivos de configuracion por dominio
+     * @var mixed */
+    private $configFiles= array();
     /** Tipo de configuracion a utilizar
      * @var string */
     private $configurationType;
@@ -103,7 +112,7 @@ class EnolaContext {
      * @param string $path_framework
      * @param string $path_application
      */
-    public function __construct($path_root, $path_framework, $path_application, $configurationType, $configurationFolder, $charset, $timeZone, $cache) {
+    public function __construct($path_root, $path_framework, $path_application, $configurationType, $configurationFolder, $charset, $timeZone, $multiDomain, $configFiles, $cache) {
         //Librarie to YAML if it's necessary
         if($configurationType == 'YAML'){
             require $path_framework . 'supportModules/Spyc.php';
@@ -127,6 +136,13 @@ class EnolaContext {
         $this->timeZone= $timeZone;
         //Setea constantes basicas
         $this->setBasicConstants();
+        //MULTI_DOMAIN: Indica si se soporta multiple dominios
+        $this->multiDomain= $multiDomain;
+        //DOMAIN: Dominio de la App
+        $this->domain= filter_input(INPUT_SERVER, 'SERVER_NAME');
+        if($this->multiDomain){
+            $this->configFiles= $configFiles;
+        }
         //Guardo la instancia para qienes quieran consultar desde cualqueir ubicacion
         self::$instance= $this;
     }
@@ -153,7 +169,16 @@ class EnolaContext {
      * @param string $path_application
      */
     public function init(){
-        $config= $this->readConfigurationFile('config');
+        $file= 'config';
+        //Seleccion el archivo de configuracion correspondiente segun el MODO y el DOMINIO
+        if($this->multiDomain){
+            if(ENOLA_MODE == 'HTTP'){
+                $file= $this->getConfigFile($this->domain);
+            }else{
+                $file= reset($this->configFiles);
+            }
+        }
+        $config= $this->readConfigurationFile($file);
         //Define si muestra o no los errores y en que nivel de detalle dependiendo en que fase se encuentre la aplicacion
         switch ($config['environment']){
             case 'development':
@@ -273,6 +298,24 @@ class EnolaContext {
     }
     public function getCharset(){
         return $this->charset;
+    }
+    public function getTimezone(){
+        return $this->timeZone;
+    }
+    public function getMultiDomain(){
+        return $this->multiDomain;
+    }
+    public function getDomain(){
+        return $this->domain;
+    }
+    public function getConfigFiles(){
+        return $this->configFiles;
+    }
+    public function getConfigFile($domain){
+        if(isset($this->configFiles[$domain])){
+            return $this->configFiles[$domain];
+        }
+        return NULL;
     }
     public function getConfigurationType(){
         return $this->configurationType;
