@@ -166,7 +166,10 @@ class HttpCore{
         //Saca el metodo HTPP y en base a eso hace una llamada al metodo correspondiente
         $methodHttp= $_SERVER['REQUEST_METHOD'];
         if($dinamic_method){
-            if(method_exists($controller, $method)){
+            if(method_exists($controller, $methodHttp . '_' . $method)){
+                $method= $methodHttp . '_' . $method;
+                $controller->$method($this->httpRequest, $this->httpResponse);
+            }else if(method_exists($controller, $method)){
                 $controller->$method($this->httpRequest, $this->httpResponse);
             }else{
                 Error::general_error('HTTP Method Error', "The HTTP method $method is not supported");

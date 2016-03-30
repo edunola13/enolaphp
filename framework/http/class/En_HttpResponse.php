@@ -109,7 +109,7 @@ class En_HttpResponse extends Response{
      * @param string $charset
      */
     public function setContentType($contentType, $charset=NULL){
-        $this->setHeader("Content-type", $contentType);
+        $this->setHeader("Content-Type", $contentType);
         if($charset != NULL){
             $this->setHeader("charset", $charset);
         }

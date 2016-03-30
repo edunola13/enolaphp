@@ -13,33 +13,32 @@ trait GenericBehavior {
      * Valida las variables de un objeto o de un array en base a una definicion de configuracion de validacion
      * Se puede utilizar la libreria que se desee pere debe respetar la inerfaz de la proporcionada por el framework.
      * @param type $var
-     * @param string $lib
      * @param string $locale
+     * @param string $lib
      * @return bool
      */
     protected function validate($var, $locale = NULL, $lib= '\Enola\Lib\Validation'){
-        $validacion= new $lib($locale);
+        $validation= new $lib($locale);
         $reglas= $this->configValidation();
         if(is_object($var)){
             $reflection= new Reflection($var);
             foreach ($reglas as $key => $regla) {
-                $validacion->add_rule($key, $reflection->getProperty($key), $regla);
+                $validation->add_rule($key, $reflection->getProperty($key), $regla);
             }
-        }
-        else{
+        }else{
             foreach ($reglas as $key => $regla) {
-                $validacion->add_rule($key, $var[$key], $regla);
+                $field= isset($var[$key]) ? $var[$key] : '';
+                $validation->add_rule($key, $field, $regla);
             }
         }
-        if(! $validacion->validate()){
+        if(! $validation->validate()){
             //Consigo los errores y retorno FALSE
-            $this->errors= $validacion->error_messages();
+            $this->errors= $validation->error_messages();
             return FALSE;
-        }
-        else{
+        }else{
             return TRUE;            
         }
-    }    
+    }     
     /**
      * Devuelve la configuracion de validacion
      * Deberia ser sobrescrita por la clase que desee validar, si no, no validara nada.
