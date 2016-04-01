@@ -260,7 +260,7 @@ class Reflection{
     public function getProperties($properties){
         $values= array();
         foreach ($properties as $key => $value) {
-            $values[$key]= $this->setProperty($key, $value);
+            $values[$key]= $this->getProperty($key);
         }
         return $values;
     }

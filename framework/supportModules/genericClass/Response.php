@@ -41,8 +41,8 @@ class Response {
      * @param type $content
      * @param int $jsonOptions
      */
-    public function setJsonContent($content, $jsonOptions=0, $depth=512){
-        self::$body= json_encode($content, $jsonOptions, $depth);
+    public function setJsonContent($content, $jsonOptions=0){
+        self::$body= json_encode($content, $jsonOptions);
     }
     /**
      * Devuelve el contenido de la respuesta
