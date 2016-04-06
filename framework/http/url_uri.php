@@ -138,13 +138,11 @@ class UrlUri{
                                 $actual_uri_part= substr($actual_uri_parts[$i], 0, strlen($url_part));
                                 if($url_part == $actual_uri_part){
                                     break;
-                                }
-                                else{
+                                }else{
                                     $maps= FALSE;
                                     break;
                                 }
-                            }
-                            else{
+                            }else{
                                 $maps= FALSE;
                                 break;
                             }
@@ -156,11 +154,10 @@ class UrlUri{
                                 $maps= FALSE;
                                 break;
                             }
-                        }
-                        else{
-                            //Si la parte de la uri empieza con ( y termina con ) puede ir cualquier string ahi por lo que pasa directamente esta parte de la validacion
-                            if(! ($url_parts[$i]{0} == "(" and $url_parts[$i]{strlen($url_parts[$i]) -1} == ")")){
-                                //Si no contiene ( y ) debe mapear
+                        }else{
+                            //Si la parte de la uri empieza con : puede ir cualquier string ahi por lo que pasa directamente esta parte de la validacion
+                            if(! $url_parts[$i]{0} == ":"){
+                                //Si no contiene : debe mapear
                                 //Si no coinciden las partes no mapean
                                 if($url_parts[$i] != $actual_uri_parts[$i]){
                                     $maps= FALSE;
@@ -168,12 +165,10 @@ class UrlUri{
                                 }
                             }
                         }
-                    }
-                    else{
+                    }else{
                         break;
                     }
-                }
-                else{
+                }else{
                     //La uri actual no tiene mas partes y no hay coincidencia completa
                     //Si lo que sigue es un - o un * mapea
                     if($url_parts[$i] != "-" && $url_parts[$i] != "*"){
@@ -182,8 +177,7 @@ class UrlUri{
                     break;                 
                 }
             }            
-        }
-        else{
+        }else{
             //Si el tamano de la url pasada es menor que la uri uso el for recorriendo las partes de la uri
             $count_uri_parts_actual= count($actual_uri_parts);
             for($i= 0; $i < $count_uri_parts_actual; $i++){
@@ -198,13 +192,11 @@ class UrlUri{
                                 $actual_uri_part= substr($actual_uri_parts[$i], 0, strlen($url_part));
                                 if($url_part == $actual_uri_part){
                                     break;
-                                }
-                                else{
+                                }else{
                                     $maps= FALSE;
                                     break;
                                 }
-                            }
-                            else{
+                            }else{
                                 $maps= FALSE;
                                 break;
                             }
@@ -216,11 +208,10 @@ class UrlUri{
                                 $maps= FALSE;
                                 break;
                             }
-                        }
-                        else{
-                            //Si la parte de la uri empieza con ( y termina con ) puede ir cualquier string ahi por lo que pasa directamente esta parte de la validacion
-                            if(! ($url_parts[$i]{0} == "(" and $url_parts[$i]{strlen($url_parts[$i]) -1} == ")")){
-                                //Si no contiene ( y ) debe mapear                        
+                        }else{
+                            //Si la parte de la uri empieza con : puede ir cualquier string ahi por lo que pasa directamente esta parte de la validacion
+                            if(! $url_parts[$i]{0} == ":"){
+                                //Si no contiene : debe mapear                        
                                 //Si no coinciden las partes no mapean
                                 if($url_parts[$i] != $actual_uri_parts[$i]){
                                     $maps= FALSE;
@@ -228,12 +219,10 @@ class UrlUri{
                                 }
                             }
                         }
-                    }
-                    else{
+                    }else{
                         break;
                     }
-                }
-                else{
+                }else{
                     //La url pasada no tiene mas partes y no hay coincidencia completa
                     $maps= FALSE;
                     break;
@@ -332,7 +321,7 @@ class UrlUri{
             }
         }        
         //Pase lo que pase arriba esto puede ir siempre, ya que puede estar anterior al * o al -
-        //Analizo si hay parametros asociativos con porque se mapean entre "(" ")"
+        //Analizo si hay parametros asociativos porque se mapean con ":"
         $count_uri_parts= count($url_parts);
         for($i= 0; $i < $count_uri_parts; $i++){
             if(count($actual_uri_parts)-1 < $i){
@@ -344,9 +333,9 @@ class UrlUri{
                 break;
             }
             else{
-                //Si la parte de la url comienza con ( y termina con ) le paso el parametro
-                if($url_parts[$i]{0} == "(" and $url_parts[$i]{strlen($url_parts[$i]) -1} == ")"){
-                    $nombre= trim($url_parts[$i], "()");
+                //Si la parte de la url comienza con : le paso el parametro
+                if($url_parts[$i]{0} == ":"){
+                    $nombre= ltrim($url_parts[$i], ":");
                     $parameters[$nombre]= $actual_uri_parts[$i];
                 }
             }

@@ -168,44 +168,14 @@ class HttpCore{
         if($dinamic_method){
             if(method_exists($controller, $methodHttp . '_' . $method)){
                 $method= $methodHttp . '_' . $method;
-                $controller->$method($this->httpRequest, $this->httpResponse);
-            }else if(method_exists($controller, $method)){
-                $controller->$method($this->httpRequest, $this->httpResponse);
-            }else{
-                Error::general_error('HTTP Method Error', "The HTTP method $method is not supported");
             }
         }else{
-           switch ($methodHttp) {
-            case 'GET':
-                $controller->doGet($this->httpRequest, $this->httpResponse);
-                break;
-            case 'POST':
-                $controller->doPost($this->httpRequest, $this->httpResponse);
-                break;
-            case 'UPDATE':
-                $controller->doUpdate($this->httpRequest, $this->httpResponse);
-                break;
-            case 'DELETE':
-                $controller->doDelete($this->httpRequest, $this->httpResponse);
-                break;
-            case 'HEAD':
-                $controller->doHead($this->httpRequest, $this->httpResponse);
-                break;
-            case 'TRACE':
-                $controller->doTrace($this->httpRequest, $this->httpResponse);
-                break;
-            case 'URI':
-                $controller->doUri($this->httpRequest, $this->httpResponse);
-                break;
-            case "OPTIONS":
-                $controller->doOptions($this->httpRequest, $this->httpResponse);
-                break;
-            case 'CONNECT':
-                $controller->doConnect($this->httpRequest, $this->httpResponse);
-                break;
-            default :                
-                Error::general_error('HTTP Method Error', "The HTTP method $methodHttp is not supported");
-            }
+            $method= "do" . ucfirst(strtolower($methodHttp));
+        }
+        if(method_exists($controller, $method)){
+            $controller->$method($this->httpRequest, $this->httpResponse);
+        }else{
+            Error::general_error('HTTP Method Error', "The HTTP method $method is not supported");
         }
     }    
     /**
