@@ -164,7 +164,7 @@ class HttpCore{
             $this->app->dependenciesEngine->injectProperties($controller, $controller_esp['properties']);
         }       
         //Saca el metodo HTPP y en base a eso hace una llamada al metodo correspondiente
-        $methodHttp= $_SERVER['REQUEST_METHOD'];
+        $methodHttp= filter_input(INPUT_SERVER, 'REQUEST_METHOD');
         if($dinamic_method){
             if(method_exists($controller, $methodHttp . '_' . $method)){
                 $method= $methodHttp . '_' . $method;

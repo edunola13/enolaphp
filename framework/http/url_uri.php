@@ -22,7 +22,7 @@ class UrlUri{
         //Resultado de Configuracion - DefinirURI
         $result= array();        
         //Cargo la URI segun el servidor - Esta casi siempre es todo lo que esta despues de www.edunola.com.ar o localhost/
-        $uri_actual= $_SERVER['REQUEST_URI'];
+        $uri_actual= filter_input(INPUT_SERVER, 'REQUEST_URI');
         //Analizo la cantidad de partes de la baseurl + indexpage(si corresponde) para poder crear la URI correspondiente para la aplicacion
         $url_base= BASEURL;
         $index_page= $context->getIndexPage();
@@ -156,7 +156,7 @@ class UrlUri{
                             }
                         }else{
                             //Si la parte de la uri empieza con : puede ir cualquier string ahi por lo que pasa directamente esta parte de la validacion
-                            if(! $url_parts[$i]{0} == ":"){
+                            if($url_parts[$i]{0} != ":"){
                                 //Si no contiene : debe mapear
                                 //Si no coinciden las partes no mapean
                                 if($url_parts[$i] != $actual_uri_parts[$i]){
@@ -210,7 +210,7 @@ class UrlUri{
                             }
                         }else{
                             //Si la parte de la uri empieza con : puede ir cualquier string ahi por lo que pasa directamente esta parte de la validacion
-                            if(! $url_parts[$i]{0} == ":"){
+                            if($url_parts[$i]{0} != ":"){
                                 //Si no contiene : debe mapear                        
                                 //Si no coinciden las partes no mapean
                                 if($url_parts[$i] != $actual_uri_parts[$i]){
@@ -410,7 +410,7 @@ class UrlUri{
             Enola\Error::general_error('Error Estado HTTP', 'No status text available.  Please check your status code number or supply your own message text.');
 	}
         //Cargo el protocolo
-	$server_protocol = (isset($_SERVER['SERVER_PROTOCOL'])) ? $_SERVER['SERVER_PROTOCOL'] : FALSE;
+	$server_protocol = filter_input(INPUT_SERVER, 'SERVER_PROTOCOL');
 
         //Segun el protocolo modifico el header HTTP
 	if (substr(php_sapi_name(), 0, 3) == 'cgi'){

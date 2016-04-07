@@ -256,7 +256,7 @@ class EnolaContext {
         //PATHAPP: direccion de la carpeta de la aplicacion - definida en index.php
         define('PATHAPP', $this->getPathApp());
         //ENOLA_MODE: Indica si la aplicacion se esta ejecutando via HTTP o CLI
-        if(PHP_SAPI == 'cli' || !isset($_SERVER['REQUEST_METHOD'])){
+        if(PHP_SAPI == 'cli' || !filter_input(INPUT_SERVER, 'REQUEST_METHOD')){
             define('ENOLA_MODE', 'CLI');
         }else{
             define('ENOLA_MODE', 'HTTP');

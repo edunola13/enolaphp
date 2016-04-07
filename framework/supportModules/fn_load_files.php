@@ -86,3 +86,35 @@ function add_property_instance($class, $obj, $name = ""){
     }
     $obj->$name= new $class();
 }
+/**
+* Este proceso analiza de a una las lineas del archivo de internacionalizacion usado. En este caso txt file y me arma lo que seria
+* un array asociativo clave valor en base a la linea.
+* @param array[string] $lineas
+* @return array[string]
+*/
+function parse_properties($lineas) {
+    $result= NULL;
+    $isWaitingOtherLine = false;
+    $value= NULL;
+    foreach($lineas as $i=>$linea) {
+        if(empty($linea) || !isset($linea) || strpos($linea,"#") === 0){
+            continue;
+        }
+        if(!$isWaitingOtherLine) {
+            $key= substr($linea,0,strpos($linea,'='));
+            $value= substr($linea,strpos($linea,'=') + 1, strlen($linea));
+        }else {
+            $value.= $linea;
+        }           
+
+        /* Check if ends with single '\' */
+        if(strrpos($value,"\\") === strlen($value)-strlen("\\")) {
+            $value= substr($value, 0, strlen($value)-1)."\n";
+            $isWaitingOtherLine= true;
+        }else {
+            $result[$key]= preg_replace("/\r\n+|\r+|\n+|\t+/i", "", $value); 
+            $isWaitingOtherLine= false;
+        }                       
+    }
+    return $result;
+}

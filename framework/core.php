@@ -179,12 +179,12 @@ class Application{
     /**
      * Carga e inicializa el modulo HTTP
      */
-    protected function loadHttpModule(){
-        //Analiza el paso de un error HTTP
-        Error::catch_server_error();
+    protected function loadHttpModule(){        
         //Cargo el modulo HTTP e instancio el Core que se encarga de crear el HttpRequest que representa el requerimiento HTTP
         require $this->context->getPathFra() . 'http/http.php';
         $this->httpCore= new Http\HttpCore($this);
+        //Analiza el paso de un error HTTP        
+        Error::catch_server_error();
     }
     /**
      * Carga el modulo cron y ejecuta el Cron correspondiente

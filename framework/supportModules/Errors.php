@@ -132,7 +132,7 @@
             }*/
             $arch = fopen(PATHAPP . 'logs/log-' . date('Y-m-d') . '.txt', "a+"); 
             if(ENOLA_MODE == 'HTTP'){
-                fwrite($arch, "[".date("Y-m-d H:i:s.u")." ".$_SERVER['REMOTE_ADDR']." "." - $type ] ".$chain." - $file - $line \n");
+                fwrite($arch, "[".date("Y-m-d H:i:s.u")." ".filter_input(INPUT_SERVER, 'REMOTE_ADDR')." "." - $type ] ".$chain." - $file - $line \n");
             }else{
                 fwrite($arch, "[".date("Y-m-d H:i:s.u")." MODE CLI "." - $type ] ".$chain." - $file - $line \n");
             }
@@ -144,14 +144,15 @@
          * Escribe en log
          */
         public static function catch_server_error(){
-            if(isset($_GET['error_apache_enola'])){
+            $enolaError= filter_input(INPUT_GET, 'error_apache_enola');
+            if($enolaError){
                 //Cargo el archivo con los errores
                 $errores= \E_fn\load_framework_file('information/errorsHTTP.ini');
-                $errores= parse_properties($errores);
+                $errores= \E_fn\parse_properties($errores);
                 //Escribo el Log
-                self::write_log('error_http', $errores[$_GET['error_apache_enola']]);
+                self::write_log('error_http', $errores[$enolaError]);
                 //Muestro el error correspondiente
-                self::general_error('Error ' . $_GET['error_apache_enola'], $errores[$_GET['error_apache_enola']] , 'general_error', $_GET['error_apache_enola']);
+                self::general_error('Error ' . $enolaError, $errores[$enolaError] , 'general_error', $enolaError);
                 //No continuo la ejecucion
                 exit;
             }

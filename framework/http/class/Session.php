@@ -9,11 +9,15 @@ session_start();
  * @author Eduardo Sebastian Nola <edunola13@gmail.com>
  * @category Enola\Http
  */
-class Session {    
+class Session {
+    /** Variables de $_SERVER
+     *  @var mixed */
+    protected $serverVars;
     /**
      * Constructor que realiza la comprobacion de identidad
      */
     public function __constructor(){
+		
         $this->checkIdentity();
     }    
     /**
@@ -91,13 +95,13 @@ class Session {
      */
     private function checkIdentity(){
         if(isset($_SESSION['REMOTE_ADDR']) && isset($_SESSION['HTTP_USER_AGENT'])){
-            if($_SESSION['REMOTE_ADDR'] != $_SERVER['REMOTE_ADDR'] || $_SESSION['HTTP_USER_AGENT'] != $_SERVER['HTTP_USER_AGENT']) {
+            if($_SESSION['REMOTE_ADDR'] != $this->serverVars['REMOTE_ADDR'] || $_SESSION['HTTP_USER_AGENT'] != $this->serverVars['HTTP_USER_AGENT']) {
                 Error::general_error('Session - Identity', 'There are a proble with the Sesion identity');
             }
         }
         else{
-            $_SESSION['REMOTE_ADDR'] = $_SERVER['REMOTE_ADDR'];
-            $_SESSION['HTTP_USER_AGENT'] = $_SERVER['HTTP_USER_AGENT'];
+            $_SESSION['REMOTE_ADDR'] = $this->serverVars['REMOTE_ADDR'];
+            $_SESSION['HTTP_USER_AGENT'] = $this->serverVars['HTTP_USER_AGENT'];
         }
     }    
 }

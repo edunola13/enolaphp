@@ -182,13 +182,13 @@ class View{
         if($locale != NULL){
             if(file_exists(PATHAPP . 'source/content/' . $file . "_$locale" . '.txt')){
                 $this->i18nContent= \E_fn\load_application_file('source/content/' . $file . "_$locale" . '.txt');
-                $this->i18nContent= $this->parse_properties($this->i18nContent);
+                $this->i18nContent= \E_fn\parse_properties($this->i18nContent);
                 $this->locale= $locale;
             }
         }
         if($this->i18nContent == NULL){
             $this->i18nContent= \E_fn\load_application_file('source/content/' . $file . '.txt');
-            $this->i18nContent= $this->parse_properties($this->i18nContent);
+            $this->i18nContent= \E_fn\parse_properties($this->i18nContent);
             $this->locale= 'Default';
         }
     }    
@@ -239,36 +239,4 @@ class View{
             return 'Default';
         }
     }    
-    /**
-     * Este proceso analiza de a una las lineas del archivo de internacionalizacion usado. En este caso txt file y me arma lo que seria
-     * un array asociativo clave valor en base a la linea.
-     * @param array[string] $lineas
-     * @return array[string]
-     */
-    function parse_properties($lineas) {
-        $result= NULL;
-        $isWaitingOtherLine = false;
-        $value= NULL;
-        foreach($lineas as $i=>$linea) {
-            if(empty($linea) || !isset($linea) || strpos($linea,"#") === 0){
-                continue;
-            }
-            if(!$isWaitingOtherLine) {
-                $key= substr($linea,0,strpos($linea,'='));
-                $value= substr($linea,strpos($linea,'=') + 1, strlen($linea));
-            }else {
-                $value.= $linea;
-            }           
-            
-            /* Check if ends with single '\' */
-            if(strrpos($value,"\\") === strlen($value)-strlen("\\")) {
-                $value= substr($value, 0, strlen($value)-1)."\n";
-                $isWaitingOtherLine= true;
-            }else {
-                $result[$key]= preg_replace("/\r\n+|\r+|\n+|\t+/i", "", $value); 
-                $isWaitingOtherLine= false;
-            }                       
-        }
-        return $result;
-   }
 }
