@@ -100,7 +100,7 @@ class UrlUri{
      * En base a una URL pasada como parametro ve si esta mapea a la URI actual de la aplicacion
      * Se pasan las url-uri definidas en los archivos de configuracion
      * @param string $url - del controlador o filtro
-     * @param string uriapp - Si no deseo utilizar el URIAPP por defecto de la aplicacion
+     * @param string uriapp - URIAPP de la aplicacion por defecto
      * @return boolean
      */
     public static function mapsActualUrl($url, $uriapp = NULL){
@@ -126,8 +126,25 @@ class UrlUri{
         if(count($url_parts) >= count($actual_uri_parts)){
             //Si el tamano de la url es igual o mayor que la uri actual uso el for recorriendo las partes de la url
             $count_uri_parts= count($url_parts);
+            $count_actual_uri_parts= count($actual_uri_parts);
             for($i= 0; $i < $count_uri_parts; $i++) {
-                if(count($actual_uri_parts) >= ($i + 1)){
+                if($count_actual_uri_parts >= ($i + 1)){
+                    if($actual_uri_parts[$i] == ''){
+                        //La uri actual no tiene mas partes y no hay coincidencia completa
+                        //Si lo que sigue es un - o un * o un :-? mapea
+                        if($url_parts[$i] != "-" && $url_parts[$i] != "*"){
+                            if($url_parts[$i] != '' && $url_parts[$i]{0} == ':' && $url_parts[$i]{strlen($url_parts[$i]) - 1} == '?'){
+                                break;
+                            }
+                            //Si no coinciden las partes no mapean
+                            if($url_parts[$i] != $actual_uri_parts[$i]){
+                                $maps= FALSE;
+                                break;
+                            }
+                        }
+                        break;
+                    }
+                    
                     //Si hay un * o un - no me importa que viene despues, mapea todo, no deberia haber nada despues
                     if($url_parts[$i] != "*" && $url_parts[$i] != "-"){
                         $pos_ocurrencia= strpos($url_parts[$i], "*");
@@ -146,8 +163,8 @@ class UrlUri{
                                 $maps= FALSE;
                                 break;
                             }
-                        }                        
-                        //Si alguna esta vacia no compara el mapeo con () y voy directo a la comparacion
+                        }                   
+                        //Si alguna esta vacia no compara el mapeo con : y voy directo a la comparacion
                         if($url_parts[$i] == '' || $actual_uri_parts[$i] == ''){
                             //Si no coinciden las partes no mapean
                             if($url_parts[$i] != $actual_uri_parts[$i]){
@@ -157,8 +174,7 @@ class UrlUri{
                         }else{
                             //Si la parte de la uri empieza con : puede ir cualquier string ahi por lo que pasa directamente esta parte de la validacion
                             if($url_parts[$i]{0} != ":"){
-                                //Si no contiene : debe mapear
-                                //Si no coinciden las partes no mapean
+                                //Si no contiene : debe mapear, Si no coinciden las partes no mapean
                                 if($url_parts[$i] != $actual_uri_parts[$i]){
                                     $maps= FALSE;
                                     break;
@@ -170,8 +186,11 @@ class UrlUri{
                     }
                 }else{
                     //La uri actual no tiene mas partes y no hay coincidencia completa
-                    //Si lo que sigue es un - o un * mapea
+                    //Si lo que sigue es un - o un * o un :-? mapea
                     if($url_parts[$i] != "-" && $url_parts[$i] != "*"){
+                        if($url_parts[$i]{0} == ':' && $url_parts[$i]{strlen($url_parts[$i]) - 1} == '?'){
+                            break;
+                        }
                         $maps= FALSE;
                     }
                     break;                 
@@ -179,9 +198,10 @@ class UrlUri{
             }            
         }else{
             //Si el tamano de la url pasada es menor que la uri uso el for recorriendo las partes de la uri
-            $count_uri_parts_actual= count($actual_uri_parts);
-            for($i= 0; $i < $count_uri_parts_actual; $i++){
-                if(count($url_parts) >= ($i + 1)){                
+            $count_uri_parts= count($url_parts);
+            $count_actual_uri_parts= count($actual_uri_parts);
+            for($i= 0; $i < $count_actual_uri_parts; $i++){
+                if($count_uri_parts >= ($i + 1)){                
                     //Si hay un * o un - no me importa que viene despues, mapea todo, no deberia haber nada despues
                     if($url_parts[$i] != "*" && $url_parts[$i] != "-"){
                         $pos_ocurrencia= strpos($url_parts[$i], "*");
@@ -211,8 +231,7 @@ class UrlUri{
                         }else{
                             //Si la parte de la uri empieza con : puede ir cualquier string ahi por lo que pasa directamente esta parte de la validacion
                             if($url_parts[$i]{0} != ":"){
-                                //Si no contiene : debe mapear                        
-                                //Si no coinciden las partes no mapean
+                                //Si no contiene : debe mapear, Si no coinciden las partes no mapean
                                 if($url_parts[$i] != $actual_uri_parts[$i]){
                                     $maps= FALSE;
                                     break;
@@ -231,6 +250,215 @@ class UrlUri{
         }        
         return $maps;
     }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    public static function mapsActualUrl2($url, $uriapp = NULL){
+        //Elimino el primer caracter si es igual a "/"
+        if(substr($url, 0, 1) == "/"){
+            $url= substr($url, 1);
+        }        
+        //Separa la url pasada y la uri en partes para poder analizarlas
+        $url_parts= explode("/", $url);
+        
+        //Saco de la uri actual o uriapp pasada como parametro los parametros
+        $uri_explode= explode("?", En_HttpRequest::getInstance()->uriApp);
+        if($uriapp !== NULL){
+            //Quito la barra si se agrego
+            $uriapp= ltrim($uriapp, "/");
+            $uri_explode= explode("?", $uriapp);
+        }
+        $uri_front= $uri_explode[0];
+        //Separo la uri actual
+        $actual_uri_parts= explode("/", $uri_front);
+        $maps= TRUE;        
+        //Analiza que url-uri tiene mas elementos
+        if(count($url_parts) >= count($actual_uri_parts)){
+            //Si el tamano de la url es igual o mayor que la uri actual uso el for recorriendo las partes de la url
+            $count_uri_parts= count($url_parts);
+            $count_actual_uri_parts= count($actual_uri_parts);
+            for($i= 0; $i < $count_uri_parts; $i++) {
+                if($count_actual_uri_parts >= ($i + 1)){
+//                    $pos_ocurrencia= strpos($url_parts[$i], "*");
+//                    if($url_parts[$i] != "*" && $url_parts[$i] != "-" && !$pos_ocurrencia && $url_parts[$i]{0} != ":"){
+//                        //Si no coinciden las partes no mapean
+//                        if($url_parts[$i] != $actual_uri_parts[$i]){
+//                            $maps= FALSE;
+//                            break;
+//                        }
+//                    }else{
+//                        if($url_parts[$i] == "*" && $url_parts[$i] == "-"){
+//                            break;
+//                        }
+//                        if($pos_ocurrencia){
+//                            $url_part= explode("*", $url_parts[$i]);
+//                            $url_part= $url_part[0];
+//                            if(strlen($actual_uri_parts[$i]) >= strlen($url_part)){
+//                                $actual_uri_part= substr($actual_uri_parts[$i], 0, strlen($url_part));
+//                                if($url_part == $actual_uri_part){
+//                                    break;
+//                                }else{
+//                                    $maps= FALSE;
+//                                    break;
+//                                }
+//                            }else{
+//                                $maps= FALSE;
+//                                break;
+//                            }
+//                        }
+//                        //Si la parte de la uri empieza con : puede ir cualquier string ahi por lo que pasa directamente esta parte de la validacion
+//                        if($url_parts[$i]{0} == ":"){
+//                            //Si es distinto de vacio pasa a la siguiente seccion
+//                            if($actual_uri_parts[$i] == '' && $url_parts[$i]{strlen($url_parts[$i])} == '?' ){
+//                                break;
+//                            }else if($actual_uri_parts[$i] == ''){
+//                                $maps= FALSE;
+//                                break;
+//                            }
+//                        }
+//                    }
+                    
+                    //---
+                    
+                    
+                    if($actual_uri_parts[$i] == ''){
+                        //La uri actual no tiene mas partes y no hay coincidencia completa
+                        //Si lo que sigue es un - o un * o un :-? mapea
+                        if($url_parts[$i] != "-" && $url_parts[$i] != "*"){
+                            if($url_parts[$i] != '' && $url_parts[$i]{0} == ':' && $url_parts[$i]{strlen($url_parts[$i]) - 1} == '?'){
+                                break;
+                            }
+                            //Si no coinciden las partes no mapean
+                            if($url_parts[$i] != $actual_uri_parts[$i]){
+                                $maps= FALSE;
+                                break;
+                            }
+                        }
+                        break;
+                    }
+                    
+                    //Si hay un * o un - no me importa que viene despues, mapea todo, no deberia haber nada despues
+                    if($url_parts[$i] != "*" && $url_parts[$i] != "-"){
+                        $pos_ocurrencia= strpos($url_parts[$i], "*");
+                        if($pos_ocurrencia != FALSE){
+                            $url_part= explode("*", $url_parts[$i]);
+                            $url_part= $url_part[0];
+                            if(strlen($actual_uri_parts[$i]) >= strlen($url_part)){
+                                $actual_uri_part= substr($actual_uri_parts[$i], 0, strlen($url_part));
+                                if($url_part == $actual_uri_part){
+                                    break;
+                                }else{
+                                    $maps= FALSE;
+                                    break;
+                                }
+                            }else{
+                                $maps= FALSE;
+                                break;
+                            }
+                        }                   
+                        //Si alguna esta vacia no compara el mapeo con : y voy directo a la comparacion
+                        if($url_parts[$i] == '' || $actual_uri_parts[$i] == ''){
+                            //Si no coinciden las partes no mapean
+                            if($url_parts[$i] != $actual_uri_parts[$i]){
+                                $maps= FALSE;
+                                break;
+                            }
+                        }else{
+                            //Si la parte de la uri empieza con : puede ir cualquier string ahi por lo que pasa directamente esta parte de la validacion
+                            if($url_parts[$i]{0} != ":"){
+                                //Si no contiene : debe mapear, Si no coinciden las partes no mapean
+                                if($url_parts[$i] != $actual_uri_parts[$i]){
+                                    $maps= FALSE;
+                                    break;
+                                }
+                            }
+                        }
+                    }else{
+                        break;
+                    }
+                }else{
+                    //La uri actual no tiene mas partes y no hay coincidencia completa
+                    //Si lo que sigue es un - o un * o un :-? mapea
+                    if($url_parts[$i] != "-" && $url_parts[$i] != "*"){
+                        if($url_parts[$i]{0} == ':' && $url_parts[$i]{strlen($url_parts[$i]) - 1} == '?'){
+                            break;
+                        }
+                        $maps= FALSE;
+                    }
+                    break;                 
+                }
+            }            
+        }else{
+            //Si el tamano de la url pasada es menor que la uri uso el for recorriendo las partes de la uri
+            $count_uri_parts= count($url_parts);
+            $count_actual_uri_parts= count($actual_uri_parts);
+            for($i= 0; $i < $count_actual_uri_parts; $i++){
+                if($count_uri_parts >= ($i + 1)){                
+                    //Si hay un * o un - no me importa que viene despues, mapea todo, no deberia haber nada despues
+                    if($url_parts[$i] != "*" && $url_parts[$i] != "-"){
+                        $pos_ocurrencia= strpos($url_parts[$i], "*");
+                        if($pos_ocurrencia != FALSE){
+                            $url_part= explode("*", $url_parts[$i]);
+                            $url_part= $url_part[0];
+                            if(strlen($actual_uri_parts[$i]) >= strlen($url_part)){
+                                $actual_uri_part= substr($actual_uri_parts[$i], 0, strlen($url_part));
+                                if($url_part == $actual_uri_part){
+                                    break;
+                                }else{
+                                    $maps= FALSE;
+                                    break;
+                                }
+                            }else{
+                                $maps= FALSE;
+                                break;
+                            }
+                        }
+                        //Si alguna esta vacia no compara el mapeo con () y voy directo a la comparacion
+                        if($url_parts[$i] == '' || $actual_uri_parts[$i] == ''){
+                            //Si no coinciden las partes no mapean
+                            if($url_parts[$i] != $actual_uri_parts[$i]){
+                                $maps= FALSE;
+                                break;
+                            }
+                        }else{
+                            //Si la parte de la uri empieza con : puede ir cualquier string ahi por lo que pasa directamente esta parte de la validacion
+                            if($url_parts[$i]{0} != ":"){
+                                //Si no contiene : debe mapear, Si no coinciden las partes no mapean
+                                if($url_parts[$i] != $actual_uri_parts[$i]){
+                                    $maps= FALSE;
+                                    break;
+                                }
+                            }
+                        }
+                    }else{
+                        break;
+                    }
+                }else{
+                    //La url pasada no tiene mas partes y no hay coincidencia completa
+                    $maps= FALSE;
+                    break;
+                }
+            }
+        }        
+        return $maps;
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     /**
      * Indica si un metodo o conjunto de ellos mapea con el metodo actual de la app o el parametrizado
      * @param string $method
@@ -329,13 +557,14 @@ class UrlUri{
                 break;
             }
             if($url_parts[$i] == '' || $actual_uri_parts[$i] == ''){
-                //Si alguno esta vacio ya no hay parametros uri, es decir ()
+                //Si alguno esta vacio ya no hay parametros uri, es decir :
                 break;
             }
             else{
                 //Si la parte de la url comienza con : le paso el parametro
                 if($url_parts[$i]{0} == ":"){
                     $nombre= ltrim($url_parts[$i], ":");
+                    $nombre= rtrim($nombre, '?');
                     $parameters[$nombre]= $actual_uri_parts[$i];
                 }
             }

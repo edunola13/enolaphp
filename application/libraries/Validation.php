@@ -181,77 +181,123 @@ class Validation {
     /*
      * ACA EMPIEZAN LAS REGLAS
      */
+    /**
+     * Funcion de uso interno para las funciones de validar que validan aspectos solo cuando la variable esta completa-cargada
+     * @param mixed $value
+     * @return boolean
+     */
+    private function isComplete($value){
+        if(!is_array($value)){
+            return !($value === '' || $value === NULL);
+        }else{
+            return (count($value) > 1);
+        }            
+    }
     
     /**
-     * Regla required: analiza si el campo fue completado 
+     * Regla required: analiza que el campo no sea null ni vacio
      * @param string $name
      * @param mixed $value
      * @return boolean
      */
     private function required($name, $value){
-        if(! is_array($value)){
-            if($value == ''){
-                $this->add_message($name, 'required');
-                return FALSE;
-            }else{
-                return TRUE;
-            }
-        }else{
-            if(count($value) > 1){
-                return TRUE;
-            }else{
-                return FALSE;
-            }
+        if(! $this->isComplete($value)){
+            $this->add_message($name, 'required');
+            return FALSE;
         }
-    }    
+        return TRUE;
+    }
+    /**
+     * Regla not_null: analiza que el campo no sea null
+     * @param string $name
+     * @param mixed $value
+     * @return boolean
+     */
+    private function not_null($name, $value){
+        if($value === NULL){
+            $this->add_message($name, 'not_null');
+            return FALSE;
+        }
+        return TRUE;
+    }
+    /**
+     * Regla not_empty: analiza que el campo no este vacio
+     * -Si es null no se controla
+     * @param string $name
+     * @param mixed $value
+     * @return boolean
+     */
+    private function not_empty($name, $value){
+        if(! $value === NULL){
+            return TRUE;
+        }
+        if($value === ''){            
+           $this->add_message($name, 'not_empty');
+           return FALSE;
+        }
+        return TRUE;
+    }
     /**
      * Regla max_length: analiza que el string no contenga mas de $max caracteres
+     * -Si no es cargada no se controla
      * @param string $name
      * @param mixed $value
      * @param int $max
      * @return boolean
      */
     private function max_length($name, $value, $max){
+        //Si no se completo no se valida
+        if(! $this->isComplete($value)){
+            return TRUE;
+        }
         if(is_string($value)){
             if(strlen($value) > $max){
                 $this->add_message($name, 'max_length', array('max' => $max));
                 return FALSE;
-            }else{
-                return TRUE;
             }
         }else{
             $this->add_message($name, 'is_string');
             return FALSE;
         }
+        return TRUE;
     }    
     /**
      * Regla min_lenght: analiza que el string no contenga menos de $min caracteres
+     * -Si no es cargada no se controla
      * @param string $name
      * @param mixed $value
      * @param int $min
      * @return boolean
      */
     private function min_length($name, $value, $min){
+        //Si no se completo no se valida
+        if(! $this->isComplete($value)){
+            return TRUE;
+        }
         if(is_string($value)){
             if(strlen($value) < $min){
                 $this->add_message($name, 'min_length', array('min' => $min));
                 return FALSE;
-            }else{
-                return TRUE;
             }
         }else{
             $this->add_message($name, 'is_string');
             return FALSE;
         }
+        return TRUE;
     }    
     /**
      * Regla length_between: analiza que el string este entre un minimo y un maximo
+     * -Si no es cargada no se controla
      * @param string $name
      * @param mixed $value
      * @param string $param El minimo y el maximo separado por &
      * @return boolean 
      */
     private function length_between($name, $value, $param){
+        //Si no se completo no se valida
+        if(! $this->isComplete($value)){
+            return TRUE;
+        }
         $params= explode('&', $param);
         $min= $params[0];
         $max= $params[1];
@@ -268,27 +314,33 @@ class Validation {
     }
     /**
      * Regla es_integer: analiza que el campo sea un integer
+     * -Si no es cargada no se controla
      * @param string $name
      * @param mixed $value
      * @return boolean
      */
     private function is_integer($name, $value){
-        if(is_numeric($value)){
+        //Si no se completo no se valida
+        if(! $this->isComplete($value)){
             return TRUE;
-        }else{
+        }
+        if(! is_numeric($value)){
             $this->add_message($name, 'is_integer');
             return FALSE;
         }
+        return TRUE;
     }    
     /**
      * Regla max: analiza que el numero no se mayor a $max
+     * -Si no es cargada no se controla
      * @param string $name
      * @param mixed $value
      * @param int $max
      * @return boolean
      */
     private function max($name, $value, $max){
-        if($value == ''){
+        //Si no se completo no se valida
+        if(! $this->isComplete($value)){
             return TRUE;
         }
         if(is_numeric($value)){
@@ -296,43 +348,51 @@ class Validation {
             if($value > $max){
                 $this->add_message($name, 'max', array('max' => $max));
                 return FALSE;
-            }else{
-                return TRUE;
             }
         }else{
             $this->add_message($name, 'is_integer');
             return FALSE;
         }
+        return TRUE;
     }    
     /**
      * Regla min: analiza que el numero no sea menor a $min
+     * -Si no es cargada no se controla
      * @param string $name
      * @param mixed $value
      * @param int $min
      * @return boolean
      */
     private function min($name, $value, $min){
+        //Si no se completo no se valida
+        if(! $this->isComplete($value)){
+            return TRUE;
+        }
         if(is_numeric($value)){
             $value= (float)$value;
             if($value < $min){
                 $this->add_message($name, 'min', array('min' => $min));
                 return FALSE;
-            }else{
-                return TRUE;
             }
         }else{
             $this->add_message($name, 'is_integer');
             return FALSE;
         }
+        return TRUE;
     }
     /**
      * Regla num_between: analiza que el numero este entre un minimo y un maximo
+     * -Si no es cargada no se controla
      * @param string $name
      * @param mixed $value
      * @param string $param El minimo y el maximo separado por &
      * @return boolean 
      */
     private function num_between($name, $value, $param){
+        //Si no se completo no se valida
+        if(! $this->isComplete($value)){
+            return TRUE;
+        }
         $params= explode('&', $param);
         $min= $params[0];
         $max= $params[1];
@@ -349,115 +409,148 @@ class Validation {
     }
     /**
      * Regla igual: analiza si 2 datos son iguales
+     * -Si no es cargada no se controla
      * @param string $name
      * @param mixed $value
      * @param mixed $toCompare
      * @return boolean
      */
     private function equal($name, $value, $toCompare){
-        if($value == $this->fieldsState["$toCompare"]['value']){
+        //Si no se completo no se valida
+        if(! $this->isComplete($value)){
             return TRUE;
-        }else{
+        }
+        if($value != $this->fieldsState["$toCompare"]['value']){
             $this->add_message($name, 'igual', array('tocompare' => $toCompare));
             return FALSE;
         }
+        return TRUE;
     } 
     /**
      * Regla username: analiza si un string cumple con un mínimo de 5 caracteres y un máximo de 20, y que se usen sólo letras, números y guión bajo
+     * -Si no es cargada no se controla
      * @param string $name
      * @param mixed $value
      * @return boolean
      */
     private function user_name ($name, $value){
-    	$expresion = '/^[a-zA-Záéíóúñ\d_]{5,20}$/i';
-    	if(preg_match($expresion, $value)){
+        //Si no se completo no se valida
+        if(! $this->isComplete($value)){
             return TRUE;
-    	}else{
+        }
+    	$expresion = '/^[a-zA-Záéíóúñ\d_]{5,20}$/i';
+    	if(! preg_match($expresion, $value)){
             $this->add_message($name, 'user_name');
             return FALSE;
     	}
+        return TRUE;
     }
     /**
      * Regla letras: analiza si un string contiene sólo letras y vocales con acento
+     * -Si no es cargada no se controla
      * @param string $name
      * @param mixed $value
      * @return boolean
      */
     private function letters ($name, $value){
-    	$expresion = '/^[a-zA-Záéíóúñ\s]*$/';
-    	if(preg_match($expresion, $value)){
+        //Si no se completo no se valida
+        if(! $this->isComplete($value)){
             return TRUE;
-    	}else{
+        }
+    	$expresion = '/^[a-zA-Záéíóúñ\s]*$/';
+    	if(! preg_match($expresion, $value)){
             $this->add_message($name, 'letters');
             return FALSE;
     	}
+        return TRUE;
     }
     /**
      * Regla letras y nums: analiza si un string contiene sólo letras y/o números
+     * -Si no es cargada no se controla
      * @param string $name
      * @param mixed $value
      * @return boolean
      */
     private function letters_numbers ($name, $value){
-    	$expresion = '/^[a-zA-Záéíóúñ0-9]*$/';
-    	if(preg_match($expresion, $value)){
+        //Si no se completo no se valida
+        if(! $this->isComplete($value)){
             return TRUE;
-    	}else{
+        }
+    	$expresion = '/^[a-zA-Záéíóúñ0-9]*$/';
+    	if(! preg_match($expresion, $value)){
             $this->add_message($name, 'letters_numbers');
             return FALSE;
     	}
+        return TRUE;
     }
     /**
      * Regla telefono: analiza si un número de teléfono es correcto
+     * -Si no es cargada no se controla
      * @param string $name
      * @param mixed $value
      * @return boolean
      */
     private function telephone ($name, $value){
-    	$expresion = '/^\+?\d{0,3}?[- .]?\(?(?:\d{0,3})\)?[- .]?\d{2,4}?[- .]?\d\d\d\d$/';
-    	if(preg_match($expresion, $value)){
+        //Si no se completo no se valida
+        if(! $this->isComplete($value)){
             return TRUE;
-    	}else{
+        }
+    	$expresion = '/^\+?\d{0,3}?[- .]?\(?(?:\d{0,3})\)?[- .]?\d{2,4}?[- .]?\d\d\d\d$/';
+    	if(! preg_match($expresion, $value)){
             $this->add_message($name, 'telephone');
             return FALSE;
     	}
+        return TRUE;
     }
     /**
      * Regla email: analiza si el string cumple el formato de mail
+     * -Si no es cargada no se controla
      * @param string $name
      * @param mixed $value
      * @return boolean
      */
     private function email($name, $value){
-        if(filter_var($value, FILTER_VALIDATE_EMAIL)){
-            return TRUE; 
-        }else{
+        //Si no se completo no se valida
+        if(! $this->isComplete($value)){
+            return TRUE;
+        }
+        if(! filter_var($value, FILTER_VALIDATE_EMAIL)){
             $this->add_message($name, 'email');
             return FALSE;
         }
+        return TRUE;
     }
     /**
      * Regla link: analiza si el string cumple el formato de URL
+     * -Si no es cargada no se controla
      * @param string $name
      * @param mixed $value
      * @return boolean
      */
     private function link($name, $value){
-        if(filter_var($value, FILTER_VALIDATE_URL)){
-            return TRUE; 
-        }else{
+        //Si no se completo no se valida
+        if(! $this->isComplete($value)){
+            return TRUE;
+        }
+        if(! filter_var($value, FILTER_VALIDATE_URL)){
             $this->add_message($name, 'link');
             return FALSE;
         }
+        return TRUE;
     }    
     /**
      * Regla date: analiza si un string cumple el formato de fecha segun un formato pasado pasado como parametro
+     * -Si no es cargada no se controla
      * @param string $name
      * @param mixed $value
      * @param string $format
      * @return boolean
      */
     private function date($name, $value, $format){
+        //Si no se completo no se valida
+        if(! $this->isComplete($value)){
+            return TRUE;
+        }
         $separator_type= array(
             "/",
             "-",
@@ -523,12 +616,17 @@ class Validation {
     }
     /**
      * Regla date_is_greater: ve si el dato fecha es mayor que la fecha pasada
+     * -Si no es cargada no se controla
      * @param string $name
      * @param mixed $value
      * @param string $param tiene el formato y la fecha separada por &
      * @return boolean 
      */
     private function date_is_greater($name, $value, $param){
+        //Si no se completo no se valida
+        if(! $this->isComplete($value)){
+            return TRUE;
+        }
         $params= explode('&', $param);
         $format= $params[0];
         $date= $params[1];
@@ -543,12 +641,17 @@ class Validation {
     }
     /**
      * Regla date_is_lower: ve si el dato fecha es menor que la fecha pasada
+     * -Si no es cargada no se controla
      * @param string $name
      * @param mixed $value
      * @param string $param tiene el formato y la fecha separada por &
      * @return boolean 
      */
     private function date_is_lower($name, $value, $param){
+        //Si no se completo no se valida
+        if(! $this->isComplete($value)){
+            return TRUE;
+        }
         $params= explode('&', $param);
         $format= $params[0];
         $date= $params[1];

@@ -1,5 +1,6 @@
 required=A value is required
-is_string=The value must be an string
+not_null=This field cannot be null
+not_empty=This field cannot be empty
 max_length=This field must have at the most :max characters
 min_length=This field must have at least :min characters
 length_between=This field must have a value between :min and :max characters

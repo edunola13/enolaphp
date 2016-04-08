@@ -1,4 +1,6 @@
 required=El valor es requerido
+not_null=El campo no puede ser nulo
+not_empty=El campo no puede estar vacio
 is_string=El campo debe ser un String
 max_length=El campo debe tener a lo sumo :max caracteres
 min_length=El campo debe tener como mínimo :min caracteres
