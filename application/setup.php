@@ -8,9 +8,9 @@ $timeZone= 'GMT';
 if(! ini_get('date.timezone') || ini_get('date.timezone') != $timeZone){
     date_default_timezone_set($timeZone);
 }
-//Indica para cada dominio cual archivo de configuracion usar
+//Indica si la App funciona con multiples dominios
 $multiDomain= FALSE;
-//Archivos de configuracion - Solo necesario de multiDomain TRUE
+//Indica para cada dominio cual archivo de configuracion usar - Solo necesario si multiDomain TRUE
 $configFiles= array();
 //Tipo de configuracion: YAML - PHP - JSON
 $configurationType= 'YAML';

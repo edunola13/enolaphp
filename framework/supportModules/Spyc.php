@@ -1148,8 +1148,8 @@ class Spyc {
 
 do {
   if (PHP_SAPI != 'cli') break;
-  if (empty (filter_input(INPUT_SERVER, 'argc')) || filter_input(INPUT_SERVER, 'argc') < 2) break;
-  if (empty (filter_input(INPUT_SERVER, 'PHP_SELF')) || FALSE === strpos (filter_input(INPUT_SERVER, 'PHP_SELF'), 'Spyc.php') ) break;
+  if (filter_input(INPUT_SERVER, 'argc') == NULL || filter_input(INPUT_SERVER, 'argc') < 2) break;
+  if (filter_input(INPUT_SERVER, 'PHP_SELF') == NULL || FALSE === strpos (filter_input(INPUT_SERVER, 'PHP_SELF'), 'Spyc.php') ) break;
   $file = $argv[1];
   echo json_encode (spyc_load_file ($file));
 } while (0);

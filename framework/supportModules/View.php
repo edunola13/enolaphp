@@ -201,7 +201,7 @@ class View{
             i18n($this->fileName, $locale);
         }
         else{
-            general_error('I18n Error', 'Before call i18n_change_locale is necesary call i18n');
+            \Enola\Error::general_error('I18n Error', 'Before call i18n_change_locale is necesary call i18n');
         }
     }    
     /**
@@ -225,7 +225,7 @@ class View{
             }
         }
         else{
-            general_error('I18n Error', 'Not specified any I18n file to make it run the i18n function');
+            \Enola\Error::general_error('I18n Error', 'Not specified any I18n file to make it run the i18n function');
         }
     }    
     /**

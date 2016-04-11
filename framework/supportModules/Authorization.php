@@ -16,6 +16,9 @@ class Authorization {
     protected function __construct() {
         $this->context= \EnolaContext::getInstance();
         $config= $this->context->readConfigurationFile($this->context->getAuthorizationFile());
+        if(!isset($config['modules']) || !isset($config['profiles'])){
+            \Enola\Error::general_error('Configuration Error', 'The configuration file ' . $this->context->getAuthorizationFile() . ' is not available or is misspelled');
+        }
         $this->modules= $config['modules'];
         $this->profiles= $config['profiles'];
     }

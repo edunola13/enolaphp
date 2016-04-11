@@ -1,4 +1,4 @@
-vendor/
-nbproject/
+/nbproject/
+vendor/*
 application/cache/*
 application/logs/*
