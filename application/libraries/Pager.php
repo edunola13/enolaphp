@@ -7,7 +7,7 @@ namespace Enola\Lib;
  * @category Enola\Lib
  * @version 1.0
  */
-class Pager {
+class Pager implements \JsonSerializable{
     /** Cantidad de elementos por pagina 
      * @var int */
     public $amountPerPage;
@@ -97,5 +97,17 @@ class Pager {
      */
     public function isActualPage($page){
         return ($this->currentPage == $page);
+    }
+    /**
+     * Retorna un arreglo con los valores de informacion del paginador
+     * @return array
+     */
+    public function jsonSerialize() {
+        return array('count' => $this->totalAmount, 
+            'countOfPages' => $this->numberOfPages(), 
+            'limit' => $this->amountPerPage,
+            'page' => $this->currentPage, 
+            'previousPage' => $this->previousPage(), 
+            'nextPage' => $this->nextPage());
     }
 }
