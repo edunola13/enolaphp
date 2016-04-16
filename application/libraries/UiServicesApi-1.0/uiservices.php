@@ -17,9 +17,9 @@ define('SERVER_URL', 'http://localhost/uiservices/');
  * Si no se desea conectar con el servidor para la primer carga de componentes se puede usar una definicion del servidor.
  * Se debe indicar SERVER_DEFINITION = TRUE
  */
-//$pathServerDefinition= realpath(dirname(__FILE__)) . '/../ServerDefinition-2015-03-12.txt';
+$pathServerDefinition= realpath(dirname(__FILE__)) . '/../ServerDefinition-2015-03-12.txt';
 define('SERVER_DEFINITION', FALSE);
-//define('SERVER_DEFINITION_FILE', $pathServerDefinition);
+define('SERVER_DEFINITION_FILE', NULL);
 /*
  * Indica como se ejecutaran los componentes
  * Los valores posibles son 'eval' y 'filephp'
