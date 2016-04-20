@@ -8,19 +8,20 @@ namespace Enola\Support;
  * @category Enola\Support
  */
 class Authorization {
+    /** Instancia unica de autorizacion
+     * @var Authorization */
     protected static $instance;
+    /** Referencia al contexto de la App
+     * @var \EnolaContext */
     protected $context;
-    protected $modules;
-    protected $profiles;
+    /** Instancia del middleware indicado
+     * @var AuthMiddleware */
+    protected $authMiddleware;
     
     protected function __construct() {
         $this->context= \EnolaContext::getInstance();
         $config= $this->context->readConfigurationFile($this->context->getAuthorizationFile());
-        if(!isset($config['modules']) || !isset($config['profiles'])){
-            \Enola\Error::general_error('Configuration Error', 'The configuration file ' . $this->context->getAuthorizationFile() . ' is not available or is misspelled');
-        }
-        $this->modules= $config['modules'];
-        $this->profiles= $config['profiles'];
+        $this->authMiddleware= new AuthFileMiddleware($config);        
     }
     /** 
      * @return Authorization
@@ -36,7 +37,7 @@ class Authorization {
      * @return array
      */
     public function getModules(){
-        return $this->modules;
+        return $this->authMiddleware->getModules();
     }
     /**
      * Retorna un determinado modulo o NULL si no existe
@@ -44,17 +45,14 @@ class Authorization {
      * @return array
      */
     public function getModule($name){
-        if(isset($this->modules[$name])){
-            return $this->modules[$name];
-        }
-        return NULL;
+        return $this->authMiddleware->getModule($name);
     }
     /**
      * Retorna todos los profiles de la aplicacion
      * @return array
      */
     public function getProfiles(){
-        return $this->profiles;
+        return $this->authMiddleware->getProfiles();
     }
     /**
      * Retorna un determinado profile o NULL si no existe
@@ -62,10 +60,7 @@ class Authorization {
      * @return array
      */
     public function getProfile($name){
-        if(isset($this->profiles[$name])){
-            return $this->profiles[$name];
-        }
-        return NULL;
+        return $this->authMiddleware->getProfile($name);
     }
     
     /*
@@ -79,11 +74,7 @@ class Authorization {
      */
     public function userHasAccess($request, $moduleName){
         //Tipo por defecto
-        $userProfile= 'default';
-        if($request->session->exist('user_logged')){
-            //Si existe le asigno el tipo correspondiente
-            $userProfile= $request->session->get('user_logged');
-        }
+        $userProfile= $this->authMiddleware->getUserProfiles($request);
         $maps= FALSE;
         if(is_array($userProfile)){
             $maps= $this->profilesHasAccess($userProfile, $moduleName);
@@ -139,11 +130,7 @@ class Authorization {
      */    
     public function userHasAccessToUrl($request, $url, $method){
         //Tipo por defecto
-        $userProfile= 'default';
-        if($request->session->exist('user_logged')){
-            //Si existe le asigno el tipo correspondiente
-            $userProfile= $request->session->get('user_logged');
-        }
+        $userProfile= $this->authMiddleware->getUserProfiles($request);
         $maps= FALSE;
         if(is_array($userProfile)){
             $maps= $this->profilesHasAccessToUrl($userProfile, $url, $method);
@@ -186,8 +173,7 @@ class Authorization {
             foreach ($permisos as $permiso) {
                 if($this->mapsModule($permiso, $url, $method)){
                     //Cuando alguno coincide salgo del for
-                    $maps= TRUE;
-                    break;
+                    $maps= TRUE; break;
                 }
             }
             if($maps){
@@ -196,8 +182,7 @@ class Authorization {
                 foreach ($denegados as $denegado) {
                     if($this->mapsModule($denegado, $url, $method)){
                         //Si la url es denegada salgo del for
-                        $maps= FALSE;
-                        break;
+                        $maps= FALSE; break;
                     }
                 }
             }  
@@ -228,11 +213,7 @@ class Authorization {
         if(isset($component['authorization-profiles']) && $component['authorization-profiles'] != ""){
             $profiles= str_replace(' ', '', $component['authorization-profiles']);
             $profiles= explode(',', $component['authorization-profiles']);
-            $userProfile= 'default';
-            $session= $request->session;
-            if($session->exist($this->context->getSessionProfile())){
-                $userProfile= $session->get($this->context->getSessionProfile());
-            }
+            $userProfile= $this->authMiddleware->getUserProfiles($request);
             //Comprueba si el usuario logueado tiene o no multiples perfiles y en base a eso comprueba
             if(is_array($userProfile)){
                 return (count(array_intersect($userProfile, $profiles)) > 0);
@@ -288,3 +269,120 @@ class Authorization {
         }
     }
 }
+
+/**
+ * Interface para los distintos middlewares que puede tener la clase Authorization
+ * Esta nos sirve para abstraer a la clase principal del metodo de almacenamiento utilizado
+ * @author Eduardo Sebastian Nola <edunola13@gmail.com>
+ * @category Enola\Support
+ */
+interface AuthMiddleware{
+    /**
+     * Retorna todos los modulos de la aplicacion
+     * @return array
+     */
+    public function getModules();
+    /**
+     * Retorna un determinado modulo o NULL si no existe
+     * @param string $name
+     * @return array
+     */
+    public function getModule($name);
+    /**
+     * Retorna todos los profiles de la aplicacion
+     * @return array
+     */
+    public function getProfiles();
+    /**
+     * Retorna un determinado profile o NULL si no existe
+     * @param string $name
+     * @return array
+     */
+    public function getProfile($name);
+    /**
+     * Retorna los perfiles del usuario actual del sistema
+     * Por defecto 'default'
+     * @param Request $request
+     * @return mixed
+     */
+    public function getUserProfiles($request);
+}
+
+/**
+ * Middleware correspondiente al almacenamiento de las configuracion de autorizacion en archivo de configuracion
+ * @author Eduardo Sebastian Nola <edunola13@gmail.com>
+ * @category Enola\Support
+ */
+class AuthFileMiddleware implements AuthMiddleware{
+    protected $modules;
+    protected $profiles;
+    protected $sessionProfile;
+    protected $userProfiles;
+    
+    public function __construct($configFile) {
+        if(!isset($configFile['modules']) || !isset($configFile['profiles'])){
+            \Enola\Error::general_error('Configuration Error', 'The authorization configuration file is not available for File Middleware');
+        }
+        $this->modules= $configFile['modules'];
+        $this->profiles= $configFile['profiles'];
+        $this->sessionProfile= $configFile['session-profile'];
+    }
+    
+    /**
+     * Retorna todos los modulos de la aplicacion
+     * @return array
+     */
+    public function getModules(){
+        return $this->modules;
+    }
+    /**
+     * Retorna un determinado modulo o NULL si no existe
+     * @param string $name
+     * @return array
+     */
+    public function getModule($name){
+        if(isset($this->modules[$name])){
+            return $this->modules[$name];
+        }
+        return NULL;
+    }
+    /**
+     * Retorna todos los profiles de la aplicacion
+     * @return array
+     */
+    public function getProfiles(){
+        return $this->profiles;
+    }
+    /**
+     * Retorna un determinado profile o NULL si no existe
+     * @param string $name
+     * @return array
+     */
+    public function getProfile($name){
+        if(isset($this->profiles[$name])){
+            return $this->profiles[$name];
+        }
+        return NULL;
+    }
+    /**
+     * Retorna los perfiles del usuario actual del sistema
+     * Por defecto 'default'
+     * @param Request $request
+     * @return mixed
+     */
+    public function getUserProfiles($request){
+        if($this->userProfiles === NULL){
+            $this->userProfiles= $request->session->exist($this->sessionProfile) ? $request->session->get($this->sessionProfile) : 'default';
+        }
+        return $this->userProfiles;
+    }
+}
+
+/**
+ * Middleware correspondiente al almacenamiento de las configuracion de autorizacion en base de datos
+ * @author Eduardo Sebastian Nola <edunola13@gmail.com>
+ * @category Enola\Support
+ */
+//class AuthDbMiddleware implements Enola\Support\AuthMiddleware{
+//    
+//}

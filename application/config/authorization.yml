@@ -1,3 +1,5 @@
+  session-profile: user_logged
+  
   modules:
     front: {url: /*, method: *}
   

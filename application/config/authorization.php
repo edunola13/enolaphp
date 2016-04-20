@@ -1,4 +1,5 @@
 <?php
+$config['session-profile'] = 'user_logged';
 
 $config['modules'] = array(
     'front' => array('url' => '/*', 'method' => '*')

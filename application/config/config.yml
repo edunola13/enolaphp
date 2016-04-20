@@ -19,8 +19,7 @@
     default: en
     locales: es,fr,me
     
-  url-components: enola-components
-  session-profile: user_logged 
+  url-components: enola-components  
   components: {}
       
   libraries:
