@@ -1,11 +1,27 @@
   session-profile: user_logged
+  actual-authorization: Local
   
-  modules:
-    front: {url: /*, method: *}
+  Local:
+    authorization-type: file
+    modules:
+      front: 
+        - {url: /*, method: *}
+
+    profiles:
+      default: 
+        permit:
+          - front
+        deny: {}
+        error: /login
   
-  profiles:
-    default: 
-      permit:
-        - front
-      deny: {}
-      error: login
+  Servidor:
+    authorization-type: database
+    connection: Authorization
+    tables:
+      user: user
+      user-profile: user_profile
+      profile: profile
+      profile-permit: profile_permit
+      profile-deny: profile_deny
+      module: module
+      key: modulekey

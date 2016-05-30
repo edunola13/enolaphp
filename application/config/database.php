@@ -1,6 +1,6 @@
 <?php
 
-$config['actual_db']= 'Local';
+$config['actual-db']= 'Local';
   
 $config['Local']= array( 
     'hostname' => 'localhost',

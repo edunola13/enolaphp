@@ -1,4 +1,4 @@
-  actual_db: Local
+  actual-db: Local
   
   Local: 
     hostname: localhost

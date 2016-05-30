@@ -71,7 +71,7 @@ class DataBaseAR extends Support\GenericLoader{
             self::$config_db= $this->context->readConfigurationFile($this->configFile);
         }
         //Consulta la bd actual si no se indico opcion        print_r(self::$config_db);
-        if($nameDB == NULL)$nameDB= self::$config_db['actual_db'];
+        if($nameDB == NULL)$nameDB= self::$config_db['actual-db'];
         //Cargo las opciones de la bd actual
         $cbd= self::$config_db[$nameDB];
         $this->currentDB= $nameDB;
