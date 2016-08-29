@@ -53,7 +53,7 @@ class HttpCore{
     }
     /**
      * Retorna la especificacion del controlador que mapea con la URI actual
-     * Levanta error 404 si ningun controlador mapeame voy a comer 
+     * Levanta error 404 si ningun controlador mapea
      * @param string $uriapp
      * @return array 
      */

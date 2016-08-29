@@ -26,9 +26,10 @@
         switch ($level) {
             case E_USER_ERROR:
                 Error::error_php('Error', $level, $message, $file, $line);
+                if(ENOLA_MODE == 'HTTP'){Http\UrlUri::setEstadoHeader(500);}
                 exit(1);
                 break;
-
+            
             case E_USER_WARNING:
                 Error::error_php('Warning', $level, $message, $file, $line);
                 break;
@@ -59,6 +60,7 @@
                 else{
                     Error::error_php('Error Fatal - Parse - Strict', $e['type'], $e['message'], $e['file'], $e['line']);
                 }
+                if(ENOLA_MODE == 'HTTP'){Http\UrlUri::setEstadoHeader(500);}
             }
         }
     }
@@ -92,7 +94,6 @@
         /**
          * Crea una respuesta de error 404
          * Usada por el framework y/o el usuario
-         * Escribe en log
          */
         public static function error_404(){
             $head= '404 Pagina no Encontrada';

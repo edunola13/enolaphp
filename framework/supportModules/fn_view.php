@@ -10,7 +10,12 @@ la clase.
  * Realiza el include de una vista dentro de otra
  * @param string $view
  */
-function includeView($view){
+function includeView($view, $params = NULL){
+    if($params != NULL && is_array($params)){
+        foreach ($params as $key => $value) {
+            $$key= $value;
+        }
+    }
     $dir= PATHAPP . 'source/view/' . $view . '.php';
     include $dir;
 }

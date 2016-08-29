@@ -12,7 +12,21 @@ use Enola;
  * @category Enola\Http
  * @internal
  */
-class UrlUri{    
+class UrlUri{
+    public static function defineBaseUrl($relativeUri, $use_forwarded_host = false){
+        $server= filter_input_array(INPUT_SERVER);
+        $ssl= (! empty($server['HTTPS']) && $server['HTTPS'] == 'on');
+        $sp= strtolower( $server['SERVER_PROTOCOL'] );
+        $protocol= substr( $sp, 0, strpos( $sp, '/' ) ) . ( ( $ssl ) ? 's' : '' );
+        $port= $server['SERVER_PORT'];
+        $port= ((! $ssl && $port=='80') || ($ssl && $port=='443') ) ? '' : ':'.$port;
+        $host= ($use_forwarded_host && isset($server['HTTP_X_FORWARDED_HOST'])) ? $server['HTTP_X_FORWARDED_HOST'] : (isset($server['HTTP_HOST']) ? $server['HTTP_HOST'] : null );
+        $host= isset( $host ) ? $host : $server['SERVER_NAME'] . $port;
+        $baseUrl= $protocol . '://' . $host . '/' . ltrim($relativeUri, '/');
+        //BASEURL: Defino la base url segun la url desde donde se inicia la ejecucion de la aplicacion
+        define('BASEURL', $baseUrl);
+        return $baseUrl;
+    }
     /**
      * Se crea la URI ACTUAL de la aplicacion, una URI con el Locale y otra sin Locale, se define la base url real, etc.
      * @param \EnolaContext $context
@@ -21,10 +35,13 @@ class UrlUri{
     public static function defineApplicationUri($context){
         //Resultado de Configuracion - DefinirURI
         $result= array();        
-        //Cargo la URI segun el servidor - Esta casi siempre es todo lo que esta despues de www.edunola.com.ar o localhost/
+        //Cargo la URI segun el servidor
         $uri_actual= filter_input(INPUT_SERVER, 'REQUEST_URI');
         //Analizo la cantidad de partes de la baseurl + indexpage(si corresponde) para poder crear la URI correspondiente para la aplicacion
-        $url_base= BASEURL;
+        $url_base= self::defineBaseUrl($context->getRelativeUrL());
+        //Defino en el contexto el base url
+        $context->setBaseUrL($url_base);
+        
         $index_page= $context->getIndexPage();
         if($index_page != ''){
             $url_base .= trim($index_page, '/') . '/';
@@ -93,7 +110,6 @@ class UrlUri{
         $result['LOCALE']= $locale_actual;
         //BASEURL_LOCALE: Contiene la base URL con el LOCALE correspondiente. Si el locale es el por defecto esta es igual a REAL_BASE_URL
         $result['BASEURL_LOCALE']= $base_url_locale;
-        
         return $result;
     }
     /**

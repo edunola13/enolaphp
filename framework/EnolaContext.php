@@ -13,6 +13,9 @@ class EnolaContext {
     /** Referencia el nucleo del framework 
      * @var \Enola\Application */
     public $app;
+    /** Variables de contexto definidas en el archivo de configuracion.
+     * @var mixed[] */
+    private $contextVars;
     //Path basicos
     /** Path raiz de toda la aplicacion
      * @var string */
@@ -24,7 +27,13 @@ class EnolaContext {
      * @var string */
     private $pathApp;
     //URLs base
-    /** Direccion base donde funciona la aplicacion
+    /** Direccion donde funciona la aplicacion
+     * @var string */
+    private $urlApp;
+    /** Direccion base relativa donde funciona la aplicacion
+     * @var string */
+    private $relativeUrl;
+    /** Direccion url donde funciona la aplicacion en base a donde ejecuta 
      * @var string */
     private $baseUrl;
     /** Archivo index de la aplicacion
@@ -195,13 +204,15 @@ class EnolaContext {
                 $message= 'The environment is not defined in configuration.json';
                 require $path_application . 'errors/general_error.php';
                 exit;
-        }       
-        // BASE_URL: Base url de la aplicacion - definida por el usuario en el archivo de configuracion    
-        $pos= strlen($config['base_url']) - 1;
-        if($config['base_url'][$pos] != '/'){
-            $config['base_url'] .= '/';
+        } 
+        //URL_APP: Url donde funciona la aplicacion
+        $this->urlApp= $config['url_app'];
+        //RELATIVE_URL: Base relativa de la aplicacion - definida por el usuario en el archivo de configuracion    
+        $pos= strlen($config['relative_url']) - 1;
+        if($config['relative_url'][$pos] != '/'){
+            $config['relative_url'] .= '/';
         }
-        $this->baseUrl= $config['base_url'];
+        $this->relativeUrl= $config['relative_url'];
         //INDEX_PAGE: Pagina inicial. En blanco si se utiliza mod_rewrite
         $this->indexPage= $config['index_page']; 
         //URL_COMPONENT: URL con la cual se deben mapear los componentes via URL
@@ -243,8 +254,9 @@ class EnolaContext {
         $this->filtersAfterDefinition= $config['filters_after_processing'];
         $this->componentsDefinition= $config['components'];
         
-        // BASE_URL: Base url de la aplicacion - definida por el usuario en el archivo de configuracion 
-        define('BASEURL', $this->getBaseUrl());
+        if(isset($config['vars'])){
+            $this->contextVars= $config['vars'];
+        }
     }
     /**
      * Establece las constantes basicas del sistema
@@ -265,7 +277,20 @@ class EnolaContext {
     
     /*
      * Getters
-     */    
+     */ 
+    public function getContextVars(){
+        return $this->contextVars;
+    }
+    public function getContextVar($name){
+        if(isset($this->contextVars[$name])){
+            return $this->contextVars[$name];
+        }else{
+            return NULL;
+        }
+    }
+    public function setContextVar($name, $value){
+        $this->contextVars[$name]= $value;
+    }
     public function getPathRoot(){
         return $this->pathRoot;
     }
@@ -275,8 +300,17 @@ class EnolaContext {
     public function getPathApp(){
         return $this->pathApp;
     }
+    public function getUrlApp(){
+        return $this->urlApp;
+    }
+    public function getRelativeUrL(){
+        return $this->relativeUrl;
+    }
     public function getBaseUrL(){
         return $this->baseUrl;
+    }
+    public function setBaseUrL($baseUrl){
+        $this->baseUrl= $baseUrl;
     }
     public function getIndexPage(){
         return $this->indexPage;
