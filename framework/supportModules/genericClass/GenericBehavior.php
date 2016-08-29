@@ -27,7 +27,7 @@ trait GenericBehavior {
             }
         }else{
             foreach ($reglas as $key => $regla) {
-                $field= isset($var[$key]) ? $var[$key] : '';
+                $field= isset($var[$key]) ? $var[$key] : NULL;
                 $validation->add_rule($key, $field, $regla);
             }
         }

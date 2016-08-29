@@ -190,7 +190,7 @@ class Validation {
         if(!is_array($value)){
             return !($value === '' || $value === NULL);
         }else{
-            return (count($value) > 1);
+            return (count($value) > 0);
         }            
     }
     
