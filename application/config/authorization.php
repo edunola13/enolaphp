@@ -17,7 +17,7 @@ $config['Local']= array(
                 'front'
             ),
             'deny' => array(),
-            'error' => 'login'
+            'error-redirect' => 'login'
         )
     )
 );

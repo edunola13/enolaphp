@@ -1,4 +1,5 @@
-  base_url: http://localhost/enolaphp/
+  url_app: http://localhost
+  relative_url: /enolaphp
   index_page:
   environment: development
   calculate_performance: true
@@ -24,7 +25,7 @@
       
   libraries:
     validation: 
-      path: Validation
+      path: Validation/ValidationFields
       
   composer: 
       

@@ -43,8 +43,14 @@ class Authorization extends Http\En_Filter{
             if($auth->getProfile($actualProfile) == NULL){
                 $request->session->deleteSession();
             }
-            //Si no tiene permiso es redireccionado            
-            $response->redirect($auth->getProfile($actualProfile)['error']);
+            //Si no tiene permiso es redireccionado a una url o manejado por un controlador
+            if(isset($auth->getProfile($actualProfile)['error-redirect'])){
+                $response->redirect($auth->getProfile($actualProfile)['error-redirect']);
+            }else if(isset($auth->getProfile($actualProfile)['error-forward'])){
+                $this->forward($auth->getProfile($actualProfile)['error-forward']);
+            }else{
+                echo 'No Permissions'; exit;
+            } 
         }
     }
 }

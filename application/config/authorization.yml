@@ -12,7 +12,7 @@
         permit:
           - front
         deny: {}
-        error: /login
+        error-redirect: /login
   
   Servidor:
     authorization-type: database

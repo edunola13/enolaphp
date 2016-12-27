@@ -1,6 +1,7 @@
 <?php
 
-$config['base_url']= 'http://localhost/enolaphp/';
+$config['url_app']= 'http://localhost';
+$config['url_app']= '/enolaphp';
 $config['index_page']= '';
 $config['environment']= 'development';
 $config['calculate_performance']= true;
@@ -32,7 +33,7 @@ $config['components']= array();
       
 $config['libraries']= array(
     'validation' => array( 
-        'path' => 'Validation'
+        'path' => 'Validation/ValidationFields'
     )
 );
       

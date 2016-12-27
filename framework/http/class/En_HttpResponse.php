@@ -87,6 +87,18 @@ class En_HttpResponse extends Response{
         return filter_input(INPUT_COOKIE, $name);
     }
     /**
+     * Setea parametros de cookie
+     * @param int $lifetime
+     * @param string $path
+     * @param string $domain
+     * @param bool $secure
+     * @param bool $httponly
+     * @return bool
+     */
+    public function setCookieParams($lifetime, $path=NULL, $domain=NULL, $secure=FALSE, $httponly= FALSE){
+        session_set_cookie_params($lifetime, $path, $domain, $secure, $httponly);
+    }
+    /**
      * Setea una cookie
      * @param string $name
      * @param string $value

@@ -263,6 +263,8 @@ class EnolaContext {
      */
     private function setBasicConstants(){
         //Algunas constantes - La idea es ir sacandolas
+        //PATHROOT: direccion de la carpeta del framework - definida en index.php
+        define('PATHROOT', $this->getPathRoot());
         //PATHFRA: direccion de la carpeta del framework - definida en index.php
         define('PATHFRA', $this->getPathFra());    
         //PATHAPP: direccion de la carpeta de la aplicacion - definida en index.php

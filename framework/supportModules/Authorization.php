@@ -526,7 +526,7 @@ class AuthDbMiddleware implements AuthMiddleware{
      */
     public function getProfile($name){
         if($this->loadProfiles != 'ALL' && !in_array($name, $this->loadProfiles)){
-            $this->connection->select('id, name, error');
+            $this->connection->select('id, name, error_redirect, error_forward');
             $this->connection->from($this->tableProfile);
             $this->connection->where('name = :name', array('name' => $name));
             $profile= $this->connection->get()->fetch(\PDO::FETCH_ASSOC);
@@ -551,7 +551,7 @@ class AuthDbMiddleware implements AuthMiddleware{
                 $denyModules[]= $module[0]; 
             }
             
-            $this->profiles[$name]= array('permit' => $permitModules, 'deny' => $denyModules, 'error' => $profile['error']);
+            $this->profiles[$name]= array('permit' => $permitModules, 'deny' => $denyModules, 'error-redirect' => $profile['error_redirect'], 'error-forward' => $profile['error_forward']);
             $this->loadProfiles[]= $name;
         }
         return $this->profiles[$name];
