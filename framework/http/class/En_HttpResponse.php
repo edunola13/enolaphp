@@ -152,6 +152,19 @@ class En_HttpResponse extends Response{
         readfile($file);        
     }
     /**
+     * Metodo para API REST.
+     * Envia una respuesta json con un codigo de respuesta
+     * @param int $code
+     * @param string $contentType
+     * @param string $jsonString
+     */
+    public function sendApiRest($code=200, $contentType='application/json', $jsonString= ''){
+        $this->setStatusCode($code);
+        $this->setContentType($contentType);
+        $this->setContent($jsonString);
+        $this->sendContent();
+    }
+    /**
      * Redirecciona a otra pagina pasando una uri relativa a la aplicacion
      * @param string $uri
      */

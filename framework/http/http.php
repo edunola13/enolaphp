@@ -157,8 +157,8 @@ class HttpCore{
         //Agrego los parametros URI
         $uri_params= UrlUri::uriParams($controller_esp['url'], $uriapp);
         $dinamic_method= $uri_params['dinamic'];
-        $method= $uri_params['method'];
-        $controller->setUriParams($uri_params['params']);
+        $method= $uri_params['method']; 
+        $parameters= $uri_params['params'] ? $uri_params['params'] : array();
         //Analizo si hay parametros en la configuracion
         if(isset($controller_esp['properties'])){
             $this->app->dependenciesEngine->injectProperties($controller, $controller_esp['properties']);
@@ -166,12 +166,17 @@ class HttpCore{
         //Saca el metodo HTPP y en base a eso hace una llamada al metodo correspondiente
         $methodHttp= filter_input(INPUT_SERVER, 'REQUEST_METHOD');
         if($dinamic_method){
+            if($method != 'index' && !(method_exists($controller, $methodHttp . '_' . $method) || method_exists($controller, $method))){
+                $parameters= array_merge(array('0' => $method), $parameters);
+                $method= 'index';                
+            }
             if(method_exists($controller, $methodHttp . '_' . $method)){
                 $method= $methodHttp . '_' . $method;
             }
         }else{
             $method= "do" . ucfirst(strtolower($methodHttp));
         }
+        $controller->setUriParams($parameters);
         if(method_exists($controller, $method)){
             $controller->$method($this->httpRequest, $this->httpResponse);
         }else{
