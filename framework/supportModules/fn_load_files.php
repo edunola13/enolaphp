@@ -28,6 +28,37 @@ function import_aplication_file($dir){
     require_once $dir;
 }
 /**
+ * Carga todos los archivos de una determinada carpeta de la aplicacion pasando una direccion desde application folder
+ * @param string $dir
+ */
+function import_aplication_folder($dir){
+    $dir= PATHAPP . $dir;
+    $dir= rtrim($dir, '/') . '/';
+    foreach (glob($dir."*.php") as $filename){
+        require_once $filename;
+    }
+}
+/**
+ * Carga todos los archivos de una determinada carpeta y sus subcarpetas de la aplicacion pasando una direccion desde application folder
+ * @param string $dir
+ */
+function import_aplication_folder_subfolders($dir){
+    $dir= PATHAPP . $dir;
+    $dir= rtrim($dir, '/') . '/';
+    $dh= opendir($dir);
+    $dir_list= array($dir);
+    while (false !== ($filename = readdir($dh))) {
+        if($filename!="." && $filename!=".." && is_dir($dir.$filename)){
+            array_push($dir_list, $dir.$filename . "/");
+        }
+    }
+    foreach ($dir_list as $dir) {        
+        foreach (glob($dir."*.php") as $filename){
+            require_once $filename;
+        }
+    }
+}
+/**
  * Carga un archivo que luego podras ser asignado a una variable desde application folder
  * @param string $dir
  * @param boolean $byLine
