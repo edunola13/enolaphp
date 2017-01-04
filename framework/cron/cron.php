@@ -69,19 +69,76 @@ class CronCore{
         }
         return array("real" => $realParams, "clean" => $cleanParams);
     }
+    private function validInterval($frequencyMin, $min){
+        $contain= strpos($frequencyMin, '*/');
+        if($contain !== FALSE){            
+            $interval= intval(substr($frequencyMin, 2));
+            return ($min % $interval) == 0;
+        }else if($frequencyMin == '*'){
+            return TRUE;
+        }else{
+            return $frequencyMin == $min;
+        }
+    }
+    /**
+     * Retorna si una frecuencia esta activa en determinado dateTime
+     * @param string $frequency
+     * @param array $actualFrequency
+     * @return boolean
+     */
+    public function activeFrequency($frequency, $actualFrequency){
+        $frequency= explode(' ', trim($frequency, ' '));        
+        $condition= $this->validInterval($frequency[0], $actualFrequency['i']) && $this->validInterval($frequency[1], $actualFrequency['H']) 
+                && $this->validInterval($frequency[2], $actualFrequency['d']) && $this->validInterval($frequency[3], $actualFrequency['m']) 
+                && $this->validInterval($frequency[4], $actualFrequency['w']);
+        return $condition;
+    }
     /**
      * Ejecuta el cron correspondiente en base a los parametros pasados por la linea de comandos
      * Utilizado solo por el framework
      */
     public function executeCronController(){
         $cron= $this->cronRequest->getParamAll(1);
-        $method= "index";
-        //Si la diferencia es mayor a 2 entre ambos arreglos de parametros quiere decir que se indico el nombre del metodo
-        if(count($this->cronRequest->getAllParams()) - count($this->cronRequest->getParams()) > 2){
-            $method= $this->cronRequest->getParamAll(2);
+        //Analizo si llamo a los controladores del usuario o si llamo al manejador de tareas del framework
+        if($cron != 'CronManagement'){
+            $method= "index";
+            //Si la diferencia es mayor a 2 entre ambos arreglos de parametros quiere decir que se indico el nombre del metodo
+            if(count($this->cronRequest->getAllParams()) - count($this->cronRequest->getParams()) > 2){
+                $method= $this->cronRequest->getParamAll(2);
+            }
+            //Ejecuto el cron
+            $this->executeCron($cron, $method);
+        }else{
+            //Ejecuto el CronManagement
+            $this->executeCronManagement();
         }
-        //Ejecuto el cron
-        $this->executeCron($cron, $method);            
+    }
+    /**
+     * Ejecuta el cron management del framework el cual analiza las tareas definidas en el archivo de configuracion
+     * y ejecuta las que corresponda.
+     */
+    public function executeCronManagement(){
+        $dateTime= new \DateTime();
+        $actualFrequency= array(
+            'i' => $dateTime->format('i'),
+            'H' => $dateTime->format('H'),
+            'd' => $dateTime->format('d'),
+            'm' => $dateTime->format('m'),
+            'w' => $dateTime->format('w')
+        );        
+        $definedCrons= $this->app->context->readConfigurationFile('cronJobs')['crons'];
+        $cronsToExeture= array();
+        foreach ($definedCrons as $cronEsp) {
+            $frecuenciaActiva= $this->activeFrequency($cronEsp['frequency'], $actualFrequency);
+            if($frecuenciaActiva){
+                $cronsToExeture[]= $cronEsp;
+            }
+        }
+        //Ejecuto las tareas en la que su frecuencia sea activa
+        foreach ($cronsToExeture as $cronEsp) {
+            $propertiesEsp= isset($cronEsp['properties']) ? $cronEsp['properties'] : NULL;
+            $this->executeCron($cronEsp['cronController'], $cronEsp['method'], $propertiesEsp);
+        }        
     }
     /**
      * Ejecuta el Cron mediante el metodo indicado
@@ -89,14 +146,17 @@ class CronCore{
      * @param string $cron
      * @param string $method
      */
-    public function executeCron($cron, $method= "index"){
+    public function executeCron($cron, $method= "index", $propertiesEsp= NULL){
         $dir= PATHAPP . 'source/crons/' . $cron . '.php';
         //Analiza si existe el archivo
         if(file_exists($dir)){
-            require $dir;
+            require_once $dir;
             $dir= explode("/", $cron);
             $class= $dir[count($dir) - 1];
             $cron= new $class();
+            if($propertiesEsp != NULL){
+                $this->app->dependenciesEngine->injectProperties($cron, $propertiesEsp);
+            }
             //Analiza si existe el metodo indicado
             if(method_exists($cron, $method)){
                 $cron->$method($this->cronRequest, $this->cronResponse);                

@@ -1,0 +1,7 @@
+crons: {}
+#    name:
+#        frequency: /5 * * * *
+#        cronController: Controller
+#        method: method
+#        properties:
+#            name: {value: ejemplo, type: string}
