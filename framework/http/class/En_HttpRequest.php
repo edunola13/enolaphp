@@ -79,7 +79,7 @@ class En_HttpRequest extends Request{
         $this->getParams= filter_input_array(INPUT_GET);
         $this->postParams= filter_input_array(INPUT_POST);
         $this->attributes= array();
-        $this->session= new Session();
+        $this->session= new Session($config['SESSION_AUTOSTART']);
         $this->requestMethod= filter_input(INPUT_SERVER, 'REQUEST_METHOD');
         $this->queryString= filter_input(INPUT_SERVER, 'QUERY_STRING');
         $this->requestUri= filter_input(INPUT_SERVER, 'REQUEST_URI');
@@ -140,6 +140,26 @@ class En_HttpRequest extends Request{
     public function postCleanParam($name){
         if(isset($this->postParams[$name])){
             return Security::clean_vars($this->postParams[$name]);
+        }else{
+            return NULL;
+        }
+    }
+    /**
+     * Retorna todos los headers del request
+     * @return string[]
+     */
+    public function getHeaders(){
+        return getallheaders();
+    }
+    /**
+     * Retorna un header especifico o null si no existe
+     * @param string $name
+     * @return string
+     */
+    public function getHeader($name){
+        $headers= $this->getHeaders();
+        if(isset($headers[$name])){
+            return $headers[$name];
         }else{
             return NULL;
         }

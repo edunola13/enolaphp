@@ -2,7 +2,7 @@
 namespace Enola\Http;
 use Enola\Error;
 
-session_start();
+//session_start();
 /**
  * Esta clase representa la session del usuario y va a proveer todo el comportamiento asociada a la session mediante
  * la funcionalidad que permite php. * 
@@ -16,10 +16,29 @@ class Session {
     /**
      * Constructor que realiza la comprobacion de identidad
      */
-    public function __constructor(){
-		
+    public function __construct($startSession = TRUE, $sessionId = NULL){
+        $this->serverVars= filter_input_array(INPUT_SERVER);
+        if($startSession){
+            $this->startSession($sessionId);
+        }
         $this->checkIdentity();
-    }    
+    }   
+    /**
+     * Inicia una session
+     */
+    public function startSession($sessionId = NULl){
+        if($sessionId != NULL){ 
+            session_id($sessionId);
+        }
+        session_start();
+    }
+    /** 
+     * Retorna si la session esta activa o no
+     * @return boolean
+     */
+    public function sessionActive(){
+        return session_status() == PHP_SESSION_ACTIVE;
+    }
     /**
      * Agrega un dato a la session mediante una clave
      * @param string $key
@@ -94,14 +113,15 @@ class Session {
      * Analiza que no se este suplantando la identidad del verdadero usuario
      */
     private function checkIdentity(){
-        if(isset($_SESSION['REMOTE_ADDR']) && isset($_SESSION['HTTP_USER_AGENT'])){
+        if(isset($_SESSION['REMOTE_ADDR']) && isset($_SESSION['HTTP_USER_AGENT'])){            
             if($_SESSION['REMOTE_ADDR'] != $this->serverVars['REMOTE_ADDR'] || $_SESSION['HTTP_USER_AGENT'] != $this->serverVars['HTTP_USER_AGENT']) {
-                Error::general_error('Session - Identity', 'There are a proble with the Sesion identity');
+                Error::general_error('Session - Identity', 'There are a problem with the Sesion identity');
+                exit;
             }
         }
         else{
             $_SESSION['REMOTE_ADDR'] = $this->serverVars['REMOTE_ADDR'];
-            $_SESSION['HTTP_USER_AGENT'] = $this->serverVars['HTTP_USER_AGENT'];
+            $_SESSION['HTTP_USER_AGENT'] = $this->serverVars['HTTP_USER_AGENT'];            
         }
     }    
 }

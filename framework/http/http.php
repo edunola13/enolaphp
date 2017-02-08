@@ -46,6 +46,7 @@ class HttpCore{
     public function __construct($app) {
         //Defino la aplicacion URI y otros valores
         $config= UrlUri::defineApplicationUri($app->context);
+        $config['SESSION_AUTOSTART']= $app->context->getSessionAutostart();
         //Creo el Http request
         $this->httpRequest= new En_HttpRequest($config);
         $this->httpResponse= new En_HttpResponse($this->httpRequest);

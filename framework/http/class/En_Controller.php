@@ -54,6 +54,12 @@ class En_Controller extends Support\GenericLoader implements Controller{
      */
     public function doPut(En_HttpRequest $request, En_HttpResponse $response){}
     /**
+     * Atiende la peticion HTTP de tipo PATCH
+     * @param En_HttpRequest $request
+     * @param En_HttpResponse $response
+     */
+    public function doPatch(En_HttpRequest $request, En_HttpResponse $response){}
+    /**
      * Atiende la peticion HTTP de tipo HEAD
      * @param En_HttpRequest $request
      * @param En_HttpResponse $response
