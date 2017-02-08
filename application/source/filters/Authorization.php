@@ -19,6 +19,9 @@ class Authorization extends Http\En_Filter{
      * @param En_HttpResponse $response
      */
     public function filter(En_HttpRequest $request, En_HttpResponse $response){
+        if(!$request->session->sessionActive()){
+            $request->session->startSession();
+        }
         $auth= \Enola\Support\Authorization::getInstance();
         //Tipo por defecto
         $userProfile= 'default';
@@ -49,8 +52,9 @@ class Authorization extends Http\En_Filter{
             }else if(isset($auth->getProfile($actualProfile)['error-forward'])){
                 $this->forward($auth->getProfile($actualProfile)['error-forward']);
             }else{
+                $response->setStatusCode(401);
                 echo 'No Permissions'; exit;
-            } 
+            }            
         }
     }
 }

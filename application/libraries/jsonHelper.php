@@ -19,6 +19,8 @@ trait JsonHelperDoctrine{
                     $list[]= $objeto;
                 }
                 $vars[$key]= $list;                
+            }else if($var instanceof  \Doctrine\ORM\PersistentCollection && !$var->isInitialized()){
+                $vars[$key]= array();
             }
         }
         return $vars;

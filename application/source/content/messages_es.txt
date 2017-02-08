@@ -15,6 +15,7 @@ email=El campo no respeta el formato de mail
 link=El campo no respeta el formato de link
 date=La fecha no respeta el formato, el formato debe ser :format
 user_name=El campo debe contener sólo caracteres de a-z, números y guiones bajos. Debe tener entre 5 y 50 caracteres
+user_name_or_email=El campo debe contener sólo caracteres de a-z, números y guiones bajos. Debe tener entre 5 y 50 caracteres. O ser un email.
 letters=El campo debe contener sólo letras
 letters_numbers=El campo debe contener solo letras y/o números
 telephone=El número de teléfono ingresado es incorrecto
