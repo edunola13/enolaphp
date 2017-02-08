@@ -79,6 +79,9 @@ class EnolaContext {
     /** Indica se se cachean los archivos de configuracion
      * @var string */
     private $cacheConfigFiles;
+    /** Indica si la session se inicia automaticamente por el framework
+     * @var boolean*/
+    private $sessionAutostart;
     /** Path archivo de authorization
      * @var string */
     private $authorizationFile;
@@ -207,7 +210,7 @@ class EnolaContext {
         } 
         //URL_APP: Url donde funciona la aplicacion
         $this->urlApp= $config['url_app'];
-        //RELATIVE_URL: Base relativa de la aplicacion - definida por el usuario en el archivo de configuracion    
+        //BASE_URL: Base relativa de la aplicacion - definida por el usuario en el archivo de configuracion    
         $pos= strlen($config['relative_url']) - 1;
         if($config['relative_url'][$pos] != '/'){
             $config['relative_url'] .= '/';
@@ -227,6 +230,8 @@ class EnolaContext {
         $this->calculatePerformance= $config['calculate_performance'];
         //ENVIRONMENT: Indica el ambiente de la aplicacion
         $this->environment= $config['environment'];
+        //SESSION_AUTOSTART: Indica si el framework inicia automaticamente la session
+        $this->sessionAutostart= $config['session_autostart'];
         //AUTHORIZATION_FILE: Indica el archivo que contiene la configuracion de autorizacion
         $this->authorizationFile= $config['authorization_file'];
         //AUTOLOAD_FILE: Indica la direccion del archivo autoload de composer
@@ -358,6 +363,9 @@ class EnolaContext {
     }
     public function getConfigurationFolder(){
         return $this->configurationFolder;
+    }
+    public function getSessionAutostart(){
+        return $this->sessionAutostart;
     }
     public function getAuthorizationFile(){
         return $this->authorizationFile;

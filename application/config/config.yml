@@ -3,6 +3,7 @@
   index_page:
   environment: development
   calculate_performance: true
+  session_autostart: false
   authorization_file: authorization
   
   controllers: 

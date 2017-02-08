@@ -5,6 +5,7 @@ $config['url_app']= '/enolaphp';
 $config['index_page']= '';
 $config['environment']= 'development';
 $config['calculate_performance']= true;
+$config['session_autostart']= false;
 $config['authorization_file']= 'authorization';
   
 $config['controllers']= array(
