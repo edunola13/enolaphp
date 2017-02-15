@@ -7,9 +7,8 @@
   authorization_file: authorization
   
   controllers: 
-    index: 
+    /: 
       class: Index
-      url: /
       
   filters: 
     authorization: 

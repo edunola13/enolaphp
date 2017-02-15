@@ -9,9 +9,8 @@ $config['session_autostart']= false;
 $config['authorization_file']= 'authorization';
   
 $config['controllers']= array(
-    'index' => array(
-        'class' => 'Index',
-        'url' => '/'
+    '/' => array(
+        'class' => 'Index'
     )
 );
       

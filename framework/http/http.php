@@ -58,20 +58,71 @@ class HttpCore{
      * @param string $uriapp
      * @return array 
      */
-    public function mappingController($uriapp = NULL){
+    public function mappingController($uriapp = NULL, $method = NULL){
         $controllers= $this->app->context->getControllersDefinition();
         $maps= FALSE;
-        //Recorre todos los controladores hasta que uno coincida con la URI actual
-        foreach ($controllers as $controller_esp) {            
+        //Recorre todos los controladores principales hasta que uno coincida con la URI actual
+        foreach ($controllers as $url => $controller_esp) {            
             //Analiza si el controlador mapea con la uri actual
-            $maps= UrlUri::mapsActualUrl($controller_esp['url'], $uriapp);
-            if($maps){
-                return $controller_esp;
+            $controller_esp['url']= strpos($url, '@') ? substr($url, 0, strpos($url, '@')) : $url;
+            
+            $mapController= $this->mapsController($controller_esp, $uriapp, $method);
+            if($mapController == NULL && isset($controller_esp['routes'])){
+                foreach ($controller_esp['routes'] as $url => $controller_esp_2) {
+                    $controller_esp_2['url']= strpos($url, '@') ? substr($url, 0, strpos($url, '@')) : $url;
+                    $mapController= $this->mapsController($controller_esp_2, $uriapp, $method, $controller_esp);
+                    if($mapController != NULL){
+                        break;
+                    }
+                }
             }
+            if($mapController != NULL){
+                return $mapController;
+            }           
         }
         //si ningun controlador mapeo avisa el problema
         if(! $maps){
             Error::error_404();
+        }
+    }
+    /**
+     * Controla si el controlador pasado mapea con la url y el metodo actual. 
+     * En caso de mapear arma la especificacion del controlador.
+     * @param mixed $controller
+     * @param string $uriapp
+     * @param string $method
+     * @param mixed $parentController
+     * @return mixed
+     */
+    private function mapsController($controller, $uriapp = NULL, $method = NULL, $parentController = NULL){
+        $httpMethod= isset($controller['httpMethod']) ? $controller['httpMethod'] : '*';
+        if($parentController != NULL){
+            $controller['url']= rtrim($parentController['url'], '/') . '/' . ltrim($controller['url'], '/');
+        }
+        $maps= UrlUri::mapsActualUrl($controller['url'], $uriapp) && UrlUri::mapsActualMethod($httpMethod, $method);
+        if($maps){
+            $mapController= array(
+                'url' => $controller['url'],
+                'httpMethod' => $httpMethod,
+                'location' => isset($controller['location']) ? $controller['location'] : NULL,
+                'namespace' => isset($controller['namespace']) ? $controller['namespace'] : NULL,
+                'class' => isset($controller['class']) ? $controller['class'] : $parentController['class'],
+                'method' => isset($controller['method']) ? $controller['method'] : NULL,
+                'properties' => isset($controller['properties']) ? $controller['properties'] : array()
+            );
+            if($parentController != NULL){
+                if(! isset($controller['class'])){
+                    $mapController['location']= isset($parentController['location']) ? $parentController['location'] : NULL;
+                    $mapController['namespace']= isset($parentController['namespace']) ? $parentController['namespace'] : NULL;
+                }
+                if(isset($parentController['properties'])){
+                    $mapController['properties']= array_merge($mapController['properties'], $parentController['properties']);
+                }
+            }
+            
+            return $mapController;
+        }else{
+            return NULL;
         }
     }
     /**
@@ -174,6 +225,8 @@ class HttpCore{
             if(method_exists($controller, $methodHttp . '_' . $method)){
                 $method= $methodHttp . '_' . $method;
             }
+        }else if(isset($controller_esp['method'])){
+            $method= $controller_esp['method'];
         }else{
             $method= "do" . ucfirst(strtolower($methodHttp));
         }
