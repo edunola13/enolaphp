@@ -135,10 +135,15 @@ class Authorization {
         if($this->getProfile($profileName) != NULL){            
             //Seteo la configuracion del usuario correpondiente
             $config_seguridad= $this->getProfile($profileName);
-            //Seteo los permisos del usuario
-            $permisos= $config_seguridad['permit'];
-            //Veo si el profile contiene el modulo en su seccion de permitidos
-            $maps= in_array($moduleName, $permisos);            
+            if(isset($config_seguridad['join'])){
+                $maps= $this->profileHasAccess($config_seguridad['join'], $moduleName);
+            }
+            if(!$maps){
+                //Seteo los permisos del usuario
+                $permisos= $config_seguridad['permit'];
+                //Veo si el profile contiene el modulo en su seccion de permitidos            
+                $maps= in_array($moduleName, $permisos);            
+            }
             if($maps){
                 //Si hubo mapeo, recorro las url denegadas para el usuario
                 $denegados= $config_seguridad['deny'];
@@ -193,13 +198,19 @@ class Authorization {
         if($this->getProfile($profileName) != NULL){            
             //Seteo la configuracion del usuario correpondiente
             $config_seguridad= $this->getProfile($profileName);
-            //Seteo los permisos del usuario
-            $permisos= $config_seguridad['permit'];            
-            //Recorro sus permisos y veo si alguno coincice
-            foreach ($permisos as $permiso) {
-                if($this->mapsModule($permiso, $url, $method)){
-                    //Cuando alguno coincide salgo del for
-                    $maps= TRUE; break;
+            //Veo si el profile padre tiene permisos
+            if(isset($config_seguridad['join'])){
+                $maps= $this->profileHasAccessToUrl($config_seguridad['join'], $url, $method);
+            }
+            if(!$maps){
+                //Seteo los permisos del usuario
+                $permisos= $config_seguridad['permit'];            
+                //Recorro sus permisos y veo si alguno coincice
+                foreach ($permisos as $permiso) {
+                    if($this->mapsModule($permiso, $url, $method)){
+                        //Cuando alguno coincide salgo del for
+                        $maps= TRUE; break;
+                    }
                 }
             }
             if($maps){
@@ -526,7 +537,7 @@ class AuthDbMiddleware implements AuthMiddleware{
      */
     public function getProfile($name){
         if($this->loadProfiles != 'ALL' && !in_array($name, $this->loadProfiles)){
-            $this->connection->select('id, name, error_redirect, error_forward');
+            $this->connection->select('id, name, join, error_redirect, error_forward');
             $this->connection->from($this->tableProfile);
             $this->connection->where('name = :name', array('name' => $name));
             $profile= $this->connection->get()->fetch(\PDO::FETCH_ASSOC);

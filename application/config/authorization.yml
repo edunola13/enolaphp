@@ -8,7 +8,7 @@
         - {url: /*, method: *}
 
     profiles:
-      default: 
+      default:
         permit:
           - front
         deny: {}
