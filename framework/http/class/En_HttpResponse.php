@@ -153,12 +153,23 @@ class En_HttpResponse extends Response{
     }
     /**
      * Metodo para API REST.
+     * Envia una respuesta json con un codigo de respuesta codificando los datos
+     * @param int $code
+     * @param string $data
+     * @param int $options
+     * @param string $contentType
+     */
+    public function sendApiRestEncode($code=200, $data = NULL, $options= 0, $contentType='application/json'){        
+        $this->sendApiRest($code, json_encode($data, $options), $contentType);
+    }
+    /**
+     * Metodo para API REST.
      * Envia una respuesta json con un codigo de respuesta
      * @param int $code
-     * @param string $contentType
      * @param string $jsonString
+     * @param string $contentType
      */
-    public function sendApiRest($code=200, $contentType='application/json', $jsonString= ''){
+    public function sendApiRest($code=200, $jsonString= '', $contentType='application/json'){
         $this->setStatusCode($code);
         $this->setContentType($contentType);
         $this->setContent($jsonString);

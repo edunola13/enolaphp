@@ -36,6 +36,38 @@ interface CacheInterface {
     public function delete($key);
 }
 /**
+ * Esta clase abstracta contiene funcionalidad compartida entre todas las instancias de cache
+ * @author Eduardo Sebastian Nola <edunola13@gmail.com>
+ * @category Enola\Cache
+ */
+abstract class CacheUtils{
+    /**
+     * Prepara los datos antes de guardarlos en cache
+     * @param mixed $data
+     * @return string
+     */
+    protected function preperaData($data){
+        if(is_string($data)){
+            return $data;
+        }else{
+            return serialize($data);
+        }
+    }
+    /**
+     * Retorna los datos exactamente como se cachearon
+     * @param string $data
+     * @return mixed
+     */
+    protected function unPrepareData($data){
+        $dataUn = @unserialize($data);
+        if ($data === 'b:0;' || $dataUn !== false) {
+            return $dataUn;
+        } else {
+            echo $data;
+        }
+    }
+}
+/**
  * Esta clase implementa el sistema de cache. Implementa la interface de cache y responde a todos los metodos segun el
  * driver actual que tenga seteado.
  * Esta administra los nombres de las claves en base al prefijo utilizado
@@ -85,7 +117,11 @@ class Cache implements CacheInterface{
                 $this->store= new CacheApc();
                 break;
             case 'memcached':
-                $this->store= new CacheMemCache($this->prefix, $config["servers"]);
+                $persistenceId= isset($config['persistenceId']) ? $config['persistenceId'] : NULL;
+                $this->store= new CacheMemCached($config["servers"], $persistenceId);
+                break;
+            case 'redis':
+                $this->store= new CacheRedis($config['schema'], $config['host'], $config['port']);
                 break;
             default:
                 \Enola\Error::general_error("Cache Configuration", "Driver specified unsupported");
@@ -99,7 +135,7 @@ class Cache implements CacheInterface{
      */
     protected function realKey($key){
         return $this->prefix . md5($key);
-    }
+    }    
     /**
      * Devuelve si existe un dato guardado en cache con esa clave
      * @param string $key
@@ -137,7 +173,7 @@ class Cache implements CacheInterface{
  * @author Eduardo Sebastian Nola <edunola13@gmail.com>
  * @category Enola\Cache
  */
-class CacheFileSystem implements CacheInterface{
+class CacheFileSystem extends CacheUtils implements CacheInterface{
     /** Carpeta donde se almacenara la cache
      * @var string */
     public $folder;
@@ -182,7 +218,7 @@ class CacheFileSystem implements CacheInterface{
         $fileString = file_get_contents($filename);
         fclose($file);
         //Unserialize los datos y veo que no esten corrompidos o se haya expirado el tiempo
-        $data = unserialize($fileString);
+        $data = $this->unPrepareData($fileString);
         if (!$data) {
            //Datos corrompidos, elimino el archivo
            unlink($filename);
@@ -212,7 +248,7 @@ class CacheFileSystem implements CacheInterface{
         if($ttl != 0){
             $ttl= time() + $ttl;
         }
-        $data = serialize(array($ttl,$data));
+        $data = $this->preperaData(array($ttl,$data));
         if (fwrite($file,$data)===false) {return FALSE;}
         return fclose($file);
     }
@@ -235,7 +271,7 @@ class CacheFileSystem implements CacheInterface{
  * @author Eduardo Sebastian Nola <edunola13@gmail.com>
  * @category Enola\Cache
  */
-class CacheDataBase implements CacheInterface{
+class CacheDataBase extends CacheUtils implements CacheInterface{
     /** Conexion a Base de Datos a utilizar
      * @var string */
     public $nameDB;
@@ -282,7 +318,7 @@ class CacheDataBase implements CacheInterface{
         $fila= $result->fetch();
         if($fila != NULL){
             //Unserialize los datos y veo que no esten corrompidos o se haya expirado el tiempo
-            $data = unserialize($fila['data']);
+            $data = $this->unPrepareData($fila['data']);
             if (!$data) {
                 //Datos corrompidos, elimino la fila
                 $this->delete($key);
@@ -306,7 +342,7 @@ class CacheDataBase implements CacheInterface{
         if($ttl != 0){
             $ttl= time() + $ttl;
         }
-        $data = serialize(array($ttl,$data));
+        $data = $this->preperaData(array($ttl,$data));
         $this->delete($key);
         return $this->connection->insert($this->table, array('keyCache' => $key, 'data' => $data));
     }
@@ -326,7 +362,7 @@ class CacheDataBase implements CacheInterface{
  * @author Eduardo Sebastian Nola <edunola13@gmail.com>
  * @category Enola\Cache
  */
-class CacheApc implements CacheInterface{
+class CacheApc extends CacheUtils implements CacheInterface{
     /**
      * Constructor
      */
@@ -351,7 +387,7 @@ class CacheApc implements CacheInterface{
      * @return type
      */
     public function get($key){
-        return apc_fetch($key);
+        return $this->unPrepareData(apc_fetch($key));
     }
     /**
      * Almacena un valor en cache asociado a una clave
@@ -360,7 +396,7 @@ class CacheApc implements CacheInterface{
      * @param int $ttl
      */
     public function store($key, $data, $ttl=0){
-        return apc_store($key, $data, $ttl);
+        return apc_store($key, $this->preperaData($data), $ttl);
     }
     /**
      * Elimina un valor en cache asociado a una clave
@@ -377,17 +413,17 @@ class CacheApc implements CacheInterface{
  * @author Eduardo Sebastian Nola <edunola13@gmail.com>
  * @category Enola\Cache
  */
-class CacheMemCache implements CacheInterface{
+class CacheMemCached extends CacheUtils implements CacheInterface{
     /** Referencia a Memcached
      * @var \Memcached */
     public $connection;
     /**
      * Constructor - Instancia la clase Memcached y agrega los servidores indicados
-     * @param type $persistent_id
      * @param arry $servers
+     * @param type $persistentId 
      */
-    public function __construct($persistent_id = NULL, $servers = array()) {
-        $this->connection= new Memcached($persistent_id);
+    public function __construct($servers = array(), $persistentId = NULL) {
+        $this->connection= new \Memcached($persistentId);
         foreach ($servers as $value) {
             $this->addServer($value['host'], $value['port'], $value['weight']);
         }
@@ -406,7 +442,7 @@ class CacheMemCache implements CacheInterface{
      * @return type
      */
     public function get($key){
-        return $this->connection->get($key);
+        return $this->unPrepareData($this->connection->get($key));
     }
     /**
      * Almacena un valor en cache asociado a una clave
@@ -415,7 +451,7 @@ class CacheMemCache implements CacheInterface{
      * @param int $ttl
      */
     public function store($key, $data, $ttl=0){
-        return $this->connection->set($key, $data, $ttl);
+        return $this->connection->set($key, $this->preperaData($data), $ttl);
     }
     /**
      * Elimina un valor en cache asociado a una clave
@@ -434,5 +470,61 @@ class CacheMemCache implements CacheInterface{
      */
     public function addServer($host, $port, $weight=0){
         return $this->connection->addServer($host, $port, $weight);
+    }
+}
+
+/**
+ * Esta clase representa al driver para Redis
+ * Implementa la interface instanciando al manejador y ejecutando el comportamiento correspondiente del mismo.
+ * @author Eduardo Sebastian Nola <edunola13@gmail.com>
+ * @category Enola\Cache
+ */
+class CacheRedis extends CacheUtils implements CacheInterface{
+    /** Referencia a Memcached
+     * @var \Predis\Client */
+    public $connection;
+    /**
+     * Constructor - Instancia la clase Memcached y agrega los servidores indicados
+     * @param arry $servers
+     * @param type $persistentId 
+     */
+    public function __construct($schema, $host, $port) {
+        //PredisAutoloader::register();
+        $this->connection= new \Predis\Client(array('schema' => $schema, 'host' => $host, 'port' => $port));
+
+    }
+    /**
+     * Devuelve si existe un dato guardado en cache con esa clave
+     * @param string $key
+     * @return boolean
+     */
+    public function exists($key) {
+        return $this->connection->exists($key);
+    }
+    /**
+     * Devuelve un valor guardado en cache o null si no existe
+     * @param string $key
+     * @return type
+     */
+    public function get($key){
+        return $this->unPrepareData($this->connection->get($key));
+    }
+    /**
+     * Almacena un valor en cache asociado a una clave
+     * @param string $key
+     * @param type $data
+     * @param int $ttl
+     */
+    public function store($key, $data, $ttl=0){
+        $this->connection->set($key, $this->preperaData($data));
+        return $this->connection->expire($key, $ttl);
+    }
+    /**
+     * Elimina un valor en cache asociado a una clave
+     * @param string $key
+     * @return boolean
+     */
+    public function delete($key){
+        return $this->connection->del($key);
     }
 }

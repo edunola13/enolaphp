@@ -87,16 +87,18 @@ class DataBaseAR extends Support\GenericLoader{
             //Para SQLite y el resto
             if($cbd['driverbd'] == "sqlite"){
                 $dsn .= $cbd['database'];
+                $gbd = new \PDO($dsn);
             }else{
                 $dsn .= 'host='.$cbd['hostname'].';port='.$cbd['port'].';dbname='.$cbd['database'];
+                if($cbd['user'] == ""){
+                    $cbd['user']= NULL;
+                    $cbd['pass']= NULL;
+                }
+                //Abro la conexion                
+                $gbd = new \PDO($dsn, $cbd['user'], $cbd['pass'], array(\PDO::ATTR_PERSISTENT => $cbd['persistent']));                
+                $gbd->exec("SET NAMES '".$cbd['charset']."'");
             }
-            if($cbd['user'] == ""){
-                $cbd['user']= NULL;
-                $cbd['pass']= NULL;
-            }
-            //Abro la conexion                
-            $gbd = new \PDO($dsn, $cbd['user'], $cbd['pass'], array(\PDO::ATTR_PERSISTENT => $cbd['persistent']));
-            $gbd->exec("SET NAMES '".$cbd['charset']."'");
+            
             if($this->context->getEnvironment() == 'development'){
                 $gbd->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
             }else{
