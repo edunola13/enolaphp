@@ -42,13 +42,15 @@ class JsonHelper{
      */   
     public function object_to_array($object, array $fields){
         $array= array();
-        if(is_array($object)){
-            $array= $object;
-            foreach ($array as &$var) {
-                $var= $this->object_to_array_internal($var, $fields);
+        if(is_array($object) || $object instanceof \Traversable){
+            $array= array();
+            foreach ($object as $var) {
+                $array[]= $this->object_to_array_internal($var, $fields);
             }
-        }else{        
+        }else if(! is_null($object)){        
             $array= $this->object_to_array_internal($object, $fields);
+        }else{
+            $array= NULL;
         }
         return $array;        
     }
@@ -64,9 +66,13 @@ class JsonHelper{
         $reflection= new \Enola\Support\Reflection($object);
         foreach ($fields as $key => $value) {
             if(is_array($value)){
-                $var[$key]= $this->object_to_array_internal($reflection->getProperty($key), $fields[$key]);
+                $var[$key]= $this->object_to_array($reflection->getProperty($key), $fields[$key]);
             }else{
-                $var[$value]= $reflection->getProperty($value);
+                if(is_string($key) && is_string($value)){
+                    $var[$key]= $reflection->getProperty($value);
+                }else{
+                    $var[$value]= $reflection->getProperty($value);
+                }
             }
         }
         return $var;
