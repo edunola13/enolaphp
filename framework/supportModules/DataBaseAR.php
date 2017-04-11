@@ -134,6 +134,7 @@ class DataBaseAR extends Support\GenericLoader{
      */
     public function connect($nameDB = NULL, $configFile = NULL){
         if($configFile != NULL){
+            $this->configFile= $configFile;
             self::$config_db= NULL;
         }
         $this->connection= $this->getConnection($nameDB);

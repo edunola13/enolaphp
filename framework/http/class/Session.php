@@ -40,6 +40,13 @@ class Session {
         return session_status() == PHP_SESSION_ACTIVE;
     }
     /**
+     * Retornar el id de session o ""
+     * @return string
+     */
+    public function sessionId(){
+        return session_id();
+    }
+    /**
      * Agrega un dato a la session mediante una clave
      * @param string $key
      * @param type $value
