@@ -105,27 +105,31 @@ class Cache implements CacheInterface{
         if($store == "Default"){
             $store= self::$config['defaultStore'];            
         }
-        $config= self::$config['stores'][$store];
-        switch ($config['driver']) {
-            case 'file':
-                $this->store= new CacheFileSystem($config['folder']);
-                break;
-            case 'database':
-                $this->store= new CacheDataBase($config['connection'], $config['table']);
-                break;
-            case 'apc':
-                $this->store= new CacheApc();
-                break;
-            case 'memcached':
-                $persistenceId= isset($config['persistenceId']) ? $config['persistenceId'] : NULL;
-                $this->store= new CacheMemCached($config["servers"], $persistenceId);
-                break;
-            case 'redis':
-                $this->store= new CacheRedis($config['schema'], $config['host'], $config['port']);
-                break;
-            default:
-                \Enola\Error::general_error("Cache Configuration", "Driver specified unsupported");
-                break;
+        if($store == 'none'){
+            $this->store= new CacheNone();
+        }else{
+            $config= self::$config['stores'][$store];
+            switch ($config['driver']) {
+                case 'file':
+                    $this->store= new CacheFileSystem($config['folder']);
+                    break;
+                case 'database':
+                    $this->store= new CacheDataBase($config['connection'], $config['table']);
+                    break;
+                case 'apc':
+                    $this->store= new CacheApc();
+                    break;
+                case 'memcached':
+                    $persistenceId= isset($config['persistenceId']) ? $config['persistenceId'] : NULL;
+                    $this->store= new CacheMemCached($config["servers"], $persistenceId);
+                    break;
+                case 'redis':
+                    $this->store= new CacheRedis($config['schema'], $config['host'], $config['port']);
+                    break;
+                default:
+                    \Enola\Error::general_error("Cache Configuration", "Driver specified unsupported");
+                    break;
+            }
         }
     }
     /**
@@ -165,6 +169,51 @@ class Cache implements CacheInterface{
      */
     public function delete($key){
         return $this->store->delete($this->realKey($key));
+    }    
+}
+/**
+ * Esta clase es para cuando no se desea utilizar cache entonces estan disponibles todos los metodos pero nunca
+ * hay datos por lo que siempre va a tener que recargar los datos
+ * @author Eduardo Sebastian Nola <edunola13@gmail.com>
+ * @category Enola\Cache
+ */
+class CacheNone implements CacheInterface{
+    /**
+     * Constructor
+     * Guarda la carpeta a utilizar, la carpeta se debe indicar desde PathApp
+     * @param string $folder
+     */
+    public function __construct() {
+    } 
+    /**
+     * Devuelve si existe un dato guardado en cache con esa clave
+     * @param string $key
+     */
+    public function exists($key) {
+        return FALSE;
+    }
+    /**
+     * Devuelve un valor guardado en cache o null si no existe
+     * @param string $key
+     */
+    public function get($key) {
+        return NULL;
+    }
+    /**
+     * Almacena un valor en cache asociado a una clave
+     * @param string $key
+     * @param type $data
+     * @param int $ttl
+     */
+    public function store($key,$data,$ttl=0) {
+        return TRUE;
+    }
+    /**
+     * Elimina un valor en cache asociado a una clave
+     * @param string $key
+     */
+    public function delete($key) {
+        return TRUE;
     }    
 }
 /**

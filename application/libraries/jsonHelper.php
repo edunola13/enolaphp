@@ -35,6 +35,25 @@ class JsonHelper{
     public function __construct() {        
     }
     /**
+     * Retorna un array con los campos indicados
+     * @param array $array
+     * @param array $fields
+     * @return array
+     */
+    public function array_fields($array, array $fields){
+        $newArray= array();
+        foreach ($array as $value) {
+            $newValue= array();
+            foreach ($fields as $key) {
+                if(array_key_exists($key, $value)){
+                    $newValue[$key]= $value[$key];
+                }
+            }
+            $newArray[]= $newValue;
+        }        
+        return $newArray;
+    }
+    /**
      * Transforma un objeto en un array en base al parametro $fields que indica que atributos del objeto mapear
      * @param Object $object
      * @param mixed $fields
@@ -160,6 +179,16 @@ class JsonHelper{
             }
         }    
     }
+}
+/**
+ * Retorna un array con los campos indicados
+ * @param array $array
+ * @param array $fields
+ * @return array
+ */
+function array_fields($array, array $fields){
+    $jsonHelper= new JsonHelper();
+    return $jsonHelper->array_fields($array, $fields);
 }
 /**
  * Transforma un objeto en un array en base al parametro $fields que indica que atributos del objeto mapear
