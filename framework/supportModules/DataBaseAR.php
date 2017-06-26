@@ -89,7 +89,10 @@ class DataBaseAR extends Support\GenericLoader{
                 $dsn .= $cbd['database'];
                 $gbd = new \PDO($dsn);
             }else{
-                $dsn .= 'host='.$cbd['hostname'].';port='.$cbd['port'].';dbname='.$cbd['database'];
+                $dsn .= 'host='.$cbd['hostname'].';port='.$cbd['port'];
+                if(isset($cbd['database'])){
+                    $dsn.= ';dbname='.$cbd['database'];
+                }
                 if($cbd['user'] == ""){
                     $cbd['user']= NULL;
                     $cbd['pass']= NULL;
@@ -438,16 +441,17 @@ class DataBaseAR extends Support\GenericLoader{
             reset($manyValues);
             if(current($manyValues) != FALSE){
                 //Armo y preparo la consulta
-                $query= $this->prepareInsert($table, $values[0]);
-            }            
-            do{
+                $query= $this->prepareInsert($table, $manyValues[0]);
+            }       
+            $ok= true;
+            while(current($manyValues) != FALSE && $ok){
                 //Ejecuto la consulta
-                $query->execute($values);
+                $query->execute(current($manyValues));
                 //Retorno si salio todo bien o no
                 $ok= $this->isOk($query);
                 //Paso al proximo
                 next($manyValues);
-            }while(current($manyValues) != FALSE && $ok);
+            }
             return $ok;
         } catch (\PDOException $e) {
             throw $e;

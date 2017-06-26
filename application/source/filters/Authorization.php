@@ -19,17 +19,29 @@ class Authorization extends Http\En_Filter{
      * @param En_HttpResponse $response
      */
     public function filter(En_HttpRequest $request, En_HttpResponse $response){
-        if(!$request->session->sessionActive()){
-            $request->session->startSession();
-        }
-        $auth= \Enola\Support\Authorization::getInstance();
         //Tipo por defecto
         $userProfile= 'default';
         $actualProfile= $userProfile;
-        if($request->session->exist('user_logged')){
-            //Si existe le asigno el tipo correspondiente
-            $userProfile= $request->session->get('user_logged');
+        if($this->context->getAuthentication() == 'session'){
+            if(!$request->session->sessionActive()){
+                $request->session->startSession();
+            }
+            if($request->session->exist('user_logged')){
+                //Si existe le asigno el tipo correspondiente
+                $userProfile= $request->session->get('user_logged');
+            }
+        }else{            
+            if($request->getToken()){
+                try{
+                    \Enola\Lib\Auth::check($request->getToken());
+                    $data= \Enola\Lib\Auth::getData($request->getToken());
+                    $userProfile= $data['user_logged']; 
+                } catch (Exception $ex) {                    
+                }                
+            }
         }
+        
+        $auth= \Enola\Support\Authorization::getInstance();
         $maps= FALSE;
         if(is_array($userProfile)){
             foreach ($userProfile as $profile) {
@@ -41,11 +53,12 @@ class Authorization extends Http\En_Filter{
             $actualProfile= $userProfile;
             $maps= $auth->profileHasAccessToUrl($userProfile, $request->uriApp, $request->requestMethod);
         }
+        
         if(! $maps){
-            //Si el perfil no existe elimina la sesion
-            if($auth->getProfile($actualProfile) == NULL){
+            //Si el perfil no existe y se esta usando sesiones elimina la sesion
+            if($auth->getProfile($actualProfile) == NULL && $this->context->getAuthentication() == 'session'){
                 $request->session->deleteSession();
-            }
+            }            
             //Si no tiene permiso es redireccionado a una url o manejado por un controlador
             if(isset($auth->getProfile($actualProfile)['error-redirect'])){
                 $response->redirect($auth->getProfile($actualProfile)['error-redirect']);
@@ -53,8 +66,9 @@ class Authorization extends Http\En_Filter{
                 $this->forward($auth->getProfile($actualProfile)['error-forward']);
             }else{
                 $response->setStatusCode(401);
-                echo 'No Permissions'; exit;
-            }            
+                echo 'No Permissions';
+            }
+            return false;
         }
     }
 }

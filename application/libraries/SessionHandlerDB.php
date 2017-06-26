@@ -1,6 +1,9 @@
 <?php
 namespace Enola\Handler;
 
+/*$sess = new Enola\Handler\SessionHandlerDb();
+session_set_save_handler($sess);*/
+
 /**
  * Manejador de Session a traves de Base de Datos
  * Basado de http://vardump.es/2016/01/guardar-sesiones-en-base-de-datos/
@@ -16,7 +19,7 @@ class SessionHandlerDB implements \SessionHandlerInterface{
     /** Indica la conexion a la base de datos
      * @var string
      */
-    protected $dataBase= 'OperacionalMysql';
+    protected $dataBase= 'Local';
     /** Indica si la conexion esta abierta
      * @var boolean
      */
@@ -132,5 +135,39 @@ class SessionHandlerDB implements \SessionHandlerInterface{
         else{
             return FALSE;
         }
+    }
+}
+
+class SessionsDaoMysql extends \Enola\DB\DataBaseAR{
+    
+    public function __construct($conect = FALSE, $nameDB = NULL, $configFile = NULL) {
+        parent::__construct($conect, $nameDB, $configFile);
+    }
+        
+    public function sessionData($id, $key){
+        $this->select('d.session_id, d.key_data, d.data');
+        $this->from('sessions_data d');
+        $this->join('sessions s', 'd.session_id = s.session_id');
+        $this->where('d.session_id = :id AND d.key_data = :key', array('id' => $id, 'key' => $key));
+        return $this->get()->fetch(PDO::FETCH_ASSOC);
+    }
+    
+    public function storeSessionData($data){
+        return $this->insert('sessions_data', $data);
+    }
+    
+    public function updateSessionData($id, $key, $data){
+        $this->where('session_id = :id AND key_data = :key', array('id' => $id, 'key' => $key));
+        return $this->update('sessions_data', $data);
+    }
+    
+    public function deleteSessionData($id){
+        $this->where('session_id = :id', array('id' => $id));
+        return $this->delete('sessions_data');
+    }
+    
+    public function deleteSessionDataSpecific($id, $key){
+        $this->where('session_id = :id AND key_data = :key', array('id' => $id, 'key' => $key));
+        return $this->delete('sessions_data');
     }
 }

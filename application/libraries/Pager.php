@@ -38,6 +38,9 @@ class Pager implements \JsonSerializable{
      * @return int
      */
     public function numberOfPages(){
+        if($this->totalAmount == 0){
+            return 0;
+        }
         $cantidad= $this->totalAmount / $this->amountPerPage;
         if(is_int($cantidad)){
             return $cantidad;

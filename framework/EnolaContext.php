@@ -79,6 +79,9 @@ class EnolaContext {
     /** Indica se se cachean los archivos de configuracion
      * @var string */
     private $cacheConfigFiles;
+    /** Indica el metodo de autenticacion que usara la aplicacion
+     * @var boolean*/
+    private $authentication;
     /** Indica si la session se inicia automaticamente por el framework
      * @var boolean*/
     private $sessionAutostart;
@@ -187,7 +190,8 @@ class EnolaContext {
             if(ENOLA_MODE == 'HTTP'){
                 $file= $this->getConfigFile($this->domain);
             }else{
-                $file= reset($this->configFiles);
+                reset($this->configFiles);
+                $file= next($this->configFiles);
             }
         }
         $config= $this->readConfigurationFile($file);
@@ -230,6 +234,8 @@ class EnolaContext {
         $this->calculatePerformance= $config['calculate_performance'];
         //ENVIRONMENT: Indica el ambiente de la aplicacion
         $this->environment= $config['environment'];
+        //AUTHENTICATION: Indica el metodo de autenticacion de la aplicacion
+        $this->authentication= $config['authentication'];
         //SESSION_AUTOSTART: Indica si el framework inicia automaticamente la session
         $this->sessionAutostart= $config['session_autostart'];
         //AUTHORIZATION_FILE: Indica el archivo que contiene la configuracion de autorizacion
@@ -355,6 +361,8 @@ class EnolaContext {
     public function getConfigFile($domain){
         if(isset($this->configFiles[$domain])){
             return $this->configFiles[$domain];
+        }else{
+            return $domain;
         }
         return NULL;
     }
@@ -363,6 +371,9 @@ class EnolaContext {
     }
     public function getConfigurationFolder(){
         return $this->configurationFolder;
+    }
+    public function getAuthentication(){
+        return $this->authentication;
     }
     public function getSessionAutostart(){
         return $this->sessionAutostart;

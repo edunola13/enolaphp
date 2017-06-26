@@ -13,7 +13,10 @@ class FileHelper {
      */
     protected $pathBase= PATHROOT;
     
-    public function __construct() {        
+    public function __construct($pathBase = null) {        
+        if($pathBase != null){
+            $this->pathBase= $pathBase;
+        }
     }
     /**
      * Retorna el path base desde el cual se esta trabajando

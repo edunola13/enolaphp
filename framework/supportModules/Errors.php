@@ -113,7 +113,7 @@
          */
         public static function general_error($head, $message, $template = 'general_error', $code_error = 500){
             self::write_log($message, 'General Error');
-            if(ENOLA_MODE == 'HTTP'){Http\UrlUri::setEstadoHeader($code_error);}
+            if(ENOLA_MODE == 'HTTP' && class_exists('Http\UrlUri')){Http\UrlUri::setEstadoHeader($code_error);}
             if(error_reporting()){
                 include PATHAPP . 'errors/' . $template . '.php'; 
             }        

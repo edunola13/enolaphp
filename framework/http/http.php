@@ -139,15 +139,19 @@ class HttpCore{
             $actualController= $this->mappingController($uriapp);
         }
         //Ejecuto los filtros pre-procesamiento
+        $rtaFilters= true;
         if($filter){
-            $this->executeFilters($this->app->context->getFiltersBeforeDefinition());
+            $rtaFilters= $this->executeFilters($this->app->context->getFiltersBeforeDefinition());
         }
-        //Ejecuto el controlador
-        $this->executeController($actualController, $uriapp);
-        //Ejecuto los filtros post-procesamiento
-        if($filter){
-            $this->executeFilters($this->app->context->getFiltersAfterDefinition());
-        }
+        //Controlo que desde un filtro no se haya parado la ejecucion
+        if($rtaFilters !== false){
+            //Ejecuto el controlador
+            $this->executeController($actualController, $uriapp);
+            //Ejecuto los filtros post-procesamiento
+            if($filter){
+                $this->executeFilters($this->app->context->getFiltersAfterDefinition());
+            }
+        }        
     }
     /**
      * Analiza los filtros que mapean con la URI pasada y ejecuta los que correspondan. En caso de no pasar URI se utiliza
@@ -179,7 +183,10 @@ class HttpCore{
                 }
                 //Analiza si existe el metodo filtrar
                 if(method_exists($filterIns, 'filter')){
-                    $filterIns->filter($this->httpRequest, $this->httpResponse);
+                    $rta= $filterIns->filter($this->httpRequest, $this->httpResponse);
+                    if($rta === false){
+                        return false;
+                    }
                 }
                 else{
                     Error::general_error('Filter Error', 'The filter ' . $filter_esp['class'] . ' dont implement the method filter()');

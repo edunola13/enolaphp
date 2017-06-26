@@ -21,6 +21,9 @@ class En_HttpRequest extends Request{
     /** Referencia a la Session 
      * @var Session */
     public $session;
+    /** Token 
+     * @var string */
+    public $token;
     /** Metodo HTTP
      * @var string */
     public $requestMethod;
@@ -163,6 +166,22 @@ class En_HttpRequest extends Request{
         }else{
             return NULL;
         }
+    }
+    /**
+     * Retorna el token actual de la peticion
+     * Busca en el header Authorization o una variable get token
+     * @return string
+     */
+    public function getToken(){
+        if(!$this->token){
+            if($this->getHeader('Authorization') != NULL){
+                $this->token= $this->getHeader('Authorization');
+            }
+            if(!$this->token && $this->getParam('token')){
+                $this->token= $this->getParam('token');
+            }
+        }
+        return $this->token;
     }
     /**
      * Lee los campos de un formulario y devuelve un objeto o un array con todos los valores correspondientes
