@@ -8,8 +8,7 @@
   authorization_file: authorization
   
   controllers: 
-    /: 
-      class: Index
+    - routes
       
   filters: 
     authorization: 

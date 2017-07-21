@@ -81,7 +81,7 @@ class ValidationFields extends Validation{
         if(! $this->isComplete($value)){
             return TRUE;
         }
-        if(is_string($value)){
+        if(is_string($value) || strval($value)){
             if(strlen($value) > $max){
                 $this->add_message($name, 'max_length', array('max' => $max));
                 return FALSE;
@@ -105,7 +105,7 @@ class ValidationFields extends Validation{
         if(! $this->isComplete($value)){
             return TRUE;
         }
-        if(is_string($value)){
+        if(is_string($value) || strval($value)){
             if(strlen($value) < $min){
                 $this->add_message($name, 'min_length', array('min' => $min));
                 return FALSE;
@@ -132,7 +132,7 @@ class ValidationFields extends Validation{
         $params= explode('&', $param);
         $min= $params[0];
         $max= $params[1];
-        if(is_string($value)){
+        if(is_string($value) || strval($value)){
             if(strlen($value) >= $min && strlen($value) <= $max){
                 return TRUE;
             }else{
@@ -187,7 +187,25 @@ class ValidationFields extends Validation{
             }
         }
         return TRUE;
-    }  
+    } 
+    /**
+     * Regla es_string: analiza que el campo sea un string
+     * -Si no es cargada no se controla
+     * @param string $name
+     * @param mixed $value
+     * @return boolean
+     */
+    protected function is_string($name, $value){
+        //Si no se completo no se valida
+        if(! $this->isComplete($value)){
+            return TRUE;
+        }
+        if(!is_string($value)){
+            $this->add_message($name, 'is_string');
+            return FALSE;
+        }
+        return TRUE;
+    } 
     /**
      * Regla es_integer: analiza que el campo sea un integer
      * -Si no es cargada no se controla

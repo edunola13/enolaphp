@@ -153,13 +153,13 @@ class CronCore{
             require_once $dir;
             $dir= explode("/", $cron);
             $class= $dir[count($dir) - 1];
-            $cron= new $class();
+            $cronIns= new $class();
             if($propertiesEsp != NULL){
                 $this->app->dependenciesEngine->injectProperties($cron, $propertiesEsp);
             }
             //Analiza si existe el metodo indicado
-            if(method_exists($cron, $method)){
-                $cron->$method($this->cronRequest, $this->cronResponse);                
+            if(method_exists($cronIns, $method)){
+                $cronIns->$method($this->cronRequest, $this->cronResponse);                
             }else{
                 Error::general_error('Cron Controller Error', 'The Cron Controller ' . $cron . ' dont implement the method ' . $method . '()');
             }

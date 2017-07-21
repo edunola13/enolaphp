@@ -10,9 +10,7 @@ $config['session_autostart']= false;
 $config['authorization_file']= 'authorization';
   
 $config['controllers']= array(
-    '/' => array(
-        'class' => 'Index'
-    )
+    'routes'
 );
       
 $config['filters']= array(

@@ -21,7 +21,6 @@ class Session {
         if($startSession){
             $this->startSession($sessionId);
         }
-        $this->checkIdentity();
     }   
     /**
      * Inicia una session
@@ -31,6 +30,7 @@ class Session {
             session_id($sessionId);
         }
         session_start();
+        $this->checkIdentity();
     }
     /** 
      * Retorna si la session esta activa o no

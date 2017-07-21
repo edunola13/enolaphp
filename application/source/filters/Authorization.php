@@ -36,7 +36,8 @@ class Authorization extends Http\En_Filter{
                     \Enola\Lib\Auth::check($request->getToken());
                     $data= \Enola\Lib\Auth::getData($request->getToken());
                     $userProfile= $data['user_logged']; 
-                } catch (Exception $ex) {                    
+                } catch (Exception $ex) {     
+                    \Enola\Error::write_log($e->getMessage(), $e->getCode(), $e->getFile(), $e->getLine());
                 }                
             }
         }

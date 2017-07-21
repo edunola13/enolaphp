@@ -101,8 +101,11 @@ class EnolaContext {
     /** Definicion de archvios de dependencias
      * @var string */
     private $dependenciesFile;
-    /** Definicion de controladores
+    /** Definicion de todos los arhivos con controladores
      * @var string */
+    private $controllersFile;
+    /** Contiene la definicion de todos los controladores
+     * @var array */
     private $controllersDefinition;
     /** Definicion de filtros pre procesameinto
      * @var string */
@@ -260,7 +263,7 @@ class EnolaContext {
         //Diferentes definiciones
         $this->librariesDefinition= $config['libraries'];
         $this->dependenciesFile= $config['dependency_injection'];
-        $this->controllersDefinition= $config['controllers'];
+        $this->controllersFile= $config['controllers'];
         $this->filtersBeforeDefinition= $config['filters'];
         $this->filtersAfterDefinition= $config['filters_after_processing'];
         $this->componentsDefinition= $config['components'];
@@ -396,7 +399,16 @@ class EnolaContext {
     public function getDependenciesFile(){
         return $this->dependenciesFile;
     }
+    public function getControllersFile(){
+        return $this->controllersFile;
+    }
     public function getControllersDefinition(){
+        if(!$this->controllersDefinition){
+            $this->controllersDefinition= array();
+            foreach ($this->getControllersFile() as $nameFile) {
+                $this->controllersDefinition= array_merge($this->controllersDefinition, $this->readConfigurationFile($nameFile));
+            }
+        }
         return $this->controllersDefinition;
     }
     public function getFiltersBeforeDefinition(){
