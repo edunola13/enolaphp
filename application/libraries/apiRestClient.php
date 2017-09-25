@@ -49,6 +49,7 @@ class RestClient {
         curl_setopt($connect, CURLOPT_USERAGENT, "Rest Client");
         curl_setopt($connect, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($connect, CURLOPT_SSL_VERIFYPEER, true);
+        curl_setopt($connect, CURLOPT_TIMEOUT, isset($request["timeout"]) ? $request["timeout"] : 0);
         //curl_setopt($connect, CURLOPT_CAINFO, $GLOBALS["LIB_LOCATION"] . "/cacert.pem");
         curl_setopt($connect, CURLOPT_CUSTOMREQUEST, $request["method"]);
         curl_setopt($connect, CURLOPT_HTTPHEADER, $headers);
@@ -66,7 +67,7 @@ class RestClient {
                 if(gettype($request["data"]) == "string") {
                     json_decode($request["data"], true);
                 } else {
-                    $request["data"] = json_encode($request["data"]);
+                    $request["data"] = json_encode($request["data"], JSON_UNESCAPED_SLASHES);
                 }
 
                 if(function_exists('json_last_error')) {
