@@ -15,6 +15,7 @@ num_between=El número debe estar entre :min y :max
 igual=El campo debe ser igual a la :tocompare
 email=El campo no respeta el formato de mail
 link=El campo no respeta el formato de link
+ip=El campo no respeta el formato de ip
 date=La fecha no respeta el formato, el formato debe ser :format
 user_name=El campo debe contener sólo caracteres de a-z, números y guiones bajos. Debe tener entre 5 y 50 caracteres
 user_name_or_email=El campo debe contener sólo caracteres de a-z, números y guiones bajos. Debe tener entre 5 y 50 caracteres. O ser un email.

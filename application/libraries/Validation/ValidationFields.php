@@ -453,7 +453,25 @@ class ValidationFields extends Validation{
             return FALSE;
         }
         return TRUE;
-    }    
+    } 
+    /**
+     * Regla ip: analiza si el string cumple el formato de IP
+     * -Si no es cargada no se controla
+     * @param string $name
+     * @param mixed $value
+     * @return boolean
+     */
+    protected function ip($name, $value){
+        //Si no se completo no se valida
+        if(! $this->isComplete($value)){
+            return TRUE;
+        }
+        if(! filter_var($value, FILTER_VALIDATE_IP)){
+            $this->add_message($name, 'ip');
+            return FALSE;
+        }
+        return TRUE;
+    } 
     /**
      * Regla date: analiza si un string cumple el formato de fecha segun un formato pasado pasado como parametro
      * -Si no es cargada no se controla
