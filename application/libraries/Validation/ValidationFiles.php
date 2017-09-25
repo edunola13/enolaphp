@@ -90,7 +90,7 @@ class ValidationFiles extends Validation{
      * @param int $min
      * @return boolean
      */
-    public function minFiles($name, $value, $min){
+    public function min_files($name, $value, $min){
         if(! $this->not_empty($name, $value)){
             return TRUE;
         }
