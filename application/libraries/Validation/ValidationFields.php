@@ -59,12 +59,19 @@ class ValidationFields extends Validation{
      * @return boolean
      */
     protected function not_empty($name, $value){
-        if(! $value === NULL){
+        if($value === NULL){
             return TRUE;
         }
-        if($value === ''){            
-           $this->add_message($name, 'not_empty');
-           return FALSE;
+        if(!is_array($value)){
+            if($value === ''){
+                $this->add_message($name, 'not_empty');
+                return FALSE;
+            }
+        }else{
+            if(count($value) == 0){
+                $this->add_message($name, 'not_empty');
+                return FALSE;
+            }
         }
         return TRUE;
     }
@@ -597,5 +604,26 @@ class ValidationFields extends Validation{
             $this->add_message($name, 'date_is_lover', array('date' => $date));
             return FALSE;
     	}
+    }
+    /**
+     * Regla date: analiza si un string cumple el formato de fecha segun un formato pasado pasado como parametro
+     * -Si no es cargada no se controla
+     * @param string $name
+     * @param mixed $value
+     * @param string $format
+     * @return boolean
+     */
+    protected function datetime($name, $value, $format){
+        //Si no se completo no se valida
+        if(! $this->isComplete($value)){
+            return TRUE;
+        }       
+        $date= \DateTime::createFromFormat($format, $value);        
+        if($date){
+            return TRUE;
+        }else{
+            $this->add_message($name, 'datetime', array('format' => $format));
+            return FALSE;
+        }        
     }
 }

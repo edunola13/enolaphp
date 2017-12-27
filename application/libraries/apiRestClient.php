@@ -27,8 +27,8 @@ class RestClient {
 
         if (isset($request["headers"]) && is_array($request["headers"])) {
             foreach ($request["headers"] as $h => $v) {
-                $h = strtolower($h);
-                $v = strtolower($v);
+                //$h = strtolower($h);
+                //$v = strtolower($v);
 
                 if ($h == "content-type") {
                     $default_content_type = false;
@@ -86,7 +86,7 @@ class RestClient {
         return $connect;
     }
 
-    private static function exec($request) {
+    public static function exec($request) {
     // private static function exec($method, $uri, $data, $content_type) {
 
         $connect = self::build_request($request);
