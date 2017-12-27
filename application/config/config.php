@@ -1,7 +1,7 @@
 <?php
 
 $config['url_app']= 'http://localhost';
-$config['url_app']= '/enolaphp';
+$config['relative_url']= '/enolaphp';
 $config['index_page']= '';
 $config['environment']= 'development';
 $config['calculate_performance']= true;
