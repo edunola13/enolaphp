@@ -24,6 +24,7 @@ letters_numbers=This field must contain only letters and/or numbers.
 telephone=The phone number entered is incorrect
 date_is_greater=The date must be greater than :date
 date_is_lover=The date must be less than :date
+datetime= La fecha no respeta el formato el formato esperado ':format'
 
 empty_file=The file cannot be empty
 error_file2=The uploaded file exceeds the directive of the App.

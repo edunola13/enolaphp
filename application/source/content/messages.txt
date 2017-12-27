@@ -24,6 +24,7 @@ letters_numbers=El campo debe contener solo letras y/o números
 telephone=El número de teléfono ingresado es incorrecto
 date_is_greater=La fecha debe ser mayor a :date
 date_is_lover=La fecha debe ser menor a :date
+datetime= The field does not match the date format ':format'
 
 empty_file=El archivo no puede estar vacio
 error_file2=El archivo subido excede la directiva de la App
