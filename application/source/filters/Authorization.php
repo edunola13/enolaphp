@@ -26,18 +26,20 @@ class Authorization extends Http\En_Filter{
             if(!$request->session->sessionActive()){
                 $request->session->startSession();
             }
-            if($request->session->exist('user_logged')){
+            if($request->session->exist('profiles')){
                 //Si existe le asigno el tipo correspondiente
-                $userProfile= $request->session->get('user_logged');
+                $userProfile= $request->session->get('profiles');
             }
         }else{            
             if($request->getToken()){
                 try{
                     \Enola\Lib\Auth::check($request->getToken());
                     $data= \Enola\Lib\Auth::getData($request->getToken());
-                    $userProfile= $data['user_logged']; 
-                } catch (Exception $e) {     
-                    \Enola\Error::write_log($e->getMessage(), $e->getCode(), $e->getFile(), $e->getLine());
+                    $userProfile= $data['profiles']; 
+                } catch (Exception $e) {
+                    $response->sendApiRestEncode(401, array('code' => 'error-token'));
+                    return false;
+                    //\Enola\Error::write_log($e->getMessage(), $e->getCode(), $e->getFile(), $e->getLine());
                 }                
             }
         }
@@ -66,8 +68,7 @@ class Authorization extends Http\En_Filter{
             }else if(isset($auth->getProfile($actualProfile)['error-forward'])){
                 $this->forward($auth->getProfile($actualProfile)['error-forward']);
             }else{
-                $response->setStatusCode(401);
-                echo 'No Permissions';
+                $response->sendApiRestEncode(401, array('code' => 'no-permissions'));
             }
             return false;
         }
