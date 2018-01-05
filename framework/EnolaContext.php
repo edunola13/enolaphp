@@ -459,15 +459,28 @@ class EnolaContext {
         return $config;
     }
     /**
+     * Compila archivos de configuracion. Es necesario indicar path absoluto
+     * @param type $name
+     * @param type $absolute Si es true hay que indicar el path absoluto del archivo
+     */
+    public function compileConfigurationFile($file){
+        $info= new \SplFileInfo($file);
+        $path= $info->getPath() . '/';
+        $name= $info->getBasename('.' . $info->getExtension());
+        $config= $this->readFile($name, $path);
+        file_put_contents($path . $name . '.php', '<?php $config = ' . var_export($config, true) . ';');
+    }
+    /**
      * Lee un archivo y lo carga en un array
      * @param string $name
+     * @param string $folder Si no se indica $folder se usa la carpeta de configuracion de la app
      * @return array
      */
-    private function readFile($name){
+    private function readFile($name, $folder = null){
         $realConfig= NULL;
-        $folder= $this->pathApp . $this->configurationFolder;
+        $folder != null ?: $folder= $this->pathApp . $this->configurationFolder;
         if($this->configurationType == 'YAML'){
-            $realConfig = Spyc::YAMLLoad($folder . $name . '.yml');
+            $realConfig = Spyc::YAMLLoad($folder . $name . '.yml');            
         }else if($this->configurationType == 'PHP'){
             include $folder . $name . '.php';
             //La variable $config la define cada archivo incluido

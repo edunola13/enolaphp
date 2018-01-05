@@ -149,3 +149,56 @@ function parse_properties($lineas) {
     }
     return $result;
 }
+/**
+ * Lee archivos de una carpeta, se le puede indicar que traiga tambien de las subcarpetas y por determinadas extensiones
+ * @param string $folder
+ * @param bool $includeSubFolders
+ * @param string[] $extensions
+ * @return string[]
+ */
+function get_files_from_folder($folder, $includeSubFolders= true, $extensions= null){
+    $dir= PATHAPP . $folder;
+    $dir= rtrim($dir, '/') . '/';
+    $dh= opendir($dir);
+    $dir_list= array();
+    while (false !== ($filename = readdir($dh))) {
+        if($filename!="." && $filename!=".." && $filename){
+            if(!is_dir($dir.$filename)){
+                array_push($dir_list, $dir.$filename . "/");
+            }else if($includeSubFolders){
+                $dir_list= array_merge($dir_list, get_files_from_folder($folder.$filename, true));
+            }
+        }
+    }
+    $matchList= array();
+    foreach ($dir_list as $dir) {
+        if($extensions == null){
+            $matchList[]= $dir;
+            continue;
+        }
+        //Si hay extensiones comparo
+        $info= new \SplFileInfo($dir);
+        if(in_array($info->getExtension(), $extensions)){
+            $matchList[]= $dir;
+        }
+    }
+    
+    return $matchList;
+}
+/**
+ * Retorna todas las carpetas de un directorio
+ * @param string $folder
+ * @return string[]
+ */
+function get_folders_from_folder($folder){
+    $dir= PATHAPP . $folder;
+    $dir= rtrim($dir, '/') . '/';
+    $dh= opendir($dir);
+    $dir_list= array();
+    while (false !== ($filename = readdir($dh))) {
+        if(is_dir($dir.$filename)){
+            array_push($dir_list, $dir.$filename . "/");
+        }
+    }
+    return $dir_list;
+}
