@@ -464,10 +464,13 @@ class EnolaContext {
      * @param type $absolute Si es true hay que indicar el path absoluto del archivo
      */
     public function compileConfigurationFile($file){
+        //CARGAMOS LA DEPENDENCIA POR SI ES NECESARIA
+        require_once $this->pathFra . 'supportModules/Spyc.php';
+        
         $info= new \SplFileInfo($file);
         $path= $info->getPath() . '/';
         $name= $info->getBasename('.' . $info->getExtension());
-        $config= $this->readFile($name, $path);
+        $config= $this->readFileSpecific($path . $name . '.' . $info->getExtension(), $info->getExtension());
         file_put_contents($path . $name . '.php', '<?php $config = ' . var_export($config, true) . ';');
     }
     /**
@@ -487,6 +490,25 @@ class EnolaContext {
             $realConfig= $config;
         }else{
             $realConfig= json_decode(file_get_contents($folder . $name . '.json'), true);  
+        }
+        return $realConfig;
+    }
+    /**
+     * Lee un archivo y lo carga en un array
+     * A defirencia de readFile a este no le importa el tipo de configuracion ni la carpeta de este archivo. Toma un path completo y lo carga
+     * @param string $path
+     * @return array
+     */
+    public function readFileSpecific($path, $extension = 'yml'){
+        $realConfig= NULL;
+        if($extension == 'yml'){
+            $realConfig = Spyc::YAMLLoad($path);            
+        }else if($extension == 'php'){
+            include $path;
+            //La variable $config la define cada archivo incluido
+            $realConfig= $config;
+        }else{
+            $realConfig= json_decode(file_get_contents($path), true);  
         }
         return $realConfig;
     }
