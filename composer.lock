@@ -4,16 +4,62 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "54cf2edf027ef282d07a27c43a5c9915",
-    "packages": [],
+    "content-hash": "1123c5e6d074e672dbc3a57862dd5ffd",
+    "packages": [
+        {
+            "name": "enolaphp/framework",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/edunola13/enolaphp-framework.git",
+                "reference": "b9bb631362076db1854f105cc06f08afa44304f8"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/edunola13/enolaphp-framework/zipball/b9bb631362076db1854f105cc06f08afa44304f8",
+                "reference": "b9bb631362076db1854f105cc06f08afa44304f8",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.6.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Enola\\": "src/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Eduardo Sebastian Nola",
+                    "email": "edunola13@gmail.com"
+                }
+            ],
+            "description": "Framework Enola PHP.",
+            "keywords": [
+                "enolaphp",
+                "framework"
+            ],
+            "support": {
+                "issues": "https://github.com/edunola13/enolaphp-framework/issues",
+                "source": "https://github.com/edunola13/enolaphp-framework"
+            },
+            "time": "2018-02-14T15:49:08+00:00"
+        }
+    ],
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "enolaphp/framework": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
-        "php": ">=5.5.0"
+        "php": ">=5.6.0"
     },
     "platform-dev": []
 }
