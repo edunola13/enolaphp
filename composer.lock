@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "1123c5e6d074e672dbc3a57862dd5ffd",
+    "content-hash": "e790f86e27a4cbe7a26311a675a0bddd",
     "packages": [
         {
-            "name": "enolaphp/framework",
+            "name": "enolaphp/core-modules",
             "version": "dev-master",
             "source": {
                 "type": "git",
-                "url": "https://github.com/edunola13/enolaphp-framework.git",
-                "reference": "b9bb631362076db1854f105cc06f08afa44304f8"
+                "url": "https://github.com/edunola13/core-modules.git",
+                "reference": "f35d7a7f97fe3f8426a47177550b5b563044a016"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/edunola13/enolaphp-framework/zipball/b9bb631362076db1854f105cc06f08afa44304f8",
-                "reference": "b9bb631362076db1854f105cc06f08afa44304f8",
+                "url": "https://api.github.com/repos/edunola13/core-modules/zipball/f35d7a7f97fe3f8426a47177550b5b563044a016",
+                "reference": "f35d7a7f97fe3f8426a47177550b5b563044a016",
                 "shasum": ""
             },
             "require": {
@@ -26,9 +26,53 @@
             "type": "library",
             "autoload": {
                 "psr-4": {
+                    "Enola\\Support\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Eduardo Sebastian Nola",
+                    "email": "edunola13@gmail.com"
+                }
+            ],
+            "description": "Modulos del Nucleo del Framework Enola PHP.",
+            "keywords": [
+                "core",
+                "enolaphp",
+                "framework",
+                "modules"
+            ],
+            "time": "2018-02-14T20:22:23+00:00"
+        },
+        {
+            "name": "enolaphp/framework",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/edunola13/enolaphp-framework.git",
+                "reference": "65a4949c3802b67a3021a0cefe8f9a9c3e8ad8a8"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/edunola13/enolaphp-framework/zipball/65a4949c3802b67a3021a0cefe8f9a9c3e8ad8a8",
+                "reference": "65a4949c3802b67a3021a0cefe8f9a9c3e8ad8a8",
+                "shasum": ""
+            },
+            "require": {
+                "enolaphp/core-modules": "dev-master",
+                "php": ">=5.6.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
                     "Enola\\": "src/"
                 }
             },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -43,16 +87,12 @@
                 "enolaphp",
                 "framework"
             ],
-            "support": {
-                "issues": "https://github.com/edunola13/enolaphp-framework/issues",
-                "source": "https://github.com/edunola13/enolaphp-framework"
-            },
-            "time": "2018-02-14T15:49:08+00:00"
+            "time": "2018-02-14T20:34:44+00:00"
         }
     ],
     "packages-dev": [],
     "aliases": [],
-    "minimum-stability": "stable",
+    "minimum-stability": "dev",
     "stability-flags": {
         "enolaphp/framework": 20
     },
