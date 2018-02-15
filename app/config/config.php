@@ -1,7 +1,7 @@
 <?php
 
 $config['url_app']= 'http://localhost';
-$config['url_app']= '/enolaphp';
+$config['relative_url']= '/enolaphp';
 $config['index_page']= '';
 $config['environment']= 'development';
 $config['calculate_performance']= true;
@@ -16,6 +16,7 @@ $config['controllers']= array(
 $config['filters']= array(
     'authorization' => array( 
         'class' => 'Authorization',
+        'namespace' => 'YourApp\Filters',
         'filtered' => '/*'
     )
 );
@@ -31,9 +32,6 @@ $config['url-components']= 'enola-components';
 $config['components']= array();
       
 $config['libs']= array(
-    'validation' => array( 
-        'path' => 'Validation/ValidationFields'
-    )
 );
       
 $config['dependency_injection']= array(

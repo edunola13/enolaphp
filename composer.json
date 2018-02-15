@@ -15,9 +15,17 @@
     ],
     "require": {
         "php": ">=5.6.0",
-        "enolaphp/framework": "dev-master"
+        "enolaphp/framework": "dev-master",
+        "enolaphp/utils": "dev-master"
     },
     "require-dev": {        
+    },
+    "autoload": {
+        "psr-4": {
+            "YourApp\\Libs\\": "app/libs/",
+            "YourApp\\Controllers\\": "app/src/controllers",
+            "YourApp\\Filters\\": "app/src/filters"
+        }
     },
     "config": {
         "preferred-install": "dist",

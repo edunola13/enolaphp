@@ -13,6 +13,7 @@
   filters: 
     authorization: 
       class: Authorization
+      namespace: YourApp\Filters
       filtered: /*
   filters_after_processing: {}
   
@@ -23,9 +24,7 @@
   url-components: enola-components  
   components: {}
       
-  libs:
-    validation: 
-      path: Validation/ValidationFields
+  libs: {}
       
   dependency_injection:
     - dependencyInjection

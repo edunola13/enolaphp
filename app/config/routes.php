@@ -1,6 +1,7 @@
 <?php
 $config= array(
     '/' => array( 
-        'class' => 'Index'
+        'class' => 'Index',
+        'namespace' => 'YourApp\Controllers'
     )
 );

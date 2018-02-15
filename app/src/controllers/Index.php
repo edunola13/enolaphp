@@ -1,4 +1,5 @@
 <?php
+namespace YourApp\Controllers;
 use Enola\Http\Models;
 use Enola\Http\Models\En_HttpRequest,Enola\Http\Models\En_HttpResponse;
 
