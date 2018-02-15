@@ -13,7 +13,7 @@ $multiDomain= FALSE;
 //Indica para cada dominio cual archivo de configuracion usar - Solo necesario si multiDomain TRUE
 $configFiles= array();
 //Tipo de configuracion: YAML - PHP - JSON
-$configurationType= 'PHP';
+$configurationType= 'YAML';
 //Carpeta de configuracion
 $configurationFolder= 'config/';
 //Indica si se cachean los archivo de configuracion
