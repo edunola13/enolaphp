@@ -10,8 +10,12 @@ if(! ini_get('date.timezone') || ini_get('date.timezone') != $timeZone){
 }
 //Indica si la App funciona con multiples dominios
 $multiDomain= FALSE;
-//Indica para cada dominio cual archivo de configuracion usar - Solo necesario si multiDomain TRUE
-$configFiles= array();
+//Indica el prefijo para la carpeta por dominio - Solo necesario si multiDomain TRUE
+$folderDomain= '_domain_';
+//Sirve para indicar si un dominio apunta a otro dominio - Solo necesario si multiDomain TRUE
+$configFiles= array(
+    //'enolaphp.com.ar' => 'enolaphp.com'
+);
 //Tipo de configuracion: YAML - PHP - JSON
 $configurationType= 'YAML';
 //Carpeta de configuracion

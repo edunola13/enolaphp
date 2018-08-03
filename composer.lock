@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "5d8257ed53f949e17b9388a8c707619c",
+    "content-hash": "a7d6be58dbc854267913687248cfb2fa",
     "packages": [
         {
             "name": "enolaphp/api-rest-client",
@@ -92,16 +92,16 @@
         },
         {
             "name": "enolaphp/framework",
-            "version": "v1.0",
+            "version": "v1.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/edunola13/enolaphp-framework.git",
-                "reference": "1add09c348849274ef779c2726f90662f323bc09"
+                "reference": "348e0e1b83417ce5e2c716160704c94b10bc74b3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/edunola13/enolaphp-framework/zipball/1add09c348849274ef779c2726f90662f323bc09",
-                "reference": "1add09c348849274ef779c2726f90662f323bc09",
+                "url": "https://api.github.com/repos/edunola13/enolaphp-framework/zipball/348e0e1b83417ce5e2c716160704c94b10bc74b3",
+                "reference": "348e0e1b83417ce5e2c716160704c94b10bc74b3",
                 "shasum": ""
             },
             "require": {
@@ -129,25 +129,25 @@
                 "enolaphp",
                 "framework"
             ],
-            "time": "2018-02-15T16:54:13+00:00"
+            "time": "2018-02-15T21:27:22+00:00"
         },
         {
             "name": "enolaphp/utils",
-            "version": "v1.0.1",
+            "version": "v1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/edunola13/utils.git",
-                "reference": "fb969d197211efadb0ee750cbf19ab681b8f2289"
+                "reference": "267d87be830aab71be8b58cabd512062b4f9cbde"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/edunola13/utils/zipball/fb969d197211efadb0ee750cbf19ab681b8f2289",
-                "reference": "fb969d197211efadb0ee750cbf19ab681b8f2289",
+                "url": "https://api.github.com/repos/edunola13/utils/zipball/267d87be830aab71be8b58cabd512062b4f9cbde",
+                "reference": "267d87be830aab71be8b58cabd512062b4f9cbde",
                 "shasum": ""
             },
             "require": {
                 "enolaphp/api-rest-client": "v1.0",
-                "enolaphp/framework": "v1.0",
+                "enolaphp/framework": "v1.0.1",
                 "firebase/php-jwt": "v5.0.0",
                 "php": ">=5.6.0"
             },
@@ -177,7 +177,7 @@
                 "framework",
                 "modules"
             ],
-            "time": "2018-02-15T17:42:07+00:00"
+            "time": "2018-02-15T21:32:48+00:00"
         },
         {
             "name": "firebase/php-jwt",

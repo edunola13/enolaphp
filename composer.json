@@ -15,8 +15,8 @@
     ],
     "require": {
         "php": ">=5.6.0",
-        "enolaphp/framework": "v1.0",
-        "enolaphp/utils": "v1.0.1"
+        "enolaphp/framework": "^v1.0",
+        "enolaphp/utils": "^v1.0.1"
     },
     "require-dev": {        
     },
