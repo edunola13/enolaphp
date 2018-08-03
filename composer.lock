@@ -4,62 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "a7d6be58dbc854267913687248cfb2fa",
+    "content-hash": "fb7d36b41e37f5326c4e7aa7047b94bc",
     "packages": [
         {
-            "name": "enolaphp/api-rest-client",
-            "version": "v1.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/edunola13/api-rest-client-php.git",
-                "reference": "6e2380cad1f95708b8a0e8ed594640d5188635c5"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/edunola13/api-rest-client-php/zipball/6e2380cad1f95708b8a0e8ed594640d5188635c5",
-                "reference": "6e2380cad1f95708b8a0e8ed594640d5188635c5",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.6.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Enola\\Rest\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Eduardo Sebastian Nola",
-                    "email": "edunola13@gmail.com"
-                }
-            ],
-            "description": "Cliente PHP que permite consultar de forma facil e intuitiva aplicaciones API REST.",
-            "keywords": [
-                "api",
-                "enolaphp",
-                "libs",
-                "rest"
-            ],
-            "time": "2018-02-15T16:49:54+00:00"
-        },
-        {
             "name": "enolaphp/core-modules",
-            "version": "v1.0",
+            "version": "1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/edunola13/core-modules.git",
-                "reference": "3573a9e9aec886faca52dfd173c9872fc5c5c0a1"
+                "reference": "2a2e9b89bb61cc28e548412e1d6c9bbb44bc5364"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/edunola13/core-modules/zipball/3573a9e9aec886faca52dfd173c9872fc5c5c0a1",
-                "reference": "3573a9e9aec886faca52dfd173c9872fc5c5c0a1",
+                "url": "https://api.github.com/repos/edunola13/core-modules/zipball/2a2e9b89bb61cc28e548412e1d6c9bbb44bc5364",
+                "reference": "2a2e9b89bb61cc28e548412e1d6c9bbb44bc5364",
                 "shasum": ""
             },
             "require": {
@@ -88,24 +46,24 @@
                 "framework",
                 "modules"
             ],
-            "time": "2018-02-15T16:51:12+00:00"
+            "time": "2018-05-02T18:47:00+00:00"
         },
         {
             "name": "enolaphp/framework",
-            "version": "v1.0.1",
+            "version": "dev-dev",
             "source": {
                 "type": "git",
                 "url": "https://github.com/edunola13/enolaphp-framework.git",
-                "reference": "348e0e1b83417ce5e2c716160704c94b10bc74b3"
+                "reference": "c09daedbfcbd6e35034834faa23273cb448d2bad"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/edunola13/enolaphp-framework/zipball/348e0e1b83417ce5e2c716160704c94b10bc74b3",
-                "reference": "348e0e1b83417ce5e2c716160704c94b10bc74b3",
+                "url": "https://api.github.com/repos/edunola13/enolaphp-framework/zipball/c09daedbfcbd6e35034834faa23273cb448d2bad",
+                "reference": "c09daedbfcbd6e35034834faa23273cb448d2bad",
                 "shasum": ""
             },
             "require": {
-                "enolaphp/core-modules": "v1.0",
+                "enolaphp/core-modules": "^v1.0",
                 "php": ">=5.6.0"
             },
             "type": "library",
@@ -129,107 +87,15 @@
                 "enolaphp",
                 "framework"
             ],
-            "time": "2018-02-15T21:27:22+00:00"
-        },
-        {
-            "name": "enolaphp/utils",
-            "version": "v1.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/edunola13/utils.git",
-                "reference": "267d87be830aab71be8b58cabd512062b4f9cbde"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/edunola13/utils/zipball/267d87be830aab71be8b58cabd512062b4f9cbde",
-                "reference": "267d87be830aab71be8b58cabd512062b4f9cbde",
-                "shasum": ""
-            },
-            "require": {
-                "enolaphp/api-rest-client": "v1.0",
-                "enolaphp/framework": "v1.0.1",
-                "firebase/php-jwt": "v5.0.0",
-                "php": ">=5.6.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Enola\\Handler\\": "handler/",
-                    "Enola\\Helper\\": "helper/",
-                    "Enola\\Lib\\": "lib/",
-                    "Enola\\Common\\": "common/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Eduardo Sebastian Nola",
-                    "email": "edunola13@gmail.com"
-                }
-            ],
-            "description": "Modulos / Librerias de uso General para el Framework Enola PHP.",
-            "keywords": [
-                "core",
-                "enolaphp",
-                "framework",
-                "modules"
-            ],
-            "time": "2018-02-15T21:32:48+00:00"
-        },
-        {
-            "name": "firebase/php-jwt",
-            "version": "v5.0.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/firebase/php-jwt.git",
-                "reference": "9984a4d3a32ae7673d6971ea00bae9d0a1abba0e"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/firebase/php-jwt/zipball/9984a4d3a32ae7673d6971ea00bae9d0a1abba0e",
-                "reference": "9984a4d3a32ae7673d6971ea00bae9d0a1abba0e",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.3.0"
-            },
-            "require-dev": {
-                "phpunit/phpunit": " 4.8.35"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Firebase\\JWT\\": "src"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "BSD-3-Clause"
-            ],
-            "authors": [
-                {
-                    "name": "Neuman Vong",
-                    "email": "neuman+pear@twilio.com",
-                    "role": "Developer"
-                },
-                {
-                    "name": "Anant Narayanan",
-                    "email": "anant@php.net",
-                    "role": "Developer"
-                }
-            ],
-            "description": "A simple library to encode and decode JSON Web Tokens (JWT) in PHP. Should conform to the current spec.",
-            "homepage": "https://github.com/firebase/php-jwt",
-            "time": "2017-06-27T22:17:23+00:00"
+            "time": "2018-08-03T14:16:40+00:00"
         }
     ],
     "packages-dev": [],
     "aliases": [],
-    "minimum-stability": "stable",
-    "stability-flags": [],
+    "minimum-stability": "dev",
+    "stability-flags": {
+        "enolaphp/framework": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {

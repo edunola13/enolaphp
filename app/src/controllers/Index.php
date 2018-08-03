@@ -9,6 +9,6 @@ class Index extends Models\En_Controller{
     }
     
     public function doGet(En_HttpRequest $request, En_HttpResponse $response){
-        $this->loadView("index", NULL);
+        $response->sendApiRestEncode(En_HttpResponse::HTTP_OK, ['rta' => 'Hola']);
     }
 }
